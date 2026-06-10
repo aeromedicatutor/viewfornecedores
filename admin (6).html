@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Atualizar Dados</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#f4f6f9;color:#1a1a2e;min-height:100vh}
+:root{--orange:#E8590C;--green:#1A4731;--green-light:#2a6644}
+
+header{background:var(--green);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.logo h1{color:#fff;font-size:1.1rem;font-weight:700}
+.logo p{color:rgba(255,255,255,.7);font-size:.73rem;margin-top:2px}
+.back-btn{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.8rem;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s}
+.back-btn:hover{background:rgba(255,255,255,.25)}
+
+main{max-width:800px;margin:40px auto;padding:0 24px 60px}
+
+.card{background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;padding:28px;margin-bottom:20px}
+.card h2{font-size:.95rem;font-weight:700;color:#1e293b;margin-bottom:4px}
+.card .subtitle{font-size:.78rem;color:#64748b;margin-bottom:20px}
+
+/* UPLOAD ZONE */
+.drop-zone{border:2px dashed #cbd5e1;border-radius:10px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--green);background:#f0fdf4}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-icon{font-size:2.5rem;margin-bottom:10px}
+.drop-text{font-size:.9rem;font-weight:600;color:#334155;margin-bottom:4px}
+.drop-sub{font-size:.75rem;color:#94a3b8}
+.file-chosen{margin-top:10px;font-size:.78rem;color:var(--green);font-weight:600;display:none}
+
+/* PROGRESS */
+.progress-area{display:none;margin-top:20px}
+.progress-step{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.82rem;color:#64748b}
+.step-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.step-icon.pending{background:#e2e8f0;color:#94a3b8}
+.step-icon.running{background:#dbeafe;color:#2563eb;animation:pulse 1s infinite}
+.step-icon.done{background:#dcfce7;color:#16a34a}
+.step-icon.error{background:#fee2e2;color:#dc2626}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* STATS PREVIEW */
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px;display:none}
+.pcard{background:#f8fafc;border-radius:8px;padding:12px 14px;border:1px solid #e2e8f0;text-align:center}
+.pcard-n{font-size:1.4rem;font-weight:700;color:#1e293b}
+.pcard-l{font-size:.7rem;color:#94a3b8;margin-top:2px}
+
+/* DOWNLOAD BTN */
+.btn-primary{background:var(--green);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:8px;margin-top:16px}
+.btn-primary:hover{background:var(--green-light)}
+.btn-primary:disabled{background:#94a3b8;cursor:not-allowed}
+.btn-secondary{background:#f1f5f9;color:#334155;border:1.5px solid #e2e8f0;padding:10px 22px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;margin-top:10px;margin-right:8px}
+.btn-secondary:hover{border-color:var(--green);color:var(--green)}
+
+/* CATEGORY TABLE */
+.cat-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.8rem}
+.cat-table th{text-align:left;padding:8px 12px;background:#f8fafc;color:#64748b;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+.cat-table td{padding:8px 12px;border-top:1px solid #e2e8f0}
+.cat-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+
+/* RESULT MESSAGE */
+.result-msg{padding:12px 16px;border-radius:8px;font-size:.82rem;font-weight:600;margin-top:14px;display:none}
+.result-msg.success{background:#dcfce7;color:#14532d;border:1px solid #bbf7d0}
+.result-msg.error{background:#fee2e2;color:#7f1d1d;border:1px solid #fecaca}
+
+/* HOW TO */
+.steps-list{list-style:none;counter-reset:step}
+.steps-list li{counter-increment:step;display:flex;align-items:flex-start;gap:10px;padding:8px 0;font-size:.82rem;color:#475569}
+.steps-list li::before{content:counter(step);background:var(--green);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.steps-list li strong{color:#1e293b}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <h1>⚙️ Painel Administrativo</h1>
+    <p>Atualizar dados do dashboard de fornecedores</p>
+  </div>
+  <a href="index.html" class="back-btn">← Ver Dashboard</a>
+</header>
+
+<main>
+
+  <!-- HOW TO -->
+  <div class="card">
+    <h2>Como atualizar o dashboard</h2>
+    <div class="subtitle">Siga os passos abaixo para atualizar os dados:</div>
+    <ol class="steps-list">
+      <li><span><strong>Selecione a planilha</strong> (.xlsx) exportada do sistema de atendimentos</span></li>
+      <li><span>O admin irá <strong>processar automaticamente</strong> os dados por fornecedor</span></li>
+      <li><span><strong>Visualize o preview</strong> antes de confirmar</span></li>
+      <li><span>Clique em <strong>"Baixar data.js"</strong> e substitua o arquivo na pasta do site</span></li>
+      <li><span>O dashboard (<strong>index.html</strong>) será atualizado automaticamente</span></li>
+    </ol>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="card">
+    <h2>📤 Carregar Planilha</h2>
+    <div class="subtitle">Formato esperado: colunas — Número de rastreios, Nome do fornecedor, Nº do Atendimento, Data do registro, Data de remoção, TOKEN, Horário via APP, Cena via APP</div>
+
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this.files[0])">
+      <div class="drop-icon">📊</div>
+      <div class="drop-text">Arraste a planilha aqui ou clique para selecionar</div>
+      <div class="drop-sub">Arquivos .xlsx ou .xls</div>
+      <div class="file-chosen" id="fileChosen"></div>
+    </div>
+
+    <div class="progress-area" id="progressArea">
+      <div class="progress-step" id="step1">
+        <div class="step-icon pending" id="s1i">1</div>
+        <span id="s1t">Aguardando arquivo…</span>
+      </div>
+      <div class="progress-step" id="step2">
+        <div class="step-icon pending" id="s2i">2</div>
+        <span id="s2t">Processar planilha</span>
+      </div>
+      <div class="progress-step" id="step3">
+        <div class="step-icon pending" id="s3i">3</div>
+        <span id="s3t">Calcular métricas</span>
+      </div>
+      <div class="progress-step" id="step4">
+        <div class="step-icon pending" id="s4i">4</div>
+        <span id="s4t">Gerar data.js</span>
+      </div>
+    </div>
+
+    <div class="result-msg" id="resultMsg"></div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="card" id="previewCard" style="display:none">
+    <h2>📊 Preview dos Dados Processados</h2>
+    <div class="subtitle" id="previewSubtitle"></div>
+    <div class="preview-grid" id="previewGrid" style="display:grid"></div>
+
+    <table class="cat-table" id="catTable" style="margin-top:16px">
+      <thead><tr>
+        <th>Categoria</th>
+        <th>Faixa</th>
+        <th>Fornecedores</th>
+        <th>Critério</th>
+      </tr></thead>
+      <tbody id="catTbody"></tbody>
+    </table>
+
+    <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-primary" id="downloadBtn" onclick="downloadDataJs()">⬇️ Baixar data.js</button>
+      <button class="btn-secondary" onclick="copyDataJs()">📋 Copiar conteúdo</button>
+    </div>
+    <div class="result-msg" id="downloadMsg"></div>
+  </div>
+
+</main>
+
+<script>
+const MESES_PT={1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'};
+
+let processedData = null;
+let generatedJs = null;
+
+// Drag & Drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.classList.remove('drag-over');
+  const f=e.dataTransfer.files[0];
+  if(f)handleFile(f);
+});
+
+function setStep(n,state,text){
+  const si=document.getElementById('s'+n+'i');
+  const st=document.getElementById('s'+n+'t');
+  si.className='step-icon '+state;
+  si.textContent=state==='done'?'✓':state==='error'?'✗':n;
+  if(text)st.textContent=text;
+}
+
+function showMsg(id,type,text){
+  const el=document.getElementById(id);
+  el.className='result-msg '+type;
+  el.textContent=text;
+  el.style.display='block';
+}
+
+function handleFile(file){
+  if(!file)return;
+  document.getElementById('fileChosen').textContent='📄 '+file.name;
+  document.getElementById('fileChosen').style.display='block';
+  document.getElementById('progressArea').style.display='block';
+  document.getElementById('resultMsg').style.display='none';
+  document.getElementById('previewCard').style.display='none';
+
+  setStep(1,'running','Lendo arquivo: '+file.name);
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      setStep(1,'done','Arquivo lido: '+file.name);
+      setStep(2,'running','Processando planilha...');
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const raw=XLSX.utils.sheet_to_json(ws,{header:1});
+      // Find header row (row with 'TOKEN' in it)
+      let hdrIdx=0;
+      for(let i=0;i<Math.min(5,raw.length);i++){
+        if(raw[i]&&raw[i].some&&raw[i].some(c=>String(c||'').toUpperCase().includes('TOKEN'))){hdrIdx=i;break;}
+      }
+      const headers=raw[hdrIdx].map(h=>String(h||'').trim());
+      const rows=raw.slice(hdrIdx+1).filter(r=>r&&r.some&&r.some(c=>c!=null&&c!==''));
+
+      // Map columns
+      const ci={};
+      headers.forEach((h,i)=>{
+        const hu=h.toUpperCase();
+        if(hu.includes('RASTREIO')&&hu.includes('NÚMERO')||hu.includes('NÚMERO DE RASTREIO')||hu==='NÚMERO DE RASTREIOS')ci.rastreios=i;
+        if(hu.includes('FORNECEDOR'))ci.fornecedor=i;
+        if(hu.includes('ATENDIMENTO')&&hu.includes('Nº')||hu.includes('Nº DO ATENDIMENTO'))ci.atendimento=i;
+        if(hu.includes('REGISTRO'))ci.data_reg=i;
+        if(hu.includes('TOKEN'))ci.token=i;
+        if(hu.includes('HORÁRIO'))ci.horario=i;
+        if(hu.includes('CENA'))ci.cena=i;
+      });
+      // Fallback positional
+      if(ci.rastreios===undefined)ci.rastreios=0;
+      if(ci.fornecedor===undefined)ci.fornecedor=1;
+      if(ci.data_reg===undefined)ci.data_reg=3;
+      if(ci.token===undefined)ci.token=5;
+      if(ci.horario===undefined)ci.horario=6;
+
+      setStep(2,'done',`Planilha processada: ${rows.length} linhas`);
+      setStep(3,'running','Calculando métricas por fornecedor...');
+
+      // Parse
+      const map={};
+      rows.forEach(r=>{
+        const fn=String(r[ci.fornecedor]||'').trim();
+        if(!fn)return;
+        const token=String(r[ci.token]||'').trim().toUpperCase();
+        const horario=String(r[ci.horario]||'').trim().toUpperCase();
+        const rastreios=parseFloat(r[ci.rastreios])||0;
+        // Parse date
+        let mes=0,ano=0;
+        const dateRaw=r[ci.data_reg];
+        if(dateRaw){
+          let d;
+          if(typeof dateRaw==='number'){// Excel serial
+            d=XLSX.SSF.parse_date_code(dateRaw);
+            mes=d.m;ano=d.y;
+          } else {
+            const s=String(dateRaw);
+            const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if(m){mes=parseInt(m[2]);ano=parseInt(m[3]);}
+            else{const m2=s.match(/(\d{4})-(\d{2})-(\d{2})/);if(m2){mes=parseInt(m2[2]);ano=parseInt(m2[1]);}}
+          }
+        }
+        if(!map[fn])map[fn]={rows:[]};
+        map[fn].rows.push({token,horario,rastreios,mes,ano});
+      });
+
+      // Aggregate
+      const result={};
+      Object.entries(map).forEach(([fn,data])=>{
+        const rs=data.rows;
+        const total=rs.length;
+        const token_sim=rs.filter(r=>r.token==='SIM').length;
+        const token_nao=rs.filter(r=>r.token==='NÃO'||r.token==='NAO').length;
+        const horario_sim=rs.filter(r=>r.horario==='SIM').length;
+        const horario_nao=rs.filter(r=>r.horario==='NÃO'||r.horario==='NAO').length;
+        const com_rastreio=rs.filter(r=>r.rastreios>0).length;
+        const sem_rastreio=rs.filter(r=>r.rastreios===0).length;
+        const token_sim_sem_rastreio=rs.filter(r=>r.token==='SIM'&&r.rastreios===0).length;
+        const acertos=rs.filter(r=>r.token==='SIM'&&r.horario==='SIM').length;
+        const usabilidade=total>0?Math.round(acertos/total*1000)/10:0;
+
+        // By month
+        const mesMap={};
+        rs.forEach(r=>{
+          if(!r.mes)return;
+          const k=String(r.mes);
+          if(!mesMap[k]){mesMap[k]={label:(MESES_PT[r.mes]||'Mês '+r.mes)+'/'+r.ano,total:0,token_sim:0,token_nao:0,horario_sim:0,horario_nao:0,com_rastreio:0,sem_rastreio:0,token_sim_sem_rastreio:0}}
+          const m=mesMap[k];
+          m.total++;
+          if(r.token==='SIM')m.token_sim++;else m.token_nao++;
+          if(r.horario==='SIM')m.horario_sim++;else m.horario_nao++;
+          if(r.rastreios>0)m.com_rastreio++;else m.sem_rastreio++;
+          if(r.token==='SIM'&&r.rastreios===0)m.token_sim_sem_rastreio++;
+        });
+
+        result[fn]={total,token_sim,token_nao,horario_sim,horario_nao,com_rastreio,sem_rastreio,token_sim_sem_rastreio,usabilidade,meses:mesMap};
+      });
+
+      setStep(3,'done',`Métricas calculadas: ${Object.keys(result).length} fornecedores`);
+      setStep(4,'running','Gerando data.js...');
+      processedData=result;
+      generatedJs='const SUPPLIERS_DATA = '+JSON.stringify(result)+';';
+      setStep(4,'done','data.js pronto para download!');
+      showMsg('resultMsg','success','✅ Processamento concluído! '+Object.keys(result).length+' fornecedores encontrados.');
+      showPreview(result);
+    } catch(err){
+      setStep(2,'error','Erro: '+err.message);
+      showMsg('resultMsg','error','❌ Erro ao processar: '+err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function getCat(pct){if(pct>=92)return'A';if(pct>=82)return'B';if(pct>=72)return'C';if(pct>=62)return'D';return'F';}
+
+function showPreview(data){
+  const total=Object.keys(data).length;
+  const totalAtt=Object.values(data).reduce((s,v)=>s+v.total,0);
+  const cats={A:0,B:0,C:0,D:0,F:0};
+  Object.values(data).forEach(v=>cats[getCat(v.usabilidade)]++);
+
+  document.getElementById('previewSubtitle').textContent=`${total} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos processados`;
+  document.getElementById('previewGrid').innerHTML=`
+    <div class="pcard"><div class="pcard-n">${total}</div><div class="pcard-l">Fornecedores</div></div>
+    <div class="pcard"><div class="pcard-n">${totalAtt.toLocaleString('pt-BR')}</div><div class="pcard-l">Atendimentos</div></div>
+    <div class="pcard"><div class="pcard-n" style="color:#16a34a">${cats.A}</div><div class="pcard-l">Categoria A</div></div>
+    <div class="pcard"><div class="pcard-n" style="color:#2563eb">${cats.B}</div><div class="pcard-l">Categoria B</div></div>
+    <div class="pcard"><div class="pcard-n" style="color:#d97706">${cats.C}</div><div class="pcard-l">Categoria C</div></div>
+    <div class="pcard"><div class="pcard-n" style="color:#ea580c">${cats.D}</div><div class="pcard-l">Categoria D</div></div>
+    <div class="pcard"><div class="pcard-n" style="color:#dc2626">${cats.F}</div><div class="pcard-l">Categoria F</div></div>
+  `;
+  const catDefs=[
+    {cat:'A',range:'100% – 92%',count:cats.A,color:'#16a34a',crit:'Token SIM + Horário APP SIM'},
+    {cat:'B',range:'91% – 82%',count:cats.B,color:'#2563eb',crit:'Token SIM + Horário APP SIM'},
+    {cat:'C',range:'81% – 72%',count:cats.C,color:'#d97706',crit:'Token SIM + Horário APP SIM'},
+    {cat:'D',range:'71% – 62%',count:cats.D,color:'#ea580c',crit:'Token SIM + Horário APP SIM'},
+    {cat:'F',range:'61% – 0%',count:cats.F,color:'#dc2626',crit:'Abaixo do mínimo esperado'},
+  ];
+  document.getElementById('catTbody').innerHTML=catDefs.map(c=>`
+    <tr>
+      <td><span class="cat-dot" style="background:${c.color}"></span><strong>Categoria ${c.cat}</strong></td>
+      <td>${c.range}</td>
+      <td><strong>${c.count}</strong> fornecedor(es)</td>
+      <td style="font-size:.75rem;color:#64748b">${c.crit}</td>
+    </tr>`).join('');
+  document.getElementById('previewCard').style.display='block';
+}
+
+function downloadDataJs(){
+  if(!generatedJs)return;
+  const blob=new Blob([generatedJs],{type:'application/javascript'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='data.js';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showMsg('downloadMsg','success','✅ data.js baixado! Substitua o arquivo na pasta do site e atualize a página do dashboard.');
+}
+
+function copyDataJs(){
+  if(!generatedJs)return;
+  navigator.clipboard.writeText(generatedJs).then(()=>{
+    showMsg('downloadMsg','success','✅ Conteúdo copiado para a área de transferência!');
+  }).catch(()=>{
+    showMsg('downloadMsg','error','❌ Não foi possível copiar. Use o botão Baixar.');
+  });
+}
+</script>
+</body>
+</html>
