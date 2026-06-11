@@ -13,23 +13,22 @@ body{font-family:'Poppins',sans-serif;background:#f4f6f9;color:#1a1a2e;min-heigh
 header{background:var(--green);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .logo h1{color:#fff;font-size:1.05rem;font-weight:700}
 .logo p{color:rgba(255,255,255,.65);font-size:.72rem;margin-top:2px}
-.back{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.78rem;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s}
+.back{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.78rem;cursor:pointer;text-decoration:none;display:inline-block}
 .back:hover{background:rgba(255,255,255,.25)}
 main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 .card{background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;padding:26px;margin-bottom:18px}
 .card h2{font-size:.93rem;font-weight:700;color:#1e293b;margin-bottom:4px}
 .sub{font-size:.76rem;color:#64748b;margin-bottom:18px}
 
-/* CRITERIA BOX */
+/* CRITERIA */
 .crit-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:8px}
-.crit-table th{background:#f8fafc;padding:7px 10px;text-align:left;font-size:.7rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-.crit-table td{padding:7px 10px;border-top:1px solid #e2e8f0;vertical-align:middle}
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700}
+.crit-table th{background:#f8fafc;padding:7px 10px;text-align:left;font-size:.7rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #e2e8f0}
+.crit-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.tag{display:inline-block;padding:3px 9px;border-radius:8px;font-size:.68rem;font-weight:700}
 .tag.ok{background:#dcfce7;color:#14532d}
 .tag.sloc{background:#fef3c7;color:#78350f}
-.tag.inc{background:#ffedd5;color:#7c2d12}
 .tag.web{background:#ede9fe;color:#4c1d95}
-.tag.err{background:#fee2e2;color:#7f1d1d}
+.tag.erro{background:#fee2e2;color:#7f1d1d}
 
 /* DROP ZONE */
 .dz{border:2px dashed #cbd5e1;border-radius:10px;padding:38px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
@@ -42,8 +41,8 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 
 /* PROGRESS */
 .prog{display:none;margin-top:18px}
-.ps{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:.8rem;color:#64748b}
-.psi{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
+.ps{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:.8rem;color:#64748b;border-bottom:1px solid #f8fafc}
+.psi{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
 .psi.pend{background:#e2e8f0;color:#94a3b8}
 .psi.run{background:#dbeafe;color:#2563eb;animation:pulse 1s infinite}
 .psi.done{background:#dcfce7;color:#16a34a}
@@ -51,14 +50,14 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* PREVIEW */
-.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:12px}
 .pc{background:#f8fafc;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;text-align:center}
 .pc-n{font-size:1.3rem;font-weight:700;color:#1e293b}
 .pc-l{font-size:.67rem;color:#94a3b8;margin-top:2px}
 
-.btn-p{background:var(--green);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:7px;margin-top:14px}
+.btn-p{background:var(--green);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;margin-top:14px;transition:background .2s}
 .btn-p:hover{background:var(--green-light)}
-.btn-s{background:#f1f5f9;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;margin-top:10px;margin-right:6px}
+.btn-s{background:#f1f5f9;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-top:10px;margin-right:6px;transition:all .2s}
 .btn-s:hover{border-color:var(--green);color:var(--green)}
 
 .rmsg{padding:10px 14px;border-radius:8px;font-size:.8rem;font-weight:600;margin-top:12px;display:none}
@@ -66,15 +65,16 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 .rmsg.er{background:#fee2e2;color:#7f1d1d;border:1px solid #fecaca}
 
 .steps-list{list-style:none;counter-reset:s}
-.steps-list li{counter-increment:s;display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:.8rem;color:#475569}
-.steps-list li::before{content:counter(s);background:var(--green);color:#fff;width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.steps-list li{counter-increment:s;display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:.8rem;color:#475569;border-bottom:1px solid #f8fafc}
+.steps-list li:last-child{border-bottom:none}
+.steps-list li::before{content:counter(s);background:var(--green);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;flex-shrink:0;margin-top:1px}
 </style>
 </head>
 <body>
 <header>
   <div class="logo">
     <h1>⚙️ Painel Administrativo</h1>
-    <p>Atualizar dados do dashboard de fornecedores</p>
+    <p>Atualizar dados do dashboard</p>
   </div>
   <a href="index.html" class="back">← Ver Dashboard</a>
 </header>
@@ -82,41 +82,41 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 
   <div class="card">
     <h2>📐 Critérios de Classificação</h2>
-    <div class="sub">Regras aplicadas no cálculo de usabilidade — % = Corretos ÷ (Total − WEB) × 100</div>
+    <div class="sub">% Usabilidade = Corretos ÷ (Total − WEB) × 100</div>
     <table class="crit-table">
-      <thead><tr><th>Token</th><th>Horário APP</th><th>Rastreio</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
+      <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
       <tbody>
-        <tr><td>SIM</td><td>SIM</td><td>&gt; 5 pts</td><td><span class="tag ok">✅ CORRETO</span></td><td>Sim</td></tr>
-        <tr><td>SIM</td><td>SIM</td><td>≤ 5 pts</td><td><span class="tag sloc">📍 SEM LOCALIZAÇÃO CAPTURADA</span></td><td>Sim (erro)</td></tr>
-        <tr><td>SIM</td><td>NÃO</td><td>qualquer</td><td><span class="tag inc">⚠️ INCONSISTÊNCIA</span></td><td>Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>SIM</td><td>≤ 5 ou 0</td><td><span class="tag web">🌐 VIA WEB</span></td><td>Não (excluído)</td></tr>
-        <tr><td>NÃO</td><td>SIM</td><td>&gt; 5 pts</td><td><span class="tag inc">⚠️ INCONSISTÊNCIA</span></td><td>Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>NÃO</td><td>&gt; 5 pts</td><td><span class="tag inc">⚠️ INCONSISTÊNCIA</span></td><td>Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>NÃO</td><td>≤ 5 ou 0</td><td><span class="tag err">❌ ERRADO</span></td><td>Sim (erro)</td></tr>
+        <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="tag ok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
+        <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag sloc">📍 SEM LOCALIZAÇÃO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>NÃO</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag web">🌐 VIA WEB</span></td><td>✘ Excluído</td></tr>
+        <tr><td>SIM</td><td>≤ 5 pts</td><td>NÃO</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>NÃO</td><td>qualquer</td><td>NÃO</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>NÃO</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="card">
-    <h2>ℹ️ Como atualizar o dashboard</h2>
-    <div class="sub">Siga os passos:</div>
+    <h2>ℹ️ Como atualizar</h2>
+    <div class="sub">Passo a passo:</div>
     <ol class="steps-list">
-      <li>Selecione a planilha <strong>.xlsx</strong> exportada do sistema</li>
-      <li>O admin processa os dados <strong>direto no navegador</strong> (sem servidor)</li>
-      <li>Visualize o <strong>preview</strong> dos dados antes de confirmar</li>
-      <li>Clique em <strong>"Baixar data.js"</strong> e substitua o arquivo na pasta do site</li>
-      <li>O <strong>index.html</strong> atualiza automaticamente</li>
+      <li>Baixe a planilha do sistema interno e salve em <strong>.xlsx</strong></li>
+      <li>Selecione o arquivo abaixo — processamento direto no navegador</li>
+      <li>Confira o <strong>preview</strong> dos dados gerados</li>
+      <li>Clique em <strong>"Baixar data.js"</strong></li>
+      <li>Substitua o <strong>data.js</strong> na pasta do site no GitHub Pages</li>
+      <li>O dashboard atualiza automaticamente ✅</li>
     </ol>
   </div>
 
   <div class="card">
     <h2>📤 Carregar Planilha</h2>
-    <div class="sub">Colunas esperadas: Número de rastreios · Nome do fornecedor · Nº Atendimento · Data registro · TOKEN · Horário via APP · Cena via APP</div>
+    <div class="sub">Colunas esperadas: Número de rastreios · Nome do fornecedor · Nº Atendimento · Data do registro · TOKEN · Horário via APP · Cena via APP</div>
     <div class="dz" id="dz">
       <input type="file" id="fi" accept=".xlsx,.xls" onchange="handleFile(this.files[0])">
       <div class="dz-icon">📊</div>
       <div class="dz-txt">Arraste a planilha aqui ou clique para selecionar</div>
-      <div class="dz-sub">Arquivos .xlsx ou .xls</div>
+      <div class="dz-sub">Suporta .xlsx e .xls</div>
       <div class="fc" id="fc"></div>
     </div>
     <div class="prog" id="prog">
@@ -129,10 +129,10 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
   </div>
 
   <div class="card" id="previewCard" style="display:none">
-    <h2>📊 Preview dos Dados Processados</h2>
+    <h2>📊 Preview dos Dados</h2>
     <div class="sub" id="prevSub"></div>
     <div class="pg" id="pg"></div>
-    <table class="crit-table" style="margin-top:14px" id="catTbl">
+    <table class="crit-table" style="margin-top:14px">
       <thead><tr><th>Categoria</th><th>Faixa</th><th>Fornecedores</th></tr></thead>
       <tbody id="catTbody"></tbody>
     </table>
@@ -145,7 +145,8 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 
 </main>
 <script>
-const MESES={1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'};
+const MESES={1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',
+             7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'};
 let genJs=null;
 
 const dz=document.getElementById('dz');
@@ -161,15 +162,15 @@ function ss(n,state,txt){
 }
 function msg(id,type,txt){const e=document.getElementById(id);e.className='rmsg '+type;e.textContent=txt;e.style.display='block'}
 
-function classify(token,horario,rastreios){
-  const t=token==='SIM',h=horario==='SIM',r=rastreios;
-  if(t&&h&&r>5) return'CORRETO';
-  if(t&&h&&r<=5) return'SEM_LOCALIZACAO';
-  if(t&&!h) return'INCONSISTENCIA';
-  if(!t&&h&&r<=5) return'WEB';
-  if(!t&&h&&r>5) return'INCONSISTENCIA';
-  if(!t&&!h&&r>5) return'INCONSISTENCIA';
-  return'ERRADO';
+/* ===== CLASSIFICAÇÃO FINAL ===== */
+function classify(token, horario, rastreios){
+  const t = token==='SIM';
+  const h = horario==='SIM';
+  const r = rastreios;
+  if(t && r>5)          return 'CORRETO';        // Token SIM + rastreio >5 (qualquer horário)
+  if(t && r<=5 && h)    return 'SEM_LOCALIZACAO'; // Token SIM + horário SIM + rastreio ≤5
+  if(!t && h && r<=5)   return 'WEB';             // Token NÃO + horário SIM + rastreio ≤5
+  return 'ERRO';                                  // Todo o resto
 }
 
 function handleFile(file){
@@ -189,6 +190,8 @@ function handleFile(file){
       const wb=XLSX.read(e.target.result,{type:'array'});
       const ws=wb.Sheets[wb.SheetNames[0]];
       const raw=XLSX.utils.sheet_to_json(ws,{header:1});
+
+      // Detect header row
       let hdrIdx=0;
       for(let i=0;i<Math.min(5,raw.length);i++){
         if(raw[i]&&raw[i].some&&raw[i].some(c=>String(c||'').toUpperCase().includes('TOKEN'))){hdrIdx=i;break;}
@@ -196,66 +199,89 @@ function handleFile(file){
       const hdrs=raw[hdrIdx].map(h=>String(h||'').trim().toUpperCase());
       const rows=raw.slice(hdrIdx+1).filter(r=>r&&r.some&&r.some(c=>c!=null&&c!==''));
 
-      const ci={rastreios:0,fornecedor:1,data_reg:3,token:5,horario:6};
+      // Column detection
+      const ci={rastreios:0,fornecedor:1,atendimento:2,data_reg:3,token:5,horario:6};
       hdrs.forEach((h,i)=>{
         if(h.includes('RASTREIO'))ci.rastreios=i;
         if(h.includes('FORNECEDOR'))ci.fornecedor=i;
+        if(h.includes('ATENDIMENTO')&&(h.includes('Nº')||h.includes('N°')||h.includes('NUM')))ci.atendimento=i;
         if(h.includes('REGISTRO'))ci.data_reg=i;
         if(h==='TOKEN')ci.token=i;
         if(h.includes('HORÁRIO')||h.includes('HORARIO'))ci.horario=i;
       });
 
-      ss(2,'done','Planilha: '+rows.length+' linhas');
+      ss(2,'done',`${rows.length} linhas encontradas`);
       ss(3,'run','Calculando métricas...');
 
       const map={};
       rows.forEach(r=>{
         const fn=String(r[ci.fornecedor]||'').trim();
         if(!fn)return;
-        const token=String(r[ci.token]||'').trim().toUpperCase().replace('Ã','Ã');
-        const horario=String(r[ci.horario]||'').trim().toUpperCase().replace('Ã','Ã');
-        const rastreios=parseFloat(r[ci.rastreios])||0;
+        const rawToken  = String(r[ci.token]||'').trim().toUpperCase();
+        const rawHorario= String(r[ci.horario]||'').trim().toUpperCase();
+        const rastreios = parseFloat(r[ci.rastreios])||0;
+        const att       = r[ci.atendimento]?parseInt(r[ci.atendimento]):null;
+        const token  = rawToken.includes('SIM')?'SIM':'NÃO';
+        const horario= rawHorario.includes('SIM')?'SIM':'NÃO';
+
         let mes=0,ano=0;
         const dr=r[ci.data_reg];
         if(dr){
           if(typeof dr==='number'){const d=XLSX.SSF.parse_date_code(dr);mes=d.m;ano=d.y;}
-          else{const s=String(dr);const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m){mes=parseInt(m[2]);ano=parseInt(m[3]);}else{const m2=s.match(/(\d{4})-(\d{2})-(\d{2})/);if(m2){mes=parseInt(m2[2]);ano=parseInt(m2[1]);}}}
+          else{const s=String(dr);
+            const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if(m){mes=parseInt(m[2]);ano=parseInt(m[3]);}
+            else{const m2=s.match(/(\d{4})-(\d{2})-(\d{2})/);if(m2){mes=parseInt(m2[2]);ano=parseInt(m2[1]);}}
+          }
         }
-        const tk=token.includes('SIM')?'SIM':'NÃO';
-        const hk=horario.includes('SIM')?'SIM':'NÃO';
         if(!map[fn])map[fn]=[];
-        map[fn].push({tk,hk,rastreios,mes,ano});
+        map[fn].push({token,horario,rastreios,att,mes,ano});
       });
 
       const result={};
       Object.entries(map).forEach(([fn,rs])=>{
         const total=rs.length;
-        const clMap={CORRETO:0,SEM_LOCALIZACAO:0,INCONSISTENCIA:0,WEB:0,ERRADO:0};
-        rs.forEach(r=>{clMap[classify(r.tk,r.hk,r.rastreios)]++;});
-        const base=total-clMap.WEB;
-        const usabilidade=base>0?Math.round(clMap.CORRETO/base*1000)/10:0;
+        let correto=0,sem_loc=0,web=0,erro=0;
+        rs.forEach(r=>{
+          const cl=classify(r.token,r.horario,r.rastreios);
+          if(cl==='CORRETO')correto++;
+          else if(cl==='SEM_LOCALIZACAO')sem_loc++;
+          else if(cl==='WEB')web++;
+          else erro++;
+        });
+        const base=total-web;
+        const usabilidade=base>0?Math.round(correto/base*1000)/10:0;
+
+        const att_sem_loc = rs.filter(r=>classify(r.token,r.horario,r.rastreios)==='SEM_LOCALIZACAO'&&r.att).map(r=>r.att).sort((a,b)=>a-b);
+        const att_erro    = rs.filter(r=>classify(r.token,r.horario,r.rastreios)==='ERRO'&&r.att).map(r=>r.att).sort((a,b)=>a-b);
+
         const mesMap={};
         rs.forEach(r=>{
           if(!r.mes)return;
           const k=String(r.mes);
-          if(!mesMap[k]){mesMap[k]={label:(MESES[r.mes]||'Mês '+r.mes)+'/'+r.ano,total:0,correto:0,sem_localizacao:0,inconsistencia:0,web:0,errado:0,base:0,usabilidade:0}}
+          if(!mesMap[k]){mesMap[k]={label:(MESES[r.mes]||'Mês '+r.mes)+'/'+r.ano,total:0,correto:0,sem_localizacao:0,web:0,erro:0,base:0,usabilidade:0,att_sem_localizacao:[],att_erro:[]}}
           const m=mesMap[k];m.total++;
-          const cl=classify(r.tk,r.hk,r.rastreios);
+          const cl=classify(r.token,r.horario,r.rastreios);
           if(cl==='CORRETO')m.correto++;
-          else if(cl==='SEM_LOCALIZACAO')m.sem_localizacao++;
-          else if(cl==='INCONSISTENCIA')m.inconsistencia++;
+          else if(cl==='SEM_LOCALIZACAO'){m.sem_localizacao++;if(r.att)m.att_sem_localizacao.push(r.att);}
           else if(cl==='WEB')m.web++;
-          else m.errado++;
+          else{m.erro++;if(r.att)m.att_erro.push(r.att);}
         });
-        Object.values(mesMap).forEach(m=>{m.base=m.total-m.web;m.usabilidade=m.base>0?Math.round(m.correto/m.base*1000)/10:0});
-        result[fn]={total,correto:clMap.CORRETO,sem_localizacao:clMap.SEM_LOCALIZACAO,inconsistencia:clMap.INCONSISTENCIA,web:clMap.WEB,errado:clMap.ERRADO,base,usabilidade,meses:mesMap};
+        Object.values(mesMap).forEach(m=>{
+          m.base=m.total-m.web;
+          m.usabilidade=m.base>0?Math.round(m.correto/m.base*1000)/10:0;
+          m.att_sem_localizacao.sort((a,b)=>a-b);
+          m.att_erro.sort((a,b)=>a-b);
+        });
+
+        result[fn]={total,correto,sem_localizacao:sem_loc,web,erro,base,usabilidade,att_sem_localizacao:att_sem_loc,att_erro,meses:mesMap};
       });
 
-      ss(3,'done','Métricas: '+Object.keys(result).length+' fornecedores');
+      ss(3,'done',`${Object.keys(result).length} fornecedores processados`);
       ss(4,'run','Gerando data.js...');
       genJs='const SUPPLIERS_DATA = '+JSON.stringify(result)+';';
-      ss(4,'done','data.js pronto!');
-      msg('rmsg','ok','✅ '+Object.keys(result).length+' fornecedores processados com sucesso!');
+      ss(4,'done','data.js pronto para download!');
+      msg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores processados com sucesso!`);
       showPreview(result);
     }catch(er){ss(2,'err','Erro: '+er.message);msg('rmsg','er','❌ Erro: '+er.message);}
   };
@@ -263,23 +289,34 @@ function handleFile(file){
 }
 
 function catOf(p){return p>=92?'A':p>=82?'B':p>=72?'C':p>=62?'D':'F'}
+const CAT_COLORS={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
+const CAT_RANGES={A:'100–92%',B:'91–82%',C:'81–72%',D:'71–62%',F:'61–0%'};
+
 function showPreview(data){
-  const total=Object.keys(data).length;
-  const totalAtt=Object.values(data).reduce((s,v)=>s+v.total,0);
-  const totalWeb=Object.values(data).reduce((s,v)=>s+v.web,0);
+  const keys=Object.keys(data), vals=Object.values(data);
+  const totalAtt=vals.reduce((s,v)=>s+v.total,0);
+  const totalWeb=vals.reduce((s,v)=>s+v.web,0);
+  const totalErro=vals.reduce((s,v)=>s+v.erro,0);
+  const totalSloc=vals.reduce((s,v)=>s+v.sem_localizacao,0);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  Object.values(data).forEach(v=>cats[catOf(v.usabilidade)]++);
-  document.getElementById('prevSub').textContent=`${total} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos · ${totalWeb} via WEB`;
-  const clrs={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
+  vals.forEach(v=>cats[catOf(v.usabilidade)]++);
+
+  document.getElementById('prevSub').textContent=`${keys.length} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos`;
   document.getElementById('pg').innerHTML=`
-    <div class="pc"><div class="pc-n">${total}</div><div class="pc-l">Fornecedores</div></div>
+    <div class="pc"><div class="pc-n">${keys.length}</div><div class="pc-l">Fornecedores</div></div>
     <div class="pc"><div class="pc-n">${totalAtt.toLocaleString('pt-BR')}</div><div class="pc-l">Atendimentos</div></div>
-    ${Object.entries(cats).map(([c,n])=>`<div class="pc"><div class="pc-n" style="color:${clrs[c]}">${n}</div><div class="pc-l">Cat. ${c}</div></div>`).join('')}
-    <div class="pc"><div class="pc-n" style="color:#7c3aed">${totalWeb}</div><div class="pc-l">Via WEB</div></div>`;
-  const ranges={A:'100–92%',B:'91–82%',C:'81–72%',D:'71–62%',F:'61–0%'};
+    <div class="pc"><div class="pc-n" style="color:#16a34a">${vals.reduce((s,v)=>s+v.correto,0)}</div><div class="pc-l">✅ Correto</div></div>
+    <div class="pc"><div class="pc-n" style="color:#d97706">${totalSloc}</div><div class="pc-l">📍 Sem Loc.</div></div>
+    <div class="pc"><div class="pc-n" style="color:#7c3aed">${totalWeb}</div><div class="pc-l">🌐 WEB</div></div>
+    <div class="pc"><div class="pc-n" style="color:#dc2626">${totalErro}</div><div class="pc-l">❌ Erro</div></div>
+    ${Object.entries(cats).map(([c,n])=>`<div class="pc"><div class="pc-n" style="color:${CAT_COLORS[c]}">${n}</div><div class="pc-l">Cat. ${c}</div></div>`).join('')}`;
+
   document.getElementById('catTbody').innerHTML=Object.entries(cats).map(([c,n])=>`
-    <tr><td><span style="width:10px;height:10px;background:${clrs[c]};border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle"></span><strong>Cat. ${c}</strong></td>
-    <td>${ranges[c]}</td><td><strong>${n}</strong></td></tr>`).join('');
+    <tr>
+      <td><span style="width:10px;height:10px;background:${CAT_COLORS[c]};border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle"></span><strong>Cat. ${c}</strong></td>
+      <td>${CAT_RANGES[c]}</td>
+      <td><strong>${n}</strong> fornecedor(es)</td>
+    </tr>`).join('');
   document.getElementById('previewCard').style.display='block';
 }
 
@@ -288,11 +325,13 @@ function downloadJs(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([genJs],{type:'application/javascript'}));
   a.download='data.js';a.click();URL.revokeObjectURL(a.href);
-  msg('dlmsg','ok','✅ data.js baixado! Substitua o arquivo na pasta do site.');
+  msg('dlmsg','ok','✅ data.js baixado! Substitua o arquivo na pasta do GitHub Pages.');
 }
 function copyJs(){
   if(!genJs)return;
-  navigator.clipboard.writeText(genJs).then(()=>msg('dlmsg','ok','✅ Copiado!')).catch(()=>msg('dlmsg','er','❌ Use o botão Baixar.'));
+  navigator.clipboard.writeText(genJs)
+    .then(()=>msg('dlmsg','ok','✅ Conteúdo copiado!'))
+    .catch(()=>msg('dlmsg','er','❌ Use o botão Baixar.'));
 }
 </script>
 </body>

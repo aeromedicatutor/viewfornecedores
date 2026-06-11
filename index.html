@@ -65,8 +65,8 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 .cpills{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
 .cpill{font-size:.62rem;padding:2px 7px;border-radius:10px;font-weight:600}
 .cpill.web{background:#ede9fe;color:#5b21b6}
-.cpill.inc{background:#fff7ed;color:#9a3412}
 .cpill.sloc{background:#fef3c7;color:#78350f}
+.cpill.erro{background:#fee2e2;color:#7f1d1d}
 
 /* MODAL */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
@@ -95,30 +95,36 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 
 .sec-title{font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 8px}
 
-/* BREAKDOWN CARDS */
+/* CRITERIA BOX */
+.crit-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-top:8px}
+.crit-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:.75rem;color:#475569;border-bottom:1px solid #f1f5f9}
+.crit-row:last-child{border-bottom:none}
+.crit-tag{padding:2px 8px;border-radius:6px;font-size:.68rem;font-weight:700;white-space:nowrap}
+.crit-tag.ok{background:#dcfce7;color:#14532d}
+.crit-tag.sloc{background:#fef3c7;color:#78350f}
+.crit-tag.web{background:#ede9fe;color:#4c1d95}
+.crit-tag.erro{background:#fee2e2;color:#7f1d1d}
+
+/* BREAKDOWN */
 .breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
 .bk{border-radius:10px;padding:12px 14px;border:1px solid}
 .bk.correct{background:#f0fdf4;border-color:#bbf7d0}
 .bk.sem-loc{background:#fefce8;border-color:#fde68a}
-.bk.inconsist{background:#fff7ed;border-color:#fed7aa}
 .bk.web{background:#f5f3ff;border-color:#ddd6fe}
-.bk.errado{background:#fef2f2;border-color:#fecaca}
+.bk.erro{background:#fef2f2;border-color:#fecaca}
 .bk-icon{font-size:1rem;margin-bottom:3px}
-.bk-n{font-size:1.2rem;font-weight:700}
+.bk-n{font-size:1.3rem;font-weight:700}
 .bk.correct .bk-n{color:#16a34a}.bk.sem-loc .bk-n{color:#d97706}
-.bk.inconsist .bk-n{color:#ea580c}.bk.web .bk-n{color:#7c3aed}.bk.errado .bk-n{color:#dc2626}
+.bk.web .bk-n{color:#7c3aed}.bk.erro .bk-n{color:#dc2626}
 .bk-label{font-size:.68rem;font-weight:700;margin-bottom:3px}
 .bk.correct .bk-label{color:#14532d}.bk.sem-loc .bk-label{color:#78350f}
-.bk.inconsist .bk-label{color:#7c2d12}.bk.web .bk-label{color:#4c1d95}.bk.errado .bk-label{color:#7f1d1d}
+.bk.web .bk-label{color:#4c1d95}.bk.erro .bk-label{color:#7f1d1d}
 .bk-sub{font-size:.63rem;color:#94a3b8;line-height:1.4;margin-bottom:6px}
-
-/* ATENDIMENTOS LIST */
-.att-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-.att-chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px;letter-spacing:.02em}
+.att-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.att-chip{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px}
 .att-chip.sloc{background:#fde68a;color:#78350f}
-.att-chip.inc{background:#fed7aa;color:#7c2d12}
-.att-chip.web{background:#ddd6fe;color:#4c1d95}
-.att-more{font-size:.68rem;color:#94a3b8;align-self:center;font-style:italic}
+.att-chip.erro{background:#fecaca;color:#7f1d1d}
+.att-more{font-size:.66rem;color:#94a3b8;font-style:italic;align-self:center}
 
 /* MONTHS */
 .month-list{display:flex;flex-direction:column;gap:6px}
@@ -133,20 +139,22 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 .mi.open .mi-arr{transform:rotate(180deg)}
 .mib{display:none;padding:10px 14px;background:#fff;border-top:1px solid #e2e8f0}
 .mi.open .mib{display:block}
-.mi-bk{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:6px;margin-bottom:8px}
+.mi-bk{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px}
 .mbk{border-radius:8px;padding:8px 10px;border:1px solid}
-.mbk.correct{background:#f0fdf4;border-color:#bbf7d0}.mbk.sem-loc{background:#fefce8;border-color:#fde68a}
-.mbk.inconsist{background:#fff7ed;border-color:#fed7aa}.mbk.web{background:#f5f3ff;border-color:#ddd6fe}.mbk.errado{background:#fef2f2;border-color:#fecaca}
+.mbk.correct{background:#f0fdf4;border-color:#bbf7d0}
+.mbk.sem-loc{background:#fefce8;border-color:#fde68a}
+.mbk.web{background:#f5f3ff;border-color:#ddd6fe}
+.mbk.erro{background:#fef2f2;border-color:#fecaca}
 .mbk-lbl{font-size:.62rem;font-weight:700;margin-bottom:2px}
 .mbk.correct .mbk-lbl{color:#14532d}.mbk.sem-loc .mbk-lbl{color:#78350f}
-.mbk.inconsist .mbk-lbl{color:#7c2d12}.mbk.web .mbk-lbl{color:#4c1d95}.mbk.errado .mbk-lbl{color:#7f1d1d}
+.mbk.web .mbk-lbl{color:#4c1d95}.mbk.erro .mbk-lbl{color:#7f1d1d}
 .mbk-n{font-size:1rem;font-weight:700}
 .mbk.correct .mbk-n{color:#16a34a}.mbk.sem-loc .mbk-n{color:#d97706}
-.mbk.inconsist .mbk-n{color:#ea580c}.mbk.web .mbk-n{color:#7c3aed}.mbk.errado .mbk-n{color:#dc2626}
-.mbk-atts{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-.mbk-chip{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:5px}
+.mbk.web .mbk-n{color:#7c3aed}.mbk.erro .mbk-n{color:#dc2626}
+.mbk-atts{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.mbk-chip{font-size:.63rem;font-weight:700;padding:2px 6px;border-radius:5px}
 .mbk-chip.sloc{background:#fde68a;color:#78350f}
-.mbk-chip.inc{background:#fed7aa;color:#7c2d12}
+.mbk-chip.erro{background:#fecaca;color:#7f1d1d}
 
 .nodata{text-align:center;padding:50px 20px;color:#94a3b8}
 </style>
@@ -179,7 +187,7 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 </main>
 
 <div class="ov" id="ov" onclick="closeOv(event)">
-  <div class="modal" id="modal">
+  <div class="modal">
     <div class="mhdr">
       <div class="mhdr-top">
         <div class="mtitle" id="mtitle"></div>
@@ -195,19 +203,18 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 <script>
 const D=typeof SUPPLIERS_DATA!=='undefined'?SUPPLIERS_DATA:{};
 let activeF='all';
-
 const CAT_CLR={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 function cat(p){return p>=92?'A':p>=82?'B':p>=72?'C':p>=62?'D':'F'}
 function catCls(c){return{A:'ca',B:'cb',C:'cc',D:'cd',F:'cf'}[c]}
 
 function initHeader(){
-  const keys=Object.keys(D), vals=Object.values(D);
+  const vals=Object.values(D);
   const totalAtt=vals.reduce((s,v)=>s+v.total,0);
   const web=vals.reduce((s,v)=>s+v.web,0);
   const cats={A:0,B:0,C:0,D:0,F:0};
   vals.forEach(v=>cats[cat(v.usabilidade)]++);
   document.getElementById('hstats').innerHTML=`
-    <div class="hs"><div class="hs-n">${keys.length}</div><div class="hs-l">Fornecedores</div></div>
+    <div class="hs"><div class="hs-n">${Object.keys(D).length}</div><div class="hs-l">Fornecedores</div></div>
     <div class="hs"><div class="hs-n">${totalAtt.toLocaleString('pt-BR')}</div><div class="hs-l">Atendimentos</div></div>
     <div class="hs"><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div><div class="hs-l">A+B ≥82%</div></div>
     <div class="hs"><div class="hs-n" style="color:#fca5a5">${cats.F}</div><div class="hs-l">Cat. F</div></div>
@@ -217,8 +224,7 @@ function initHeader(){
 function setF(c,btn){
   activeF=c;
   document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  render();
+  btn.classList.add('on');render();
 }
 
 function render(){
@@ -226,20 +232,18 @@ function render(){
   const entries=Object.entries(D).filter(([n,v])=>{
     return(activeF==='all'||cat(v.usabilidade)===activeF)&&(!q||n.toLowerCase().includes(q));
   }).sort((a,b)=>b[1].usabilidade-a[1].usabilidade);
-
   document.getElementById('ri').textContent=`Exibindo ${entries.length} de ${Object.keys(D).length} fornecedores`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
-
   document.getElementById('grid').innerHTML=entries.map(([n,v])=>{
     const cl=catCls(cat(v.usabilidade));
+    const safeN=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const pills=[
       v.web>0?`<span class="cpill web">🌐 ${v.web} WEB</span>`:'',
-      v.inconsistencia>0?`<span class="cpill inc">⚠️ ${v.inconsistencia} Inconsist.</span>`:'',
       v.sem_localizacao>0?`<span class="cpill sloc">📍 ${v.sem_localizacao} Sem Loc.</span>`:'',
+      v.erro>0?`<span class="cpill erro">❌ ${v.erro} Erro</span>`:'',
     ].filter(Boolean).join('');
-    const safeN=n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return`<div class="card ${cl}" onclick="openM('${safeN}')">
+    return`<div class="card ${cl}" data-name="${safeN}" onclick="openM(this.dataset.name)">
       <div class="ch"><div class="cn">${n}</div><span class="cbadge ${cl}">CAT. ${cat(v.usabilidade)}</span></div>
       <div class="cpct">${v.usabilidade}%</div>
       <div class="cpct-l">usabilidade · base: ${v.base} atend.</div>
@@ -248,33 +252,29 @@ function render(){
         <div class="cs"><div class="cs-n">${v.total}</div><div class="cs-l">Total</div></div>
         <div class="cs"><div class="cs-n" style="color:#16a34a">${v.correto}</div><div class="cs-l">Correto</div></div>
         <div class="cs"><div class="cs-n" style="color:#7c3aed">${v.web}</div><div class="cs-l">WEB</div></div>
-        <div class="cs"><div class="cs-n" style="color:#dc2626">${v.errado+v.sem_localizacao+v.inconsistencia}</div><div class="cs-l">Erros</div></div>
+        <div class="cs"><div class="cs-n" style="color:#dc2626">${v.erro+v.sem_localizacao}</div><div class="cs-l">Erros</div></div>
       </div>
       ${pills?`<div class="cpills">${pills}</div>`:''}
     </div>`;
   }).join('');
 }
 
-/* render chips for attendance numbers */
-function attChips(list, cls, max=20){
-  if(!list||!list.length) return '<span style="font-size:.7rem;color:#94a3b8;font-style:italic">Nenhum</span>';
-  const shown=list.slice(0,max);
+function chips(list,cls,max=20){
+  if(!list||!list.length)return '<span style="font-size:.7rem;color:#94a3b8;font-style:italic">Nenhum</span>';
   const extra=list.length-max;
-  return shown.map(n=>`<span class="att-chip ${cls}">#${n}</span>`).join('')
-    +(extra>0?`<span class="att-more">+${extra} mais</span>`:'');
+  return list.slice(0,max).map(n=>`<span class="att-chip ${cls}">#${n}</span>`).join('')
+    +(extra>0?`<span class="att-more"> +${extra} mais</span>`:'');
 }
-function mChips(list, cls, max=10){
-  if(!list||!list.length) return '';
-  const shown=list.slice(0,max);
+function mchips(list,cls,max=8){
+  if(!list||!list.length)return'';
   const extra=list.length-max;
-  return shown.map(n=>`<span class="mbk-chip ${cls}">#${n}</span>`).join('')
-    +(extra>0?`<span style="font-size:.63rem;color:#94a3b8"> +${extra}</span>`:'');
+  return list.slice(0,max).map(n=>`<span class="mbk-chip ${cls}">#${n}</span>`).join('')
+    +(extra>0?`<span style="font-size:.62rem;color:#94a3b8"> +${extra}</span>`:'');
 }
 
 function openM(name){
   const v=D[name];if(!v)return;
-  const c=cat(v.usabilidade), cl=catCls(c), clr=CAT_CLR[c];
-
+  const c=cat(v.usabilidade),cl=catCls(c),clr=CAT_CLR[c];
   document.getElementById('mtitle').textContent=name;
   document.getElementById('mcatrow').innerHTML=`
     <span class="mcat-badge" style="background:${clr}25;color:${clr}">CATEGORIA ${c}</span>
@@ -282,11 +282,8 @@ function openM(name){
     <span class="mcat-info">Total: <strong>${v.total}</strong></span>
     <span class="mcat-info">Base: <strong>${v.base}</strong></span>`;
 
-  const meses=Object.entries(v.meses).sort((a,b)=>+a[0]-+b[0]);
-  const mhtml=meses.map(([mn,m])=>{
+  const mhtml=Object.entries(v.meses).sort((a,b)=>+a[0]-+b[0]).map(([mn,m])=>{
     const mclr=CAT_CLR[cat(m.usabilidade)];
-    const mSlocChips = mChips(m.att_sem_localizacao,'sloc');
-    const mIncChips  = mChips(m.att_inconsistencia,'inc');
     return`<div class="mi" id="mi${mn}">
       <div class="mih" onclick="togM('mi${mn}')">
         <span class="mi-name">📅 ${m.label}</span>
@@ -298,19 +295,16 @@ function openM(name){
       </div>
       <div class="mib">
         <div class="mi-bk">
-          <div class="mbk correct"><div class="mbk-lbl">✅ CORRETO</div><div class="mbk-n">${m.correto}</div></div>
+          <div class="mbk correct"><div class="mbk-lbl">✅ CORRETO</div><div class="mbk-n">${m.correto}</div><div class="mbk-atts">${mchips(m.att_sem_localizacao,'sloc')}</div></div>
           <div class="mbk sem-loc">
-            <div class="mbk-lbl">📍 SEM LOCALIZAÇÃO</div>
-            <div class="mbk-n">${m.sem_localizacao}</div>
-            ${mSlocChips?`<div class="mbk-atts">${mSlocChips}</div>`:''}
-          </div>
-          <div class="mbk inconsist">
-            <div class="mbk-lbl">⚠️ INCONSISTÊNCIA</div>
-            <div class="mbk-n">${m.inconsistencia}</div>
-            ${mIncChips?`<div class="mbk-atts">${mIncChips}</div>`:''}
+            <div class="mbk-lbl">📍 SEM LOCALIZAÇÃO</div><div class="mbk-n">${m.sem_localizacao}</div>
+            <div class="mbk-atts">${mchips(m.att_sem_localizacao,'sloc')}</div>
           </div>
           <div class="mbk web"><div class="mbk-lbl">🌐 VIA WEB</div><div class="mbk-n">${m.web}</div></div>
-          <div class="mbk errado"><div class="mbk-lbl">❌ ERRADO</div><div class="mbk-n">${m.errado}</div></div>
+          <div class="mbk erro">
+            <div class="mbk-lbl">❌ ERRO</div><div class="mbk-n">${m.erro}</div>
+            <div class="mbk-atts">${mchips(m.att_erro,'erro')}</div>
+          </div>
         </div>
       </div>
     </div>`;
@@ -329,39 +323,37 @@ function openM(name){
       </div>
     </div>
 
-    <div class="sec-title">Classificação dos Atendimentos</div>
+    <div class="sec-title">Critério de Classificação</div>
+    <div class="crit-box">
+      <div class="crit-row"><span class="crit-tag ok">✅ CORRETO</span>Token SIM + Rastreio &gt;5 pts (qualquer horário)</div>
+      <div class="crit-row"><span class="crit-tag sloc">📍 SEM LOCALIZAÇÃO</span>Token SIM + Horário SIM + Rastreio ≤5 pts</div>
+      <div class="crit-row"><span class="crit-tag web">🌐 WEB</span>Token NÃO + Horário SIM + Rastreio ≤5 (fora da %)</div>
+      <div class="crit-row"><span class="crit-tag erro">❌ ERRO</span>Demais combinações</div>
+    </div>
+
+    <div class="sec-title">Resultado dos Atendimentos</div>
     <div class="breakdown">
       <div class="bk correct">
-        <div class="bk-icon">✅</div>
-        <div class="bk-n">${v.correto}</div>
+        <div class="bk-icon">✅</div><div class="bk-n">${v.correto}</div>
         <div class="bk-label">CORRETO</div>
-        <div class="bk-sub">Token + Horário + Rastreio &gt;5 pts</div>
+        <div class="bk-sub">Token SIM + Rastreio &gt;5 pts</div>
       </div>
       <div class="bk sem-loc">
-        <div class="bk-icon">📍</div>
-        <div class="bk-n">${v.sem_localizacao}</div>
+        <div class="bk-icon">📍</div><div class="bk-n">${v.sem_localizacao}</div>
         <div class="bk-label">SEM LOCALIZAÇÃO CAPTURADA</div>
         <div class="bk-sub">Token SIM + Horário SIM · rastreio ≤5 pts</div>
-        <div class="att-list">${attChips(v.att_sem_localizacao,'sloc')}</div>
-      </div>
-      <div class="bk inconsist">
-        <div class="bk-icon">⚠️</div>
-        <div class="bk-n">${v.inconsistencia}</div>
-        <div class="bk-label">INCONSISTÊNCIA</div>
-        <div class="bk-sub">Token/Horário divergentes ou rastreio sem registro</div>
-        <div class="att-list">${attChips(v.att_inconsistencia,'inc')}</div>
+        <div class="att-list">${chips(v.att_sem_localizacao,'sloc')}</div>
       </div>
       <div class="bk web">
-        <div class="bk-icon">🌐</div>
-        <div class="bk-n">${v.web}</div>
-        <div class="bk-label">VIA WEB (fora da %)</div>
-        <div class="bk-sub">Não utilizou o APP</div>
+        <div class="bk-icon">🌐</div><div class="bk-n">${v.web}</div>
+        <div class="bk-label">VIA WEB</div>
+        <div class="bk-sub">Não utilizou o APP — excluído da %</div>
       </div>
-      <div class="bk errado">
-        <div class="bk-icon">❌</div>
-        <div class="bk-n">${v.errado}</div>
-        <div class="bk-label">ERRADO</div>
-        <div class="bk-sub">Sem token, sem horário, sem rastreio</div>
+      <div class="bk erro">
+        <div class="bk-icon">❌</div><div class="bk-n">${v.erro}</div>
+        <div class="bk-label">ERRO</div>
+        <div class="bk-sub">Token NÃO ou rastreio insuficiente sem horário</div>
+        <div class="att-list">${chips(v.att_erro,'erro')}</div>
       </div>
     </div>
 
