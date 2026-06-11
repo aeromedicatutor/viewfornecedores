@@ -9,7 +9,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Poppins',sans-serif;background:#f4f6f9;color:#1a1a2e;min-height:100vh}
 :root{
-  --green:#1A4731;--green-light:#2a6644;--orange:#E8590C;
+  --green:#1A4731;--green-light:#2a6644;
   --ca:#16a34a;--ca-bg:#dcfce7;--ca-t:#14532d;
   --cb:#2563eb;--cb-bg:#dbeafe;--cb-t:#1e3a8a;
   --cc:#d97706;--cc-bg:#fef3c7;--cc-t:#78350f;
@@ -31,12 +31,12 @@ header{background:var(--green);padding:18px 32px;display:flex;align-items:center
 .fb{padding:6px 12px;border:1.5px solid #cbd5e1;border-radius:20px;background:#fff;font-family:'Poppins',sans-serif;font-size:.75rem;cursor:pointer;transition:all .2s;font-weight:500}
 .fb:hover{border-color:var(--green);color:var(--green)}
 .fb.on{color:#fff}
+.fb.on.fall{background:var(--green);border-color:var(--green)}
 .fb.on.fa{background:var(--ca);border-color:var(--ca)}
 .fb.on.fb2{background:var(--cb);border-color:var(--cb)}
 .fb.on.fc{background:var(--cc);border-color:var(--cc)}
 .fb.on.fd{background:var(--cd);border-color:var(--cd)}
 .fb.on.ff{background:var(--cf);border-color:var(--cf)}
-.fb.on.fall{background:var(--green);border-color:var(--green)}
 
 main{padding:20px 32px;max-width:1400px;margin:0 auto}
 .ri{font-size:.78rem;color:#64748b;margin-bottom:14px}
@@ -44,35 +44,24 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 
 .card{background:#fff;border-radius:12px;border:1.5px solid #e2e8f0;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
-.card.ca::before{background:var(--ca)}
-.card.cb::before{background:var(--cb)}
-.card.cc::before{background:var(--cc)}
-.card.cd::before{background:var(--cd)}
-.card.cf::before{background:var(--cf)}
+.card.ca::before{background:var(--ca)}.card.cb::before{background:var(--cb)}
+.card.cc::before{background:var(--cc)}.card.cd::before{background:var(--cd)}.card.cf::before{background:var(--cf)}
 .card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,71,49,.1)}
-
 .ch{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
 .cn{font-size:.8rem;font-weight:600;color:#1e293b;line-height:1.35;flex:1}
 .cbadge{padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;white-space:nowrap;flex-shrink:0}
-.cbadge.ca{background:var(--ca-bg);color:var(--ca-t)}
-.cbadge.cb{background:var(--cb-bg);color:var(--cb-t)}
-.cbadge.cc{background:var(--cc-bg);color:var(--cc-t)}
-.cbadge.cd{background:var(--cd-bg);color:var(--cd-t)}
-.cbadge.cf{background:var(--cf-bg);color:var(--cf-t)}
-
+.cbadge.ca{background:var(--ca-bg);color:var(--ca-t)}.cbadge.cb{background:var(--cb-bg);color:var(--cb-t)}
+.cbadge.cc{background:var(--cc-bg);color:var(--cc-t)}.cbadge.cd{background:var(--cd-bg);color:var(--cd-t)}.cbadge.cf{background:var(--cf-bg);color:var(--cf-t)}
 .cpct{font-size:1.75rem;font-weight:700}
 .ca .cpct{color:var(--ca)}.cb .cpct{color:var(--cb)}.cc .cpct{color:var(--cc)}.cd .cpct{color:var(--cd)}.cf .cpct{color:var(--cf)}
 .cpct-l{font-size:.68rem;color:#94a3b8;margin-bottom:10px}
 .pbar{height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:12px}
 .pbfill{height:100%;border-radius:3px}
 .ca .pbfill{background:var(--ca)}.cb .pbfill{background:var(--cb)}.cc .pbfill{background:var(--cc)}.cd .pbfill{background:var(--cd)}.cf .pbfill{background:var(--cf)}
-
 .cstats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .cs{background:#f8fafc;border-radius:6px;padding:5px 4px;text-align:center}
 .cs-n{font-size:.92rem;font-weight:700;color:#1e293b}
 .cs-l{font-size:.6rem;color:#94a3b8;margin-top:1px;line-height:1.2}
-
-/* status mini pills on card */
 .cpills{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
 .cpill{font-size:.62rem;padding:2px 7px;border-radius:10px;font-weight:600}
 .cpill.web{background:#ede9fe;color:#5b21b6}
@@ -82,7 +71,7 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 /* MODAL */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
 .ov.open{display:flex}
-.modal{background:#fff;border-radius:16px;width:100%;max-width:880px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:900px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
 .mhdr{background:var(--green);padding:18px 24px;border-radius:16px 16px 0 0;position:sticky;top:0;z-index:10}
 .mhdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .mtitle{color:#fff;font-size:.95rem;font-weight:700;line-height:1.35;flex:1}
@@ -91,10 +80,9 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 .mcat-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
 .mcat-badge{padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:700}
 .mcat-info{color:rgba(255,255,255,.85);font-size:.78rem}
-
 .mbody{padding:0 20px 24px}
 
-/* USABILIDADE METER */
+/* USABILIDADE */
 .umeter{background:#e8f5ee;border-radius:12px;padding:14px 18px;margin:18px 0 0}
 .utop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .ulabel{font-size:.72rem;color:#4b7a5e;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
@@ -105,39 +93,32 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 .uleg-i{display:flex;align-items:center;gap:4px;font-size:.68rem;color:#4b7a5e}
 .uleg-d{width:9px;height:9px;border-radius:50%}
 
-/* SUMMARY CARDS */
 .sec-title{font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 8px}
-.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
-.sc{background:#f8fafc;border-radius:10px;padding:10px 12px;border:1px solid #e2e8f0}
-.sc-icon{font-size:1.1rem;margin-bottom:3px}
-.sc-n{font-size:1.15rem;font-weight:700;color:#1e293b}
-.sc-subs{display:flex;gap:6px;margin-top:3px;flex-wrap:wrap}
-.sc-ok{font-size:.68rem;color:#16a34a;font-weight:600}
-.sc-no{font-size:.68rem;color:#dc2626;font-weight:600}
-.sc-l{font-size:.67rem;color:#94a3b8;margin-top:2px}
 
-/* STATUS BREAKDOWN */
-.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin-top:10px}
-.bk{border-radius:10px;padding:10px 14px;border:1px solid}
+/* BREAKDOWN CARDS */
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.bk{border-radius:10px;padding:12px 14px;border:1px solid}
 .bk.correct{background:#f0fdf4;border-color:#bbf7d0}
 .bk.sem-loc{background:#fefce8;border-color:#fde68a}
 .bk.inconsist{background:#fff7ed;border-color:#fed7aa}
 .bk.web{background:#f5f3ff;border-color:#ddd6fe}
 .bk.errado{background:#fef2f2;border-color:#fecaca}
-.bk-icon{font-size:1.1rem;margin-bottom:4px}
+.bk-icon{font-size:1rem;margin-bottom:3px}
 .bk-n{font-size:1.2rem;font-weight:700}
-.bk.correct .bk-n{color:#16a34a}
-.bk.sem-loc .bk-n{color:#d97706}
-.bk.inconsist .bk-n{color:#ea580c}
-.bk.web .bk-n{color:#7c3aed}
-.bk.errado .bk-n{color:#dc2626}
-.bk-label{font-size:.7rem;font-weight:700;margin-bottom:2px}
-.bk.correct .bk-label{color:#14532d}
-.bk.sem-loc .bk-label{color:#78350f}
-.bk.inconsist .bk-label{color:#7c2d12}
-.bk.web .bk-label{color:#4c1d95}
-.bk.errado .bk-label{color:#7f1d1d}
-.bk-sub{font-size:.66rem;color:#94a3b8;line-height:1.4}
+.bk.correct .bk-n{color:#16a34a}.bk.sem-loc .bk-n{color:#d97706}
+.bk.inconsist .bk-n{color:#ea580c}.bk.web .bk-n{color:#7c3aed}.bk.errado .bk-n{color:#dc2626}
+.bk-label{font-size:.68rem;font-weight:700;margin-bottom:3px}
+.bk.correct .bk-label{color:#14532d}.bk.sem-loc .bk-label{color:#78350f}
+.bk.inconsist .bk-label{color:#7c2d12}.bk.web .bk-label{color:#4c1d95}.bk.errado .bk-label{color:#7f1d1d}
+.bk-sub{font-size:.63rem;color:#94a3b8;line-height:1.4;margin-bottom:6px}
+
+/* ATENDIMENTOS LIST */
+.att-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.att-chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px;letter-spacing:.02em}
+.att-chip.sloc{background:#fde68a;color:#78350f}
+.att-chip.inc{background:#fed7aa;color:#7c2d12}
+.att-chip.web{background:#ddd6fe;color:#4c1d95}
+.att-more{font-size:.68rem;color:#94a3b8;align-self:center;font-style:italic}
 
 /* MONTHS */
 .month-list{display:flex;flex-direction:column;gap:6px}
@@ -152,16 +133,20 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 .mi.open .mi-arr{transform:rotate(180deg)}
 .mib{display:none;padding:10px 14px;background:#fff;border-top:1px solid #e2e8f0}
 .mi.open .mib{display:block}
-.mi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px}
-.mstat{background:#f8fafc;border-radius:8px;padding:7px 10px;border:1px solid #e2e8f0}
-.mstat-lbl{font-size:.62rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
-.mstat-n{font-size:.9rem;font-weight:700}
-.mstat.correct .mstat-n{color:#16a34a}
-.mstat.sem-loc .mstat-n{color:#d97706}
-.mstat.inconsist .mstat-n{color:#ea580c}
-.mstat.web .mstat-n{color:#7c3aed}
-.mstat.errado .mstat-n{color:#dc2626}
-.mstat-sub{font-size:.63rem;color:#94a3b8;margin-top:1px}
+.mi-bk{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:6px;margin-bottom:8px}
+.mbk{border-radius:8px;padding:8px 10px;border:1px solid}
+.mbk.correct{background:#f0fdf4;border-color:#bbf7d0}.mbk.sem-loc{background:#fefce8;border-color:#fde68a}
+.mbk.inconsist{background:#fff7ed;border-color:#fed7aa}.mbk.web{background:#f5f3ff;border-color:#ddd6fe}.mbk.errado{background:#fef2f2;border-color:#fecaca}
+.mbk-lbl{font-size:.62rem;font-weight:700;margin-bottom:2px}
+.mbk.correct .mbk-lbl{color:#14532d}.mbk.sem-loc .mbk-lbl{color:#78350f}
+.mbk.inconsist .mbk-lbl{color:#7c2d12}.mbk.web .mbk-lbl{color:#4c1d95}.mbk.errado .mbk-lbl{color:#7f1d1d}
+.mbk-n{font-size:1rem;font-weight:700}
+.mbk.correct .mbk-n{color:#16a34a}.mbk.sem-loc .mbk-n{color:#d97706}
+.mbk.inconsist .mbk-n{color:#ea580c}.mbk.web .mbk-n{color:#7c3aed}.mbk.errado .mbk-n{color:#dc2626}
+.mbk-atts{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.mbk-chip{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:5px}
+.mbk-chip.sloc{background:#fde68a;color:#78350f}
+.mbk-chip.inc{background:#fed7aa;color:#7c2d12}
 
 .nodata{text-align:center;padding:50px 20px;color:#94a3b8}
 </style>
@@ -178,12 +163,12 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 <div class="toolbar">
   <input type="text" id="srch" placeholder="🔍  Buscar fornecedor..." oninput="render()">
   <div class="fbtns">
-    <button class="fb fall on" data-cat="all" onclick="setF('all',this)">Todos</button>
-    <button class="fb fa" data-cat="A" onclick="setF('A',this)">Cat. A</button>
-    <button class="fb fb2" data-cat="B" onclick="setF('B',this)">Cat. B</button>
-    <button class="fb fc" data-cat="C" onclick="setF('C',this)">Cat. C</button>
-    <button class="fb fd" data-cat="D" onclick="setF('D',this)">Cat. D</button>
-    <button class="fb ff" data-cat="F" onclick="setF('F',this)">Cat. F</button>
+    <button class="fb fall on" onclick="setF('all',this)">Todos</button>
+    <button class="fb fa" onclick="setF('A',this)">Cat. A</button>
+    <button class="fb fb2" onclick="setF('B',this)">Cat. B</button>
+    <button class="fb fc" onclick="setF('C',this)">Cat. C</button>
+    <button class="fb fd" onclick="setF('D',this)">Cat. D</button>
+    <button class="fb ff" onclick="setF('F',this)">Cat. F</button>
   </div>
 </div>
 
@@ -195,7 +180,7 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 
 <div class="ov" id="ov" onclick="closeOv(event)">
   <div class="modal" id="modal">
-    <div class="mhdr" id="mhdr">
+    <div class="mhdr">
       <div class="mhdr-top">
         <div class="mtitle" id="mtitle"></div>
         <button class="mclose" onclick="closeM()">✕</button>
@@ -208,26 +193,25 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
 
 <script src="data.js"></script>
 <script>
-const D = typeof SUPPLIERS_DATA!=='undefined'?SUPPLIERS_DATA:{};
+const D=typeof SUPPLIERS_DATA!=='undefined'?SUPPLIERS_DATA:{};
 let activeF='all';
 
+const CAT_CLR={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 function cat(p){return p>=92?'A':p>=82?'B':p>=72?'C':p>=62?'D':'F'}
 function catCls(c){return{A:'ca',B:'cb',C:'cc',D:'cd',F:'cf'}[c]}
-function catLbl(c){return'CATEGORIA '+c}
-function catClr(c){return{A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'}[c]}
 
 function initHeader(){
-  const total=Object.keys(D).length;
-  const totalAtt=Object.values(D).reduce((s,v)=>s+v.total,0);
+  const keys=Object.keys(D), vals=Object.values(D);
+  const totalAtt=vals.reduce((s,v)=>s+v.total,0);
+  const web=vals.reduce((s,v)=>s+v.web,0);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  const web=Object.values(D).reduce((s,v)=>s+v.web,0);
-  Object.values(D).forEach(v=>cats[cat(v.usabilidade)]++);
+  vals.forEach(v=>cats[cat(v.usabilidade)]++);
   document.getElementById('hstats').innerHTML=`
-    <div class="hs"><div class="hs-n">${total}</div><div class="hs-l">Fornecedores</div></div>
+    <div class="hs"><div class="hs-n">${keys.length}</div><div class="hs-l">Fornecedores</div></div>
     <div class="hs"><div class="hs-n">${totalAtt.toLocaleString('pt-BR')}</div><div class="hs-l">Atendimentos</div></div>
-    <div class="hs"><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div><div class="hs-l">A+B (≥82%)</div></div>
+    <div class="hs"><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div><div class="hs-l">A+B ≥82%</div></div>
     <div class="hs"><div class="hs-n" style="color:#fca5a5">${cats.F}</div><div class="hs-l">Cat. F</div></div>
-    <div class="hs"><div class="hs-n" style="color:#c4b5fd">${web}</div><div class="hs-l">Uso WEB</div></div>`;
+    <div class="hs"><div class="hs-n" style="color:#c4b5fd">${web}</div><div class="hs-l">Via WEB</div></div>`;
 }
 
 function setF(c,btn){
@@ -242,19 +226,21 @@ function render(){
   const entries=Object.entries(D).filter(([n,v])=>{
     return(activeF==='all'||cat(v.usabilidade)===activeF)&&(!q||n.toLowerCase().includes(q));
   }).sort((a,b)=>b[1].usabilidade-a[1].usabilidade);
+
   document.getElementById('ri').textContent=`Exibindo ${entries.length} de ${Object.keys(D).length} fornecedores`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
-  const cc=c=>catCls(cat(c));
+
   document.getElementById('grid').innerHTML=entries.map(([n,v])=>{
-    const cl=cc(v.usabilidade);
+    const cl=catCls(cat(v.usabilidade));
     const pills=[
       v.web>0?`<span class="cpill web">🌐 ${v.web} WEB</span>`:'',
-      v.inconsistencia>0?`<span class="cpill inc">⚠️ ${v.inconsistencia} Inconsistência</span>`:'',
+      v.inconsistencia>0?`<span class="cpill inc">⚠️ ${v.inconsistencia} Inconsist.</span>`:'',
       v.sem_localizacao>0?`<span class="cpill sloc">📍 ${v.sem_localizacao} Sem Loc.</span>`:'',
     ].filter(Boolean).join('');
-    return`<div class="card ${cl}" onclick="openM('${n.replace(/'/g,"\\'").replace(/\\/g,'\\\\').replace(/"/g,'&quot;')}')">
-      <div class="ch"><div class="cn">${n}</div><span class="cbadge ${cl}">${catLbl(cat(v.usabilidade))}</span></div>
+    const safeN=n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return`<div class="card ${cl}" onclick="openM('${safeN}')">
+      <div class="ch"><div class="cn">${n}</div><span class="cbadge ${cl}">CAT. ${cat(v.usabilidade)}</span></div>
       <div class="cpct">${v.usabilidade}%</div>
       <div class="cpct-l">usabilidade · base: ${v.base} atend.</div>
       <div class="pbar"><div class="pbfill" style="width:${v.usabilidade}%"></div></div>
@@ -269,23 +255,38 @@ function render(){
   }).join('');
 }
 
+/* render chips for attendance numbers */
+function attChips(list, cls, max=20){
+  if(!list||!list.length) return '<span style="font-size:.7rem;color:#94a3b8;font-style:italic">Nenhum</span>';
+  const shown=list.slice(0,max);
+  const extra=list.length-max;
+  return shown.map(n=>`<span class="att-chip ${cls}">#${n}</span>`).join('')
+    +(extra>0?`<span class="att-more">+${extra} mais</span>`:'');
+}
+function mChips(list, cls, max=10){
+  if(!list||!list.length) return '';
+  const shown=list.slice(0,max);
+  const extra=list.length-max;
+  return shown.map(n=>`<span class="mbk-chip ${cls}">#${n}</span>`).join('')
+    +(extra>0?`<span style="font-size:.63rem;color:#94a3b8"> +${extra}</span>`:'');
+}
+
 function openM(name){
   const v=D[name];if(!v)return;
-  const c=cat(v.usabilidade);
-  const cl=catCls(c);
-  const clr=catClr(c);
+  const c=cat(v.usabilidade), cl=catCls(c), clr=CAT_CLR[c];
 
   document.getElementById('mtitle').textContent=name;
   document.getElementById('mcatrow').innerHTML=`
-    <span class="mcat-badge" style="background:${clr}25;color:${clr}">${catLbl(c)}</span>
+    <span class="mcat-badge" style="background:${clr}25;color:${clr}">CATEGORIA ${c}</span>
     <span class="mcat-info">Usabilidade: <strong>${v.usabilidade}%</strong></span>
-    <span class="mcat-info">Total: <strong>${v.total}</strong> atend.</span>
-    <span class="mcat-info">Base de cálculo: <strong>${v.base}</strong></span>`;
+    <span class="mcat-info">Total: <strong>${v.total}</strong></span>
+    <span class="mcat-info">Base: <strong>${v.base}</strong></span>`;
 
-  // months
   const meses=Object.entries(v.meses).sort((a,b)=>+a[0]-+b[0]);
   const mhtml=meses.map(([mn,m])=>{
-    const mclr=catClr(cat(m.usabilidade));
+    const mclr=CAT_CLR[cat(m.usabilidade)];
+    const mSlocChips = mChips(m.att_sem_localizacao,'sloc');
+    const mIncChips  = mChips(m.att_inconsistencia,'inc');
     return`<div class="mi" id="mi${mn}">
       <div class="mih" onclick="togM('mi${mn}')">
         <span class="mi-name">📅 ${m.label}</span>
@@ -296,12 +297,20 @@ function openM(name){
         </div>
       </div>
       <div class="mib">
-        <div class="mi-grid">
-          <div class="mstat correct"><div class="mstat-lbl">✅ Correto</div><div class="mstat-n">${m.correto}</div><div class="mstat-sub">Token + Horário + Rastreio &gt;5</div></div>
-          <div class="mstat sem-loc"><div class="mstat-lbl">📍 Sem Localização</div><div class="mstat-n">${m.sem_localizacao}</div><div class="mstat-sub">Token SIM + Horário SIM sem rastreio</div></div>
-          <div class="mstat inconsist"><div class="mstat-lbl">⚠️ Inconsistência</div><div class="mstat-n">${m.inconsistencia}</div><div class="mstat-sub">Token/Horário divergentes</div></div>
-          <div class="mstat web"><div class="mstat-lbl">🌐 Via WEB</div><div class="mstat-n">${m.web}</div><div class="mstat-sub">Não usou APP (fora da %)</div></div>
-          <div class="mstat errado"><div class="mstat-lbl">❌ Errado</div><div class="mstat-n">${m.errado}</div><div class="mstat-sub">Sem token, sem horário</div></div>
+        <div class="mi-bk">
+          <div class="mbk correct"><div class="mbk-lbl">✅ CORRETO</div><div class="mbk-n">${m.correto}</div></div>
+          <div class="mbk sem-loc">
+            <div class="mbk-lbl">📍 SEM LOCALIZAÇÃO</div>
+            <div class="mbk-n">${m.sem_localizacao}</div>
+            ${mSlocChips?`<div class="mbk-atts">${mSlocChips}</div>`:''}
+          </div>
+          <div class="mbk inconsist">
+            <div class="mbk-lbl">⚠️ INCONSISTÊNCIA</div>
+            <div class="mbk-n">${m.inconsistencia}</div>
+            ${mIncChips?`<div class="mbk-atts">${mIncChips}</div>`:''}
+          </div>
+          <div class="mbk web"><div class="mbk-lbl">🌐 VIA WEB</div><div class="mbk-n">${m.web}</div></div>
+          <div class="mbk errado"><div class="mbk-lbl">❌ ERRADO</div><div class="mbk-n">${m.errado}</div></div>
         </div>
       </div>
     </div>`;
@@ -320,37 +329,33 @@ function openM(name){
       </div>
     </div>
 
-    <div class="sec-title">Resumo Geral</div>
-    <div class="sgrid">
-      <div class="sc"><div class="sc-icon">📋</div><div class="sc-n">${v.total}</div><div class="sc-l">Total de Atendimentos</div></div>
-      <div class="sc"><div class="sc-icon">📐</div><div class="sc-n">${v.base}</div><div class="sc-l">Base de cálculo (−WEB)</div></div>
-    </div>
-
     <div class="sec-title">Classificação dos Atendimentos</div>
     <div class="breakdown">
       <div class="bk correct">
         <div class="bk-icon">✅</div>
         <div class="bk-n">${v.correto}</div>
         <div class="bk-label">CORRETO</div>
-        <div class="bk-sub">Token SIM + Horário SIM + Rastreio &gt;5 pts</div>
+        <div class="bk-sub">Token + Horário + Rastreio &gt;5 pts</div>
       </div>
       <div class="bk sem-loc">
         <div class="bk-icon">📍</div>
         <div class="bk-n">${v.sem_localizacao}</div>
         <div class="bk-label">SEM LOCALIZAÇÃO CAPTURADA</div>
-        <div class="bk-sub">Token SIM + Horário SIM mas rastreio ≤5 pts</div>
+        <div class="bk-sub">Token SIM + Horário SIM · rastreio ≤5 pts</div>
+        <div class="att-list">${attChips(v.att_sem_localizacao,'sloc')}</div>
       </div>
       <div class="bk inconsist">
         <div class="bk-icon">⚠️</div>
         <div class="bk-n">${v.inconsistencia}</div>
         <div class="bk-label">INCONSISTÊNCIA</div>
         <div class="bk-sub">Token/Horário divergentes ou rastreio sem registro</div>
+        <div class="att-list">${attChips(v.att_inconsistencia,'inc')}</div>
       </div>
       <div class="bk web">
         <div class="bk-icon">🌐</div>
         <div class="bk-n">${v.web}</div>
         <div class="bk-label">VIA WEB (fora da %)</div>
-        <div class="bk-sub">Não utilizou o APP — registro via plataforma web</div>
+        <div class="bk-sub">Não utilizou o APP</div>
       </div>
       <div class="bk errado">
         <div class="bk-icon">❌</div>
