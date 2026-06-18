@@ -9,37 +9,37 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Poppins',sans-serif;background:#f4f6f9;color:#1a1a2e;min-height:100vh}
-:root{--green:#1A4731;--green-light:#2a6644}
+:root{--green:#1A4731;--green-light:#2a6644;--purple:#7c3aed}
 header{background:var(--green);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .logo h1{color:#fff;font-size:1.05rem;font-weight:700}
 .logo p{color:rgba(255,255,255,.65);font-size:.72rem;margin-top:2px}
 .back{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.78rem;cursor:pointer;text-decoration:none;display:inline-block}
 .back:hover{background:rgba(255,255,255,.25)}
-main{max-width:820px;margin:36px auto;padding:0 24px 60px}
+main{max-width:860px;margin:36px auto;padding:0 24px 60px}
 .card{background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;padding:26px;margin-bottom:18px}
 .card h2{font-size:.93rem;font-weight:700;color:#1e293b;margin-bottom:4px}
 .sub{font-size:.76rem;color:#64748b;margin-bottom:18px}
-
-/* CRITERIA */
 .crit-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:8px}
 .crit-table th{background:#f8fafc;padding:7px 10px;text-align:left;font-size:.7rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #e2e8f0}
 .crit-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
 .tag{display:inline-block;padding:3px 9px;border-radius:8px;font-size:.68rem;font-weight:700}
-.tag.ok{background:#dcfce7;color:#14532d}
-.tag.sloc{background:#fef3c7;color:#78350f}
-.tag.web{background:#ede9fe;color:#4c1d95}
-.tag.erro{background:#fee2e2;color:#7f1d1d}
+.tag.ok{background:#dcfce7;color:#14532d}.tag.smov{background:#fef3c7;color:#78350f}
+.tag.web{background:#ede9fe;color:#4c1d95}.tag.erro{background:#fee2e2;color:#7f1d1d}
 
-/* DROP ZONE */
-.dz{border:2px dashed #cbd5e1;border-radius:10px;padding:38px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+/* TWO UPLOAD ZONES */
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.upload-grid{grid-template-columns:1fr}}
+.dz{border:2px dashed #cbd5e1;border-radius:10px;padding:30px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
 .dz:hover,.dz.over{border-color:var(--green);background:#f0fdf4}
+.dz.purple-dz:hover,.dz.purple-dz.over{border-color:var(--purple);background:#faf5ff}
 .dz input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.dz-icon{font-size:2.2rem;margin-bottom:8px}
-.dz-txt{font-size:.88rem;font-weight:600;color:#334155;margin-bottom:3px}
-.dz-sub{font-size:.73rem;color:#94a3b8}
-.fc{margin-top:8px;font-size:.76rem;color:var(--green);font-weight:600;display:none}
+.dz-icon{font-size:1.8rem;margin-bottom:6px}
+.dz-txt{font-size:.82rem;font-weight:600;color:#334155;margin-bottom:2px}
+.dz-sub{font-size:.7rem;color:#94a3b8}
+.fc{margin-top:6px;font-size:.73rem;font-weight:600;display:none}
+.fc.green{color:var(--green)}.fc.purple{color:var(--purple)}
+.dz-label{font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
 
-/* PROGRESS */
 .prog{display:none;margin-top:18px}
 .ps{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:.8rem;color:#64748b;border-bottom:1px solid #f8fafc}
 .psi{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
@@ -49,15 +49,15 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 .psi.err{background:#fee2e2;color:#dc2626}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* PREVIEW */
-.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:12px}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:12px}
 .pc{background:#f8fafc;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;text-align:center}
-.pc-n{font-size:1.3rem;font-weight:700;color:#1e293b}
-.pc-l{font-size:.67rem;color:#94a3b8;margin-top:2px}
+.pc-n{font-size:1.25rem;font-weight:700;color:#1e293b}
+.pc-l{font-size:.65rem;color:#94a3b8;margin-top:2px}
 
-.btn-p{background:var(--green);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;margin-top:14px;transition:background .2s}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn-p{background:var(--green);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .2s}
 .btn-p:hover{background:var(--green-light)}
-.btn-s{background:#f1f5f9;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-top:10px;margin-right:6px;transition:all .2s}
+.btn-s{background:#f1f5f9;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
 .btn-s:hover{border-color:var(--green);color:var(--green)}
 
 .rmsg{padding:10px 14px;border-radius:8px;font-size:.8rem;font-weight:600;margin-top:12px;display:none}
@@ -72,10 +72,7 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
 </head>
 <body>
 <header>
-  <div class="logo">
-    <h1>⚙️ Painel Administrativo</h1>
-    <p>Atualizar dados do dashboard</p>
-  </div>
+  <div class="logo"><h1>⚙️ Painel Administrativo</h1><p>Atualizar dados do dashboard</p></div>
   <a href="index.html" class="back">← Ver Dashboard</a>
 </header>
 <main>
@@ -87,43 +84,58 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
       <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
       <tbody>
         <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="tag ok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
-        <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag sloc">📍 SEM LOCALIZAÇÃO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag smov">📍 SEM MOVIMENTAÇÃO</span></td><td>✔ Sim (erro)</td></tr>
         <tr><td>NÃO</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag web">🌐 VIA WEB</span></td><td>✘ Excluído</td></tr>
-        <tr><td>SIM</td><td>≤ 5 pts</td><td>NÃO</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>qualquer</td><td>NÃO</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td colspan="3">Demais combinações</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="card">
     <h2>ℹ️ Como atualizar</h2>
-    <div class="sub">Passo a passo:</div>
     <ol class="steps-list">
-      <li>Baixe a planilha do sistema interno e salve em <strong>.xlsx</strong></li>
-      <li>Selecione o arquivo abaixo — processamento direto no navegador</li>
-      <li>Confira o <strong>preview</strong> dos dados gerados</li>
-      <li>Clique em <strong>"Baixar data.js"</strong></li>
-      <li>Substitua o <strong>data.js</strong> na pasta do site no GitHub Pages</li>
-      <li>O dashboard atualiza automaticamente ✅</li>
+      <li>Baixe a planilha de atendimentos do sistema interno <strong>(.xlsx)</strong></li>
+      <li>Tenha também a planilha de implantação <strong>(.csv)</strong> atualizada</li>
+      <li>Carregue <strong>ambas</strong> nos campos abaixo</li>
+      <li>Clique em <strong>"Processar e Gerar data.js"</strong></li>
+      <li>Baixe o <strong>data.js</strong> e substitua no GitHub Pages</li>
     </ol>
   </div>
 
   <div class="card">
-    <h2>📤 Carregar Planilha</h2>
-    <div class="sub">Colunas esperadas: Número de rastreios · Nome do fornecedor · Nº Atendimento · Data do registro · TOKEN · Horário via APP · Cena via APP</div>
-    <div class="dz" id="dz">
-      <input type="file" id="fi" accept=".xlsx,.xls" onchange="handleFile(this.files[0])">
-      <div class="dz-icon">📊</div>
-      <div class="dz-txt">Arraste a planilha aqui ou clique para selecionar</div>
-      <div class="dz-sub">Suporta .xlsx e .xls</div>
-      <div class="fc" id="fc"></div>
+    <h2>📤 Carregar Planilhas</h2>
+    <div class="sub">Carregue as duas planilhas para gerar o data.js completo</div>
+    <div class="upload-grid">
+      <div>
+        <div class="dz-label">📊 Planilha de Atendimentos (.xlsx)</div>
+        <div class="dz" id="dz1">
+          <input type="file" accept=".xlsx,.xls" onchange="setFile(1,this.files[0])">
+          <div class="dz-icon">📊</div>
+          <div class="dz-txt">Arrastar ou clicar</div>
+          <div class="dz-sub">Exportada do sistema IRIS</div>
+          <div class="fc green" id="fc1"></div>
+        </div>
+      </div>
+      <div>
+        <div class="dz-label">🟣 Planilha de Implantação (.csv)</div>
+        <div class="dz purple-dz" id="dz2">
+          <input type="file" accept=".csv,.xlsx,.xls" onchange="setFile(2,this.files[0])">
+          <div class="dz-icon">🟣</div>
+          <div class="dz-txt">Arrastar ou clicar</div>
+          <div class="dz-sub">Status de treinamento e instalação</div>
+          <div class="fc purple" id="fc2"></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn-p" onclick="processAll()">⚙️ Processar e Gerar data.js</button>
     </div>
     <div class="prog" id="prog">
-      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Aguardando arquivo…</span></div>
-      <div class="ps"><div class="psi pend" id="s2i">2</div><span id="s2t">Processar planilha</span></div>
-      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Calcular métricas</span></div>
-      <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Gerar data.js</span></div>
+      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Lendo planilha de atendimentos…</span></div>
+      <div class="ps"><div class="psi pend" id="s2i">2</div><span id="s2t">Lendo planilha de implantação…</span></div>
+      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Cruzando fornecedores…</span></div>
+      <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Calculando métricas…</span></div>
+      <div class="ps"><div class="psi pend" id="s5i">5</div><span id="s5t">Gerando data.js…</span></div>
     </div>
     <div class="rmsg" id="rmsg"></div>
   </div>
@@ -132,191 +144,229 @@ main{max-width:820px;margin:36px auto;padding:0 24px 60px}
     <h2>📊 Preview dos Dados</h2>
     <div class="sub" id="prevSub"></div>
     <div class="pg" id="pg"></div>
-    <table class="crit-table" style="margin-top:14px">
-      <thead><tr><th>Categoria</th><th>Faixa</th><th>Fornecedores</th></tr></thead>
-      <tbody id="catTbody"></tbody>
-    </table>
-    <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap">
+    <div class="btn-row">
       <button class="btn-p" onclick="downloadJs()">⬇️ Baixar data.js</button>
-      <button class="btn-s" onclick="copyJs()">📋 Copiar conteúdo</button>
+      <button class="btn-s" onclick="copyJs()">📋 Copiar</button>
     </div>
     <div class="rmsg" id="dlmsg"></div>
   </div>
 
 </main>
 <script>
-const MESES={1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',
-             7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'};
-let genJs=null;
+const MESES={1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'};
+let file1=null, file2=null, genJs=null;
 
-const dz=document.getElementById('dz');
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
-dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');const f=e.dataTransfer.files[0];if(f)handleFile(f)});
+function setFile(n, f){
+  if(!f) return;
+  if(n===1){file1=f;document.getElementById('fc1').textContent='📄 '+f.name;document.getElementById('fc1').style.display='block';}
+  else{file2=f;document.getElementById('fc2').textContent='📄 '+f.name;document.getElementById('fc2').style.display='block';}
+}
+
+// Drag & drop
+['dz1','dz2'].forEach((id,i)=>{
+  const el=document.getElementById(id);
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over')});
+  el.addEventListener('dragleave',()=>el.classList.remove('over'));
+  el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('over');setFile(i+1,e.dataTransfer.files[0])});
+});
 
 function ss(n,state,txt){
   const i=document.getElementById('s'+n+'i'),t=document.getElementById('s'+n+'t');
-  i.className='psi '+state;
-  i.textContent=state==='done'?'✓':state==='err'?'✗':n;
+  i.className='psi '+state;i.textContent=state==='done'?'✓':state==='err'?'✗':n;
   if(txt)t.textContent=txt;
 }
 function msg(id,type,txt){const e=document.getElementById(id);e.className='rmsg '+type;e.textContent=txt;e.style.display='block'}
 
-/* ===== CLASSIFICAÇÃO FINAL ===== */
-function classify(token, horario, rastreios){
-  const t = token==='SIM';
-  const h = horario==='SIM';
-  const r = rastreios;
-  if(t && r>5)          return 'CORRETO';        // Token SIM + rastreio >5 (qualquer horário)
-  if(t && r<=5 && h)    return 'SEM_LOCALIZACAO'; // Token SIM + horário SIM + rastreio ≤5
-  if(!t && h && r<=5)   return 'WEB';             // Token NÃO + horário SIM + rastreio ≤5
-  return 'ERRO';                                  // Todo o resto
+function readFile(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=e=>resolve(e.target.result);
+    r.onerror=reject;
+    r.readAsArrayBuffer(file);
+  });
 }
 
-function handleFile(file){
-  if(!file)return;
-  document.getElementById('fc').textContent='📄 '+file.name;
-  document.getElementById('fc').style.display='block';
+function classify(token,horario,rastreios){
+  const t=token==='SIM', h=horario==='SIM', r=rastreios;
+  if(t&&r>5) return'CORRETO';
+  if(t&&r<=5&&h) return'SEM_MOVIMENTACAO';
+  if(!t&&h&&r<=5) return'WEB';
+  return'ERRO';
+}
+
+function norm(s){return s.replace(/\s+/g,' ').trim().toUpperCase()}
+
+function getCardType(fn, csvMap){
+  const n=norm(fn);
+  if(n.includes('H MED')&&n.includes('GESTÃO')) return'INTEGRADA';
+  // Try match
+  for(const [k,v] of Object.entries(csvMap)){
+    const match = n.startsWith(k.slice(0,12)) || k.startsWith(n.slice(0,12));
+    if(match){
+      if(v.status==='Pendente') return'PENDENTE';
+      if(v.motivo==='Em Instalação') return'EM_INSTALACAO';
+      if(v.utilizando==='Não') return'NAO_USA';
+    }
+  }
+  return'NORMAL';
+}
+
+function parseDateStr(s){
+  if(!s) return null;
+  const m=String(s).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+  if(m) return `${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')}/${m[3]} ${m[4].padStart(2,'0')}:${m[5]}`;
+  return String(s).slice(0,16);
+}
+
+async function processAll(){
+  if(!file1||!file2){msg('rmsg','er','❌ Carregue as duas planilhas antes de processar.');return;}
   document.getElementById('prog').style.display='block';
   document.getElementById('rmsg').style.display='none';
   document.getElementById('previewCard').style.display='none';
 
-  ss(1,'run','Lendo: '+file.name);
-  const reader=new FileReader();
-  reader.onload=e=>{
+  try{
+    // Step 1: read xlsx
+    ss(1,'run','Lendo atendimentos...');
+    const buf1=await readFile(file1);
+    const wb1=XLSX.read(buf1,{type:'array'});
+    const ws1=wb1.Sheets[wb1.SheetNames[0]];
+    const raw1=XLSX.utils.sheet_to_json(ws1,{header:1});
+    let hi=0;
+    for(let i=0;i<Math.min(5,raw1.length);i++){if(raw1[i]&&raw1[i].some(c=>String(c||'').toUpperCase().includes('TOKEN'))){hi=i;break;}}
+    const hdrs=raw1[hi].map(h=>String(h||'').trim().toUpperCase());
+    const rows=raw1.slice(hi+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
+    const ci={rastreios:0,fornecedor:1,atendimento:2,data_reg:3,token:5,horario:6,equipe:8};
+    hdrs.forEach((h,i)=>{
+      if(h.includes('RASTREIO'))ci.rastreios=i;
+      if(h.includes('FORNECEDOR'))ci.fornecedor=i;
+      if(h.includes('ATENDIMENTO')&&(h.includes('Nº')||h.includes('N°')||h.includes('NUM')))ci.atendimento=i;
+      if(h.includes('REGISTRO'))ci.data_reg=i;
+      if(h==='TOKEN')ci.token=i;
+      if(h.includes('HORÁRIO')||h.includes('HORARIO'))ci.horario=i;
+      if(h.includes('EQUIPE')&&h.includes('ATENDIMENTO'))ci.equipe=i;
+    });
+    ss(1,'done',`${rows.length} atendimentos lidos`);
+
+    // Step 2: read csv
+    ss(2,'run','Lendo implantação...');
+    const buf2=await readFile(file2);
+    let csvRows=[];
+    // Try as xlsx first, else parse as csv
     try{
-      ss(1,'done','Arquivo lido: '+file.name);
-      ss(2,'run','Processando planilha...');
-      const wb=XLSX.read(e.target.result,{type:'array'});
-      const ws=wb.Sheets[wb.SheetNames[0]];
-      const raw=XLSX.utils.sheet_to_json(ws,{header:1});
+      const wb2=XLSX.read(buf2,{type:'array'});
+      const ws2=wb2.Sheets[wb2.SheetNames[0]];
+      csvRows=XLSX.utils.sheet_to_json(ws2);
+    }catch(e){
+      // Parse as CSV text
+      const text=new TextDecoder('latin1').decode(buf2);
+      const lines=text.split('\n').filter(l=>l.trim());
+      const csvHdrs=lines[0].split(';').map(h=>h.trim().replace(/"/g,''));
+      csvRows=lines.slice(1).map(l=>{
+        const vals=l.split(';').map(v=>v.trim().replace(/"/g,''));
+        const obj={};csvHdrs.forEach((h,i)=>obj[h]=vals[i]);return obj;
+      });
+    }
+    const csvMap={};
+    csvRows.forEach(row=>{
+      const fn=norm(row['Fornecedor']||row['fornecedor']||'');
+      if(!fn)return;
+      csvMap[fn]={
+        status:String(row['STATUS']||'').trim(),
+        utilizando:String(row['UTILIZANDO']||'').trim(),
+        motivo:String(row['Motivo N utilização']||'').trim()
+      };
+    });
+    ss(2,'done',`${Object.keys(csvMap).length} fornecedores na implantação`);
 
-      // Detect header row
-      let hdrIdx=0;
-      for(let i=0;i<Math.min(5,raw.length);i++){
-        if(raw[i]&&raw[i].some&&raw[i].some(c=>String(c||'').toUpperCase().includes('TOKEN'))){hdrIdx=i;break;}
+    // Step 3: cross-reference
+    ss(3,'run','Cruzando dados...');
+    const map={};
+    rows.forEach(r=>{
+      const fn=String(r[ci.fornecedor]||'').trim();if(!fn)return;
+      const rawT=String(r[ci.token]||'').toUpperCase();
+      const rawH=String(r[ci.horario]||'').toUpperCase();
+      const rastreios=parseFloat(r[ci.rastreios])||0;
+      const att=r[ci.atendimento]?parseInt(r[ci.atendimento]):null;
+      const token=rawT.includes('SIM')?'SIM':'NÃO';
+      const horario=rawH.includes('SIM')?'SIM':'NÃO';
+      let mes=0,ano=0,dataStr='';
+      const dr=r[ci.data_reg];
+      if(dr){
+        if(typeof dr==='number'){const d=XLSX.SSF.parse_date_code(dr);mes=d.m;ano=d.y;dataStr=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')}/${d.y} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;}
+        else{const s=String(dr);const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m){mes=parseInt(m[2]);ano=parseInt(m[3]);}dataStr=parseDateStr(s);}
       }
-      const hdrs=raw[hdrIdx].map(h=>String(h||'').trim().toUpperCase());
-      const rows=raw.slice(hdrIdx+1).filter(r=>r&&r.some&&r.some(c=>c!=null&&c!==''));
+      const equipe=String(r[ci.equipe]||'').trim();
+      if(!map[fn])map[fn]=[];
+      map[fn].push({token,horario,rastreios,att,mes,ano,dataStr,equipe});
+    });
+    ss(3,'done',`${Object.keys(map).length} fornecedores cruzados`);
 
-      // Column detection
-      const ci={rastreios:0,fornecedor:1,atendimento:2,data_reg:3,token:5,horario:6};
-      hdrs.forEach((h,i)=>{
-        if(h.includes('RASTREIO'))ci.rastreios=i;
-        if(h.includes('FORNECEDOR'))ci.fornecedor=i;
-        if(h.includes('ATENDIMENTO')&&(h.includes('Nº')||h.includes('N°')||h.includes('NUM')))ci.atendimento=i;
-        if(h.includes('REGISTRO'))ci.data_reg=i;
-        if(h==='TOKEN')ci.token=i;
-        if(h.includes('HORÁRIO')||h.includes('HORARIO'))ci.horario=i;
+    // Step 4: calculate
+    ss(4,'run','Calculando métricas...');
+    const result={};
+    Object.entries(map).forEach(([fn,rs])=>{
+      const total=rs.length;
+      let correto=0,sem_mov=0,web=0,erro=0;
+      rs.forEach(r=>{
+        const cl=classify(r.token,r.horario,r.rastreios);
+        if(cl==='CORRETO')correto++;
+        else if(cl==='SEM_MOVIMENTACAO')sem_mov++;
+        else if(cl==='WEB')web++;
+        else erro++;
       });
-
-      ss(2,'done',`${rows.length} linhas encontradas`);
-      ss(3,'run','Calculando métricas...');
-
-      const map={};
-      rows.forEach(r=>{
-        const fn=String(r[ci.fornecedor]||'').trim();
-        if(!fn)return;
-        const rawToken  = String(r[ci.token]||'').trim().toUpperCase();
-        const rawHorario= String(r[ci.horario]||'').trim().toUpperCase();
-        const rastreios = parseFloat(r[ci.rastreios])||0;
-        const att       = r[ci.atendimento]?parseInt(r[ci.atendimento]):null;
-        const token  = rawToken.includes('SIM')?'SIM':'NÃO';
-        const horario= rawHorario.includes('SIM')?'SIM':'NÃO';
-
-        let mes=0,ano=0;
-        const dr=r[ci.data_reg];
-        if(dr){
-          if(typeof dr==='number'){const d=XLSX.SSF.parse_date_code(dr);mes=d.m;ano=d.y;}
-          else{const s=String(dr);
-            const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-            if(m){mes=parseInt(m[2]);ano=parseInt(m[3]);}
-            else{const m2=s.match(/(\d{4})-(\d{2})-(\d{2})/);if(m2){mes=parseInt(m2[2]);ano=parseInt(m2[1]);}}
-          }
-        }
-        if(!map[fn])map[fn]=[];
-        map[fn].push({token,horario,rastreios,att,mes,ano});
+      const base=total-web;
+      const usabilidade=base>0?Math.round(correto/base*1000)/10:0;
+      const card_type=getCardType(fn,csvMap);
+      const mesMap={};
+      rs.forEach(r=>{
+        if(!r.mes)return;
+        const k=String(r.mes);
+        if(!mesMap[k]){mesMap[k]={label:(MESES[r.mes]||'Mês '+r.mes)+'/'+r.ano,total:0,correto:0,sem_movimentacao:0,web:0,erro:0,base:0,usabilidade:0,atendimentos:[]}}
+        const m=mesMap[k];m.total++;
+        const cl=classify(r.token,r.horario,r.rastreios);
+        if(cl==='CORRETO')m.correto++;
+        else if(cl==='SEM_MOVIMENTACAO')m.sem_movimentacao++;
+        else if(cl==='WEB')m.web++;
+        else m.erro++;
+        if(r.att)m.atendimentos.push({num:r.att,equipe:r.equipe,data:r.dataStr,class:cl});
       });
-
-      const result={};
-      Object.entries(map).forEach(([fn,rs])=>{
-        const total=rs.length;
-        let correto=0,sem_loc=0,web=0,erro=0;
-        rs.forEach(r=>{
-          const cl=classify(r.token,r.horario,r.rastreios);
-          if(cl==='CORRETO')correto++;
-          else if(cl==='SEM_LOCALIZACAO')sem_loc++;
-          else if(cl==='WEB')web++;
-          else erro++;
-        });
-        const base=total-web;
-        const usabilidade=base>0?Math.round(correto/base*1000)/10:0;
-
-        const att_sem_loc = rs.filter(r=>classify(r.token,r.horario,r.rastreios)==='SEM_LOCALIZACAO'&&r.att).map(r=>r.att).sort((a,b)=>a-b);
-        const att_erro    = rs.filter(r=>classify(r.token,r.horario,r.rastreios)==='ERRO'&&r.att).map(r=>r.att).sort((a,b)=>a-b);
-
-        const mesMap={};
-        rs.forEach(r=>{
-          if(!r.mes)return;
-          const k=String(r.mes);
-          if(!mesMap[k]){mesMap[k]={label:(MESES[r.mes]||'Mês '+r.mes)+'/'+r.ano,total:0,correto:0,sem_localizacao:0,web:0,erro:0,base:0,usabilidade:0,att_sem_localizacao:[],att_erro:[]}}
-          const m=mesMap[k];m.total++;
-          const cl=classify(r.token,r.horario,r.rastreios);
-          if(cl==='CORRETO')m.correto++;
-          else if(cl==='SEM_LOCALIZACAO'){m.sem_localizacao++;if(r.att)m.att_sem_localizacao.push(r.att);}
-          else if(cl==='WEB')m.web++;
-          else{m.erro++;if(r.att)m.att_erro.push(r.att);}
-        });
-        Object.values(mesMap).forEach(m=>{
-          m.base=m.total-m.web;
-          m.usabilidade=m.base>0?Math.round(m.correto/m.base*1000)/10:0;
-          m.att_sem_localizacao.sort((a,b)=>a-b);
-          m.att_erro.sort((a,b)=>a-b);
-        });
-
-        result[fn]={total,correto,sem_localizacao:sem_loc,web,erro,base,usabilidade,att_sem_localizacao:att_sem_loc,att_erro,meses:mesMap};
+      Object.values(mesMap).forEach(m=>{
+        m.base=m.total-m.web;
+        m.usabilidade=m.base>0?Math.round(m.correto/m.base*1000)/10:0;
+        m.atendimentos.sort((a,b)=>a.num-b.num);
       });
+      result[fn]={total,correto,sem_movimentacao:sem_mov,web,erro,base,usabilidade,card_type,meses:mesMap};
+    });
+    ss(4,'done',`${Object.keys(result).length} fornecedores calculados`);
 
-      ss(3,'done',`${Object.keys(result).length} fornecedores processados`);
-      ss(4,'run','Gerando data.js...');
-      genJs='const SUPPLIERS_DATA = '+JSON.stringify(result)+';';
-      ss(4,'done','data.js pronto para download!');
-      msg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores processados com sucesso!`);
-      showPreview(result);
-    }catch(er){ss(2,'err','Erro: '+er.message);msg('rmsg','er','❌ Erro: '+er.message);}
-  };
-  reader.readAsArrayBuffer(file);
+    // Step 5: generate
+    ss(5,'run','Gerando data.js...');
+    genJs='const SUPPLIERS_DATA = '+JSON.stringify(result)+';';
+    ss(5,'done','data.js pronto!');
+    msg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores processados com sucesso!`);
+    showPreview(result);
+  }catch(er){
+    ss(3,'err','Erro: '+er.message);
+    msg('rmsg','er','❌ Erro: '+er.message);
+    console.error(er);
+  }
 }
 
 function catOf(p){return p>=92?'A':p>=82?'B':p>=72?'C':p>=62?'D':'F'}
-const CAT_COLORS={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
-const CAT_RANGES={A:'100–92%',B:'91–82%',C:'81–72%',D:'71–62%',F:'61–0%'};
+const CLR={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 
 function showPreview(data){
-  const keys=Object.keys(data), vals=Object.values(data);
-  const totalAtt=vals.reduce((s,v)=>s+v.total,0);
-  const totalWeb=vals.reduce((s,v)=>s+v.web,0);
-  const totalErro=vals.reduce((s,v)=>s+v.erro,0);
-  const totalSloc=vals.reduce((s,v)=>s+v.sem_localizacao,0);
+  const vals=Object.values(data);
+  const total=vals.length, totalAtt=vals.reduce((s,v)=>s+v.total,0);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  vals.forEach(v=>cats[catOf(v.usabilidade)]++);
-
-  document.getElementById('prevSub').textContent=`${keys.length} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos`;
+  let purple=0;
+  vals.forEach(v=>{if(v.card_type!=='NORMAL')purple++;else cats[catOf(v.usabilidade)]++;});
+  document.getElementById('prevSub').textContent=`${total} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos`;
   document.getElementById('pg').innerHTML=`
-    <div class="pc"><div class="pc-n">${keys.length}</div><div class="pc-l">Fornecedores</div></div>
+    <div class="pc"><div class="pc-n">${total}</div><div class="pc-l">Fornecedores</div></div>
     <div class="pc"><div class="pc-n">${totalAtt.toLocaleString('pt-BR')}</div><div class="pc-l">Atendimentos</div></div>
-    <div class="pc"><div class="pc-n" style="color:#16a34a">${vals.reduce((s,v)=>s+v.correto,0)}</div><div class="pc-l">✅ Correto</div></div>
-    <div class="pc"><div class="pc-n" style="color:#d97706">${totalSloc}</div><div class="pc-l">📍 Sem Loc.</div></div>
-    <div class="pc"><div class="pc-n" style="color:#7c3aed">${totalWeb}</div><div class="pc-l">🌐 WEB</div></div>
-    <div class="pc"><div class="pc-n" style="color:#dc2626">${totalErro}</div><div class="pc-l">❌ Erro</div></div>
-    ${Object.entries(cats).map(([c,n])=>`<div class="pc"><div class="pc-n" style="color:${CAT_COLORS[c]}">${n}</div><div class="pc-l">Cat. ${c}</div></div>`).join('')}`;
-
-  document.getElementById('catTbody').innerHTML=Object.entries(cats).map(([c,n])=>`
-    <tr>
-      <td><span style="width:10px;height:10px;background:${CAT_COLORS[c]};border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle"></span><strong>Cat. ${c}</strong></td>
-      <td>${CAT_RANGES[c]}</td>
-      <td><strong>${n}</strong> fornecedor(es)</td>
-    </tr>`).join('');
+    ${Object.entries(cats).map(([c,n])=>`<div class="pc"><div class="pc-n" style="color:${CLR[c]}">${n}</div><div class="pc-l">Cat. ${c}</div></div>`).join('')}
+    <div class="pc"><div class="pc-n" style="color:#7c3aed">${purple}</div><div class="pc-l">🟣 Especiais</div></div>`;
   document.getElementById('previewCard').style.display='block';
 }
 
@@ -325,13 +375,11 @@ function downloadJs(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([genJs],{type:'application/javascript'}));
   a.download='data.js';a.click();URL.revokeObjectURL(a.href);
-  msg('dlmsg','ok','✅ data.js baixado! Substitua o arquivo na pasta do GitHub Pages.');
+  msg('dlmsg','ok','✅ data.js baixado! Substitua na pasta do GitHub Pages.');
 }
 function copyJs(){
   if(!genJs)return;
-  navigator.clipboard.writeText(genJs)
-    .then(()=>msg('dlmsg','ok','✅ Conteúdo copiado!'))
-    .catch(()=>msg('dlmsg','er','❌ Use o botão Baixar.'));
+  navigator.clipboard.writeText(genJs).then(()=>msg('dlmsg','ok','✅ Copiado!')).catch(()=>msg('dlmsg','er','❌ Use o botão Baixar.'));
 }
 </script>
 </body>

@@ -15,20 +15,22 @@ body{font-family:'Poppins',sans-serif;background:#f4f6f9;color:#1a1a2e;min-heigh
   --cc:#d97706;--cc-bg:#fef3c7;--cc-t:#78350f;
   --cd:#ea580c;--cd-bg:#ffedd5;--cd-t:#7c2d12;
   --cf:#dc2626;--cf-bg:#fee2e2;--cf-t:#7f1d1d;
+  --purple:#7c3aed;--purple-bg:#ede9fe;--purple-t:#4c1d95;
+  --purple-dark:#5b21b6;
 }
 header{background:var(--green);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .logo h1{color:#fff;font-size:1.1rem;font-weight:700;line-height:1.2}
 .logo p{color:rgba(255,255,255,.65);font-size:.72rem;margin-top:2px}
-.hstats{display:flex;gap:12px;flex-wrap:wrap}
+.hstats{display:flex;gap:10px;flex-wrap:wrap}
 .hs{background:rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;text-align:center}
-.hs-n{color:#fff;font-size:1.25rem;font-weight:700}
-.hs-l{color:rgba(255,255,255,.7);font-size:.65rem;text-transform:uppercase;letter-spacing:.04em}
+.hs-n{color:#fff;font-size:1.2rem;font-weight:700}
+.hs-l{color:rgba(255,255,255,.7);font-size:.62rem;text-transform:uppercase;letter-spacing:.04em}
 
 .toolbar{background:#fff;padding:12px 32px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.05)}
 .toolbar input{flex:1;min-width:180px;padding:8px 14px;border:1.5px solid #cbd5e1;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.83rem;outline:none;transition:border .2s}
 .toolbar input:focus{border-color:var(--green)}
-.fbtns{display:flex;gap:6px;flex-wrap:wrap}
-.fb{padding:6px 12px;border:1.5px solid #cbd5e1;border-radius:20px;background:#fff;font-family:'Poppins',sans-serif;font-size:.75rem;cursor:pointer;transition:all .2s;font-weight:500}
+.fbtns{display:flex;gap:5px;flex-wrap:wrap}
+.fb{padding:5px 11px;border:1.5px solid #cbd5e1;border-radius:20px;background:#fff;font-family:'Poppins',sans-serif;font-size:.73rem;cursor:pointer;transition:all .2s;font-weight:500}
 .fb:hover{border-color:var(--green);color:var(--green)}
 .fb.on{color:#fff}
 .fb.on.fall{background:var(--green);border-color:var(--green)}
@@ -37,124 +39,162 @@ header{background:var(--green);padding:18px 32px;display:flex;align-items:center
 .fb.on.fc{background:var(--cc);border-color:var(--cc)}
 .fb.on.fd{background:var(--cd);border-color:var(--cd)}
 .fb.on.ff{background:var(--cf);border-color:var(--cf)}
+.fb.on.fpurple{background:var(--purple);border-color:var(--purple)}
 
 main{padding:20px 32px;max-width:1400px;margin:0 auto}
-.ri{font-size:.78rem;color:#64748b;margin-bottom:14px}
+.ri{font-size:.76rem;color:#64748b;margin-bottom:12px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px}
 
+/* LEGEND */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 14px;background:#fff;border-radius:10px;border:1px solid #e2e8f0}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:.7rem;color:#475569;font-weight:500}
+.leg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+/* CARDS */
 .card{background:#fff;border-radius:12px;border:1.5px solid #e2e8f0;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
 .card.ca::before{background:var(--ca)}.card.cb::before{background:var(--cb)}
 .card.cc::before{background:var(--cc)}.card.cd::before{background:var(--cd)}.card.cf::before{background:var(--cf)}
+.card.cpurple::before{background:var(--purple)}
 .card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,71,49,.1)}
-.ch{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
-.cn{font-size:.8rem;font-weight:600;color:#1e293b;line-height:1.35;flex:1}
-.cbadge{padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;white-space:nowrap;flex-shrink:0}
+
+/* Purple cards */
+.card.cpurple{border-color:#ddd6fe;background:linear-gradient(135deg,#faf5ff 0%,#fff 100%)}
+.card.cpurple:hover{border-color:var(--purple)}
+.card.cpurple .cpct{color:var(--purple)}
+.card.cpurple .pbfill{background:var(--purple)}
+
+/* Status banner inside card */
+.card-status-banner{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:8px;display:inline-block;text-transform:uppercase;letter-spacing:.04em}
+.banner-pendente{background:#ede9fe;color:#5b21b6}
+.banner-instalacao{background:#e0e7ff;color:#3730a3}
+.banner-naousaapp{background:#f5f3ff;color:#6d28d9}
+.banner-integrada{background:linear-gradient(90deg,#7c3aed,#a855f7);color:#fff}
+
+.ch{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.cn{font-size:.78rem;font-weight:600;color:#1e293b;line-height:1.35;flex:1}
+.cbadge{padding:3px 9px;border-radius:20px;font-size:.67rem;font-weight:700;white-space:nowrap;flex-shrink:0}
 .cbadge.ca{background:var(--ca-bg);color:var(--ca-t)}.cbadge.cb{background:var(--cb-bg);color:var(--cb-t)}
 .cbadge.cc{background:var(--cc-bg);color:var(--cc-t)}.cbadge.cd{background:var(--cd-bg);color:var(--cd-t)}.cbadge.cf{background:var(--cf-bg);color:var(--cf-t)}
-.cpct{font-size:1.75rem;font-weight:700}
+.cbadge.cpurple{background:var(--purple-bg);color:var(--purple-t)}
+.cpct{font-size:1.7rem;font-weight:700}
 .ca .cpct{color:var(--ca)}.cb .cpct{color:var(--cb)}.cc .cpct{color:var(--cc)}.cd .cpct{color:var(--cd)}.cf .cpct{color:var(--cf)}
-.cpct-l{font-size:.68rem;color:#94a3b8;margin-bottom:10px}
-.pbar{height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:12px}
+.cpct-l{font-size:.67rem;color:#94a3b8;margin-bottom:8px}
+.pbar{height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:10px}
 .pbfill{height:100%;border-radius:3px}
 .ca .pbfill{background:var(--ca)}.cb .pbfill{background:var(--cb)}.cc .pbfill{background:var(--cc)}.cd .pbfill{background:var(--cd)}.cf .pbfill{background:var(--cf)}
-.cstats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.cstats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .cs{background:#f8fafc;border-radius:6px;padding:5px 4px;text-align:center}
-.cs-n{font-size:.92rem;font-weight:700;color:#1e293b}
-.cs-l{font-size:.6rem;color:#94a3b8;margin-top:1px;line-height:1.2}
-.cpills{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
-.cpill{font-size:.62rem;padding:2px 7px;border-radius:10px;font-weight:600}
+.cs-n{font-size:.9rem;font-weight:700;color:#1e293b}
+.cs-l{font-size:.58rem;color:#94a3b8;margin-top:1px;line-height:1.2}
+.cpills{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.cpill{font-size:.61rem;padding:2px 6px;border-radius:8px;font-weight:600}
 .cpill.web{background:#ede9fe;color:#5b21b6}
-.cpill.sloc{background:#fef3c7;color:#78350f}
+.cpill.smov{background:#fef3c7;color:#78350f}
 .cpill.erro{background:#fee2e2;color:#7f1d1d}
 
 /* MODAL */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
 .ov.open{display:flex}
-.modal{background:#fff;border-radius:16px;width:100%;max-width:900px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
-.mhdr{background:var(--green);padding:18px 24px;border-radius:16px 16px 0 0;position:sticky;top:0;z-index:10}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:960px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.mhdr{padding:18px 24px;border-radius:16px 16px 0 0;position:sticky;top:0;z-index:10}
+.mhdr.normal{background:var(--green)}
+.mhdr.purple{background:linear-gradient(135deg,#5b21b6,#7c3aed)}
 .mhdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.mtitle{color:#fff;font-size:.95rem;font-weight:700;line-height:1.35;flex:1}
-.mclose{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+.mtitle{color:#fff;font-size:.92rem;font-weight:700;line-height:1.35;flex:1}
+.mclose{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .mclose:hover{background:rgba(255,255,255,.35)}
 .mcat-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
-.mcat-badge{padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:700}
-.mcat-info{color:rgba(255,255,255,.85);font-size:.78rem}
+.mcat-badge{padding:4px 14px;border-radius:20px;font-size:.73rem;font-weight:700}
+.mcat-info{color:rgba(255,255,255,.85);font-size:.76rem}
 .mbody{padding:0 20px 24px}
 
+/* PURPLE STATUS BANNER IN MODAL */
+.purple-banner{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:10px;padding:14px 18px;margin:18px 0 0;display:flex;align-items:center;gap:12px}
+.pb-icon{font-size:1.8rem}
+.pb-text h3{font-size:.85rem;font-weight:700;color:#5b21b6;margin-bottom:3px}
+.pb-text p{font-size:.75rem;color:#6d28d9}
+
 /* USABILIDADE */
-.umeter{background:#e8f5ee;border-radius:12px;padding:14px 18px;margin:18px 0 0}
+.umeter{background:#e8f5ee;border-radius:12px;padding:14px 18px;margin:16px 0 0}
+.umeter.purple-meter{background:#f5f3ff}
 .utop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.ulabel{font-size:.72rem;color:#4b7a5e;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.ulabel{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.umeter .ulabel{color:#4b7a5e}
+.umeter.purple-meter .ulabel{color:#6d28d9}
 .upct{font-size:1.4rem;font-weight:700}
 .ubar{height:10px;background:#c8e6d4;border-radius:5px;overflow:hidden}
+.purple-meter .ubar{background:#ddd6fe}
 .ubar-fill{height:100%;border-radius:5px}
 .uleg{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
-.uleg-i{display:flex;align-items:center;gap:4px;font-size:.68rem;color:#4b7a5e}
+.uleg-i{display:flex;align-items:center;gap:4px;font-size:.67rem;color:#4b7a5e}
 .uleg-d{width:9px;height:9px;border-radius:50%}
 
-.sec-title{font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 8px}
-
-/* CRITERIA BOX */
-.crit-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin-top:8px}
-.crit-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:.75rem;color:#475569;border-bottom:1px solid #f1f5f9}
-.crit-row:last-child{border-bottom:none}
-.crit-tag{padding:2px 8px;border-radius:6px;font-size:.68rem;font-weight:700;white-space:nowrap}
-.crit-tag.ok{background:#dcfce7;color:#14532d}
-.crit-tag.sloc{background:#fef3c7;color:#78350f}
-.crit-tag.web{background:#ede9fe;color:#4c1d95}
-.crit-tag.erro{background:#fee2e2;color:#7f1d1d}
+.sec-title{font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin:18px 0 8px}
 
 /* BREAKDOWN */
-.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 .bk{border-radius:10px;padding:12px 14px;border:1px solid}
 .bk.correct{background:#f0fdf4;border-color:#bbf7d0}
-.bk.sem-loc{background:#fefce8;border-color:#fde68a}
+.bk.sem-mov{background:#fefce8;border-color:#fde68a}
 .bk.web{background:#f5f3ff;border-color:#ddd6fe}
 .bk.erro{background:#fef2f2;border-color:#fecaca}
 .bk-icon{font-size:1rem;margin-bottom:3px}
 .bk-n{font-size:1.3rem;font-weight:700}
-.bk.correct .bk-n{color:#16a34a}.bk.sem-loc .bk-n{color:#d97706}
+.bk.correct .bk-n{color:#16a34a}.bk.sem-mov .bk-n{color:#d97706}
 .bk.web .bk-n{color:#7c3aed}.bk.erro .bk-n{color:#dc2626}
-.bk-label{font-size:.68rem;font-weight:700;margin-bottom:3px}
-.bk.correct .bk-label{color:#14532d}.bk.sem-loc .bk-label{color:#78350f}
+.bk-label{font-size:.67rem;font-weight:700;margin-bottom:3px}
+.bk.correct .bk-label{color:#14532d}.bk.sem-mov .bk-label{color:#78350f}
 .bk.web .bk-label{color:#4c1d95}.bk.erro .bk-label{color:#7f1d1d}
-.bk-sub{font-size:.63rem;color:#94a3b8;line-height:1.4;margin-bottom:6px}
-.att-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.att-chip{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px}
-.att-chip.sloc{background:#fde68a;color:#78350f}
-.att-chip.erro{background:#fecaca;color:#7f1d1d}
-.att-more{font-size:.66rem;color:#94a3b8;font-style:italic;align-self:center}
+.bk-sub{font-size:.62rem;color:#94a3b8;line-height:1.4;margin-bottom:4px}
 
 /* MONTHS */
-.month-list{display:flex;flex-direction:column;gap:6px}
+.month-list{display:flex;flex-direction:column;gap:8px}
 .mi{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
 .mih{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;cursor:pointer;background:#f8fafc;transition:background .15s}
 .mih:hover{background:#f1f5f9}
 .mi-name{font-size:.8rem;font-weight:600;color:#334155}
 .mi-right{display:flex;align-items:center;gap:10px}
-.mi-total{font-size:.75rem;color:#64748b}
+.mi-total{font-size:.73rem;color:#64748b}
 .mi-pct{font-size:.75rem;font-weight:700}
-.mi-arr{font-size:.75rem;color:#94a3b8;transition:transform .2s}
+.mi-arr{font-size:.73rem;color:#94a3b8;transition:transform .2s}
 .mi.open .mi-arr{transform:rotate(180deg)}
-.mib{display:none;padding:10px 14px;background:#fff;border-top:1px solid #e2e8f0}
+.mib{display:none;background:#fff;border-top:1px solid #e2e8f0}
 .mi.open .mib{display:block}
-.mi-bk{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px}
-.mbk{border-radius:8px;padding:8px 10px;border:1px solid}
-.mbk.correct{background:#f0fdf4;border-color:#bbf7d0}
-.mbk.sem-loc{background:#fefce8;border-color:#fde68a}
-.mbk.web{background:#f5f3ff;border-color:#ddd6fe}
-.mbk.erro{background:#fef2f2;border-color:#fecaca}
-.mbk-lbl{font-size:.62rem;font-weight:700;margin-bottom:2px}
-.mbk.correct .mbk-lbl{color:#14532d}.mbk.sem-loc .mbk-lbl{color:#78350f}
-.mbk.web .mbk-lbl{color:#4c1d95}.mbk.erro .mbk-lbl{color:#7f1d1d}
-.mbk-n{font-size:1rem;font-weight:700}
-.mbk.correct .mbk-n{color:#16a34a}.mbk.sem-loc .mbk-n{color:#d97706}
-.mbk.web .mbk-n{color:#7c3aed}.mbk.erro .mbk-n{color:#dc2626}
-.mbk-atts{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
-.mbk-chip{font-size:.63rem;font-weight:700;padding:2px 6px;border-radius:5px}
-.mbk-chip.sloc{background:#fde68a;color:#78350f}
-.mbk-chip.erro{background:#fecaca;color:#7f1d1d}
+
+/* SUMMARY inside month */
+.mi-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;padding:10px 14px;border-bottom:1px solid #f1f5f9}
+.msum{border-radius:8px;padding:7px 10px;border:1px solid;text-align:center}
+.msum.correct{background:#f0fdf4;border-color:#bbf7d0}.msum.sem-mov{background:#fefce8;border-color:#fde68a}
+.msum.web{background:#f5f3ff;border-color:#ddd6fe}.msum.erro{background:#fef2f2;border-color:#fecaca}
+.msum-n{font-size:1rem;font-weight:700}
+.msum.correct .msum-n{color:#16a34a}.msum.sem-mov .msum-n{color:#d97706}
+.msum.web .msum-n{color:#7c3aed}.msum.erro .msum-n{color:#dc2626}
+.msum-l{font-size:.63rem;font-weight:600}
+.msum.correct .msum-l{color:#14532d}.msum.sem-mov .msum-l{color:#78350f}
+.msum.web .msum-l{color:#4c1d95}.msum.erro .msum-l{color:#7f1d1d}
+
+/* ATENDIMENTO TABLE */
+.att-table-wrap{padding:0 14px 12px;overflow-x:auto}
+.att-table{width:100%;border-collapse:collapse;font-size:.73rem;margin-top:4px}
+.att-table th{text-align:left;padding:6px 10px;background:#f8fafc;color:#64748b;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;border-bottom:2px solid #e2e8f0}
+.att-table td{padding:6px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.att-table tr:last-child td{border-bottom:none}
+
+/* Row colors by classification */
+.att-table tr.row-correto td{background:#f0fdf4}
+.att-table tr.row-sem-mov td{background:#fefce8}
+.att-table tr.row-web td{background:#f5f3ff}
+.att-table tr.row-erro td{background:#fff5f5}
+
+.att-num{font-weight:700;color:#1e293b}
+.att-class{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.65rem;font-weight:700;white-space:nowrap}
+.att-class.correto{background:#dcfce7;color:#14532d}
+.att-class.sem-mov{background:#fef3c7;color:#78350f}
+.att-class.web{background:#ede9fe;color:#4c1d95}
+.att-class.erro{background:#fee2e2;color:#7f1d1d}
+.att-equipe{color:#475569;font-size:.7rem;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att-data{color:#64748b;white-space:nowrap}
 
 .nodata{text-align:center;padding:50px 20px;color:#94a3b8}
 </style>
@@ -177,18 +217,27 @@ main{padding:20px 32px;max-width:1400px;margin:0 auto}
     <button class="fb fc" onclick="setF('C',this)">Cat. C</button>
     <button class="fb fd" onclick="setF('D',this)">Cat. D</button>
     <button class="fb ff" onclick="setF('F',this)">Cat. F</button>
+    <button class="fb fpurple" onclick="setF('purple',this)">🟣 Especiais</button>
   </div>
 </div>
 
 <main>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#16a34a"></div>Cat. A (≥92%)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#2563eb"></div>Cat. B (82–91%)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#d97706"></div>Cat. C (72–81%)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#ea580c"></div>Cat. D (62–71%)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#dc2626"></div>Cat. F (&lt;62%)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#7c3aed"></div>Pendente / Em instalação / Não usa / Integrada</div>
+  </div>
   <div class="ri" id="ri"></div>
   <div class="grid" id="grid"></div>
   <div class="nodata" id="nodata" style="display:none"><span style="font-size:2.5rem">🔍</span><p>Nenhum fornecedor encontrado.</p></div>
 </main>
 
 <div class="ov" id="ov" onclick="closeOv(event)">
-  <div class="modal">
-    <div class="mhdr">
+  <div class="modal" id="modal">
+    <div class="mhdr" id="mhdr">
       <div class="mhdr-top">
         <div class="mtitle" id="mtitle"></div>
         <button class="mclose" onclick="closeM()">✕</button>
@@ -207,17 +256,38 @@ const CAT_CLR={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 function cat(p){return p>=92?'A':p>=82?'B':p>=72?'C':p>=62?'D':'F'}
 function catCls(c){return{A:'ca',B:'cb',C:'cc',D:'cd',F:'cf'}[c]}
 
+const CARD_TYPE_LABELS={
+  PENDENTE:'⏳ Pendente de Treinamento',
+  EM_INSTALACAO:'🔧 Em Instalação',
+  NAO_USA:'📵 Não Usa o APP',
+  INTEGRADA:'🔗 Integrada ao IRIS',
+  NORMAL:''
+};
+const CARD_TYPE_BANNER={
+  PENDENTE:'banner-pendente',
+  EM_INSTALACAO:'banner-instalacao',
+  NAO_USA:'banner-naousaapp',
+  INTEGRADA:'banner-integrada',
+};
+
+function isPurple(v){return v.card_type && v.card_type!=='NORMAL'}
+
 function initHeader(){
   const vals=Object.values(D);
   const totalAtt=vals.reduce((s,v)=>s+v.total,0);
   const web=vals.reduce((s,v)=>s+v.web,0);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  vals.forEach(v=>cats[cat(v.usabilidade)]++);
+  let purpleCount=0;
+  vals.forEach(v=>{
+    if(isPurple(v)) purpleCount++;
+    else cats[cat(v.usabilidade)]++;
+  });
   document.getElementById('hstats').innerHTML=`
     <div class="hs"><div class="hs-n">${Object.keys(D).length}</div><div class="hs-l">Fornecedores</div></div>
     <div class="hs"><div class="hs-n">${totalAtt.toLocaleString('pt-BR')}</div><div class="hs-l">Atendimentos</div></div>
     <div class="hs"><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div><div class="hs-l">A+B ≥82%</div></div>
     <div class="hs"><div class="hs-n" style="color:#fca5a5">${cats.F}</div><div class="hs-l">Cat. F</div></div>
+    <div class="hs"><div class="hs-n" style="color:#c4b5fd">${purpleCount}</div><div class="hs-l">🟣 Especiais</div></div>
     <div class="hs"><div class="hs-n" style="color:#c4b5fd">${web}</div><div class="hs-l">Via WEB</div></div>`;
 }
 
@@ -230,21 +300,36 @@ function setF(c,btn){
 function render(){
   const q=document.getElementById('srch').value.trim().toLowerCase();
   const entries=Object.entries(D).filter(([n,v])=>{
-    return(activeF==='all'||cat(v.usabilidade)===activeF)&&(!q||n.toLowerCase().includes(q));
-  }).sort((a,b)=>b[1].usabilidade-a[1].usabilidade);
+    const matchQ=!q||n.toLowerCase().includes(q);
+    if(activeF==='purple') return matchQ && isPurple(v);
+    if(activeF==='all')    return matchQ;
+    return matchQ && !isPurple(v) && cat(v.usabilidade)===activeF;
+  }).sort((a,b)=>{
+    // Purple cards last
+    const ap=isPurple(a[1])?1:0, bp=isPurple(b[1])?1:0;
+    if(ap!==bp) return ap-bp;
+    return b[1].usabilidade-a[1].usabilidade;
+  });
+
   document.getElementById('ri').textContent=`Exibindo ${entries.length} de ${Object.keys(D).length} fornecedores`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
+
   document.getElementById('grid').innerHTML=entries.map(([n,v])=>{
-    const cl=catCls(cat(v.usabilidade));
+    const purple=isPurple(v);
+    const cl=purple?'cpurple':catCls(cat(v.usabilidade));
+    const badgeCls=purple?'cpurple':catCls(cat(v.usabilidade));
+    const badgeTxt=purple?CARD_TYPE_LABELS[v.card_type]:`CAT. ${cat(v.usabilidade)}`;
     const safeN=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    const banner=purple?`<div class="card-status-banner ${CARD_TYPE_BANNER[v.card_type]}">${CARD_TYPE_LABELS[v.card_type]}</div>`:'';
     const pills=[
       v.web>0?`<span class="cpill web">🌐 ${v.web} WEB</span>`:'',
-      v.sem_localizacao>0?`<span class="cpill sloc">📍 ${v.sem_localizacao} Sem Loc.</span>`:'',
+      (v.sem_movimentacao||0)>0?`<span class="cpill smov">📍 ${v.sem_movimentacao} Sem Mov.</span>`:'',
       v.erro>0?`<span class="cpill erro">❌ ${v.erro} Erro</span>`:'',
     ].filter(Boolean).join('');
     return`<div class="card ${cl}" data-name="${safeN}" onclick="openM(this.dataset.name)">
-      <div class="ch"><div class="cn">${n}</div><span class="cbadge ${cl}">CAT. ${cat(v.usabilidade)}</span></div>
+      ${banner}
+      <div class="ch"><div class="cn">${n}</div><span class="cbadge ${badgeCls}">${badgeTxt}</span></div>
       <div class="cpct">${v.usabilidade}%</div>
       <div class="cpct-l">usabilidade · base: ${v.base} atend.</div>
       <div class="pbar"><div class="pbfill" style="width:${v.usabilidade}%"></div></div>
@@ -252,38 +337,51 @@ function render(){
         <div class="cs"><div class="cs-n">${v.total}</div><div class="cs-l">Total</div></div>
         <div class="cs"><div class="cs-n" style="color:#16a34a">${v.correto}</div><div class="cs-l">Correto</div></div>
         <div class="cs"><div class="cs-n" style="color:#7c3aed">${v.web}</div><div class="cs-l">WEB</div></div>
-        <div class="cs"><div class="cs-n" style="color:#dc2626">${v.erro+v.sem_localizacao}</div><div class="cs-l">Erros</div></div>
+        <div class="cs"><div class="cs-n" style="color:#dc2626">${v.erro+(v.sem_movimentacao||0)}</div><div class="cs-l">Erros</div></div>
       </div>
       ${pills?`<div class="cpills">${pills}</div>`:''}
     </div>`;
   }).join('');
 }
 
-function chips(list,cls,max=20){
-  if(!list||!list.length)return '<span style="font-size:.7rem;color:#94a3b8;font-style:italic">Nenhum</span>';
-  const extra=list.length-max;
-  return list.slice(0,max).map(n=>`<span class="att-chip ${cls}">#${n}</span>`).join('')
-    +(extra>0?`<span class="att-more"> +${extra} mais</span>`:'');
-}
-function mchips(list,cls,max=8){
-  if(!list||!list.length)return'';
-  const extra=list.length-max;
-  return list.slice(0,max).map(n=>`<span class="mbk-chip ${cls}">#${n}</span>`).join('')
-    +(extra>0?`<span style="font-size:.62rem;color:#94a3b8"> +${extra}</span>`:'');
-}
+const CLASS_ROW={'CORRETO':'row-correto','SEM_MOVIMENTACAO':'row-sem-mov','WEB':'row-web','ERRO':'row-erro'};
+const CLASS_TAG={'CORRETO':'correto','SEM_MOVIMENTACAO':'sem-mov','WEB':'web','ERRO':'erro'};
+const CLASS_LBL={'CORRETO':'✅ Correto','SEM_MOVIMENTACAO':'📍 Sem Movimentação','WEB':'🌐 WEB','ERRO':'❌ Erro'};
 
 function openM(name){
   const v=D[name];if(!v)return;
-  const c=cat(v.usabilidade),cl=catCls(c),clr=CAT_CLR[c];
-  document.getElementById('mtitle').textContent=name;
-  document.getElementById('mcatrow').innerHTML=`
-    <span class="mcat-badge" style="background:${clr}25;color:${clr}">CATEGORIA ${c}</span>
-    <span class="mcat-info">Usabilidade: <strong>${v.usabilidade}%</strong></span>
-    <span class="mcat-info">Total: <strong>${v.total}</strong></span>
-    <span class="mcat-info">Base: <strong>${v.base}</strong></span>`;
+  const purple=isPurple(v);
+  const c=cat(v.usabilidade),clr=purple?'#7c3aed':CAT_CLR[c];
 
+  // Header
+  const hdr=document.getElementById('mhdr');
+  hdr.className='mhdr '+(purple?'purple':'normal');
+  document.getElementById('mtitle').textContent=name;
+  document.getElementById('mcatrow').innerHTML= purple
+    ? `<span class="mcat-badge" style="background:rgba(255,255,255,.2);color:#fff">${CARD_TYPE_LABELS[v.card_type]}</span>
+       <span class="mcat-info">Usabilidade: <strong>${v.usabilidade}%</strong></span>
+       <span class="mcat-info">Total: <strong>${v.total}</strong></span>`
+    : `<span class="mcat-badge" style="background:${clr}25;color:${clr}">CATEGORIA ${c}</span>
+       <span class="mcat-info">Usabilidade: <strong>${v.usabilidade}%</strong></span>
+       <span class="mcat-info">Total: <strong>${v.total}</strong></span>
+       <span class="mcat-info">Base: <strong>${v.base}</strong></span>`;
+
+  // Months
   const mhtml=Object.entries(v.meses).sort((a,b)=>+a[0]-+b[0]).map(([mn,m])=>{
-    const mclr=CAT_CLR[cat(m.usabilidade)];
+    const mclr=isPurple(v)?'#7c3aed':CAT_CLR[cat(m.usabilidade)];
+    // Atendimentos table rows
+    const rows=(m.atendimentos||[]).map(a=>{
+      const rc=CLASS_ROW[a.class]||'';
+      const tc=CLASS_TAG[a.class]||'';
+      const tl=CLASS_LBL[a.class]||a.class;
+      const eq=a.equipe||'—';
+      return`<tr class="${rc}">
+        <td><span class="att-num">#${a.num}</span></td>
+        <td class="att-data">${a.data}</td>
+        <td class="att-equipe" title="${eq}">${eq}</td>
+        <td><span class="att-class ${tc}">${tl}</span></td>
+      </tr>`;
+    }).join('');
     return`<div class="mi" id="mi${mn}">
       <div class="mih" onclick="togM('mi${mn}')">
         <span class="mi-name">📅 ${m.label}</span>
@@ -294,24 +392,34 @@ function openM(name){
         </div>
       </div>
       <div class="mib">
-        <div class="mi-bk">
-          <div class="mbk correct"><div class="mbk-lbl">✅ CORRETO</div><div class="mbk-n">${m.correto}</div><div class="mbk-atts">${mchips(m.att_sem_localizacao,'sloc')}</div></div>
-          <div class="mbk sem-loc">
-            <div class="mbk-lbl">📍 SEM LOCALIZAÇÃO</div><div class="mbk-n">${m.sem_localizacao}</div>
-            <div class="mbk-atts">${mchips(m.att_sem_localizacao,'sloc')}</div>
-          </div>
-          <div class="mbk web"><div class="mbk-lbl">🌐 VIA WEB</div><div class="mbk-n">${m.web}</div></div>
-          <div class="mbk erro">
-            <div class="mbk-lbl">❌ ERRO</div><div class="mbk-n">${m.erro}</div>
-            <div class="mbk-atts">${mchips(m.att_erro,'erro')}</div>
-          </div>
+        <div class="mi-summary">
+          <div class="msum correct"><div class="msum-n">${m.correto}</div><div class="msum-l">✅ Correto</div></div>
+          <div class="msum sem-mov"><div class="msum-n">${m.sem_movimentacao}</div><div class="msum-l">📍 Sem Movimentação</div></div>
+          <div class="msum web"><div class="msum-n">${m.web}</div><div class="msum-l">🌐 WEB</div></div>
+          <div class="msum erro"><div class="msum-n">${m.erro}</div><div class="msum-l">❌ Erro</div></div>
+        </div>
+        <div class="att-table-wrap">
+          <table class="att-table">
+            <thead><tr><th>Nº Atend.</th><th>Data / Hora</th><th>Equipe</th><th>Status</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
         </div>
       </div>
     </div>`;
   }).join('');
 
   document.getElementById('mbody').innerHTML=`
-    <div class="umeter">
+    ${purple?`<div class="purple-banner">
+      <div class="pb-icon">${v.card_type==='INTEGRADA'?'🔗':v.card_type==='EM_INSTALACAO'?'🔧':v.card_type==='PENDENTE'?'⏳':'📵'}</div>
+      <div class="pb-text"><h3>${CARD_TYPE_LABELS[v.card_type]}</h3><p>${
+        v.card_type==='INTEGRADA'?'Fornecedor integrado diretamente ao IRIS — dados rastreados pelo sistema integrado.':
+        v.card_type==='EM_INSTALACAO'?'APP em processo de instalação. Aguardando conclusão para início do uso.':
+        v.card_type==='PENDENTE'?'Treinamento ainda não realizado. Fornecedor pendente de capacitação.':
+        'Fornecedor treinado mas não está utilizando o APP atualmente.'
+      }</p></div>
+    </div>`:''}
+
+    <div class="umeter ${purple?'purple-meter':''}">
       <div class="utop"><span class="ulabel">Índice de Usabilidade</span><span class="upct" style="color:${clr}">${v.usabilidade}%</span></div>
       <div class="ubar"><div class="ubar-fill" style="width:${v.usabilidade}%;background:${clr}"></div></div>
       <div class="uleg">
@@ -323,38 +431,12 @@ function openM(name){
       </div>
     </div>
 
-    <div class="sec-title">Critério de Classificação</div>
-    <div class="crit-box">
-      <div class="crit-row"><span class="crit-tag ok">✅ CORRETO</span>Token SIM + Rastreio &gt;5 pts (qualquer horário)</div>
-      <div class="crit-row"><span class="crit-tag sloc">📍 SEM LOCALIZAÇÃO</span>Token SIM + Horário SIM + Rastreio ≤5 pts</div>
-      <div class="crit-row"><span class="crit-tag web">🌐 WEB</span>Token NÃO + Horário SIM + Rastreio ≤5 (fora da %)</div>
-      <div class="crit-row"><span class="crit-tag erro">❌ ERRO</span>Demais combinações</div>
-    </div>
-
     <div class="sec-title">Resultado dos Atendimentos</div>
     <div class="breakdown">
-      <div class="bk correct">
-        <div class="bk-icon">✅</div><div class="bk-n">${v.correto}</div>
-        <div class="bk-label">CORRETO</div>
-        <div class="bk-sub">Token SIM + Rastreio &gt;5 pts</div>
-      </div>
-      <div class="bk sem-loc">
-        <div class="bk-icon">📍</div><div class="bk-n">${v.sem_localizacao}</div>
-        <div class="bk-label">SEM LOCALIZAÇÃO CAPTURADA</div>
-        <div class="bk-sub">Token SIM + Horário SIM · rastreio ≤5 pts</div>
-        <div class="att-list">${chips(v.att_sem_localizacao,'sloc')}</div>
-      </div>
-      <div class="bk web">
-        <div class="bk-icon">🌐</div><div class="bk-n">${v.web}</div>
-        <div class="bk-label">VIA WEB</div>
-        <div class="bk-sub">Não utilizou o APP — excluído da %</div>
-      </div>
-      <div class="bk erro">
-        <div class="bk-icon">❌</div><div class="bk-n">${v.erro}</div>
-        <div class="bk-label">ERRO</div>
-        <div class="bk-sub">Token NÃO ou rastreio insuficiente sem horário</div>
-        <div class="att-list">${chips(v.att_erro,'erro')}</div>
-      </div>
+      <div class="bk correct"><div class="bk-icon">✅</div><div class="bk-n">${v.correto}</div><div class="bk-label">CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5 pts</div></div>
+      <div class="bk sem-mov"><div class="bk-icon">📍</div><div class="bk-n">${v.sem_movimentacao||0}</div><div class="bk-label">SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM + Horário SIM · rastreio ≤5 pts</div></div>
+      <div class="bk web"><div class="bk-icon">🌐</div><div class="bk-n">${v.web}</div><div class="bk-label">VIA WEB</div><div class="bk-sub">Não utilizou o APP — excluído da %</div></div>
+      <div class="bk erro"><div class="bk-icon">❌</div><div class="bk-n">${v.erro}</div><div class="bk-label">ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
     </div>
 
     <div class="sec-title">Detalhe por Mês</div>
