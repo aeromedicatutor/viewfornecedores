@@ -9,65 +9,77 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Poppins',sans-serif;background:#f4f6f9;color:#1a1a2e;min-height:100vh}
-:root{--green:#1A4731;--green-light:#2a6644;--purple:#7c3aed}
-header{background:var(--green);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.logo h1{color:#fff;font-size:1.05rem;font-weight:700}
-.logo p{color:rgba(255,255,255,.65);font-size:.72rem;margin-top:2px}
-.back{background:rgba(255,255,255,.15);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.78rem;cursor:pointer;text-decoration:none;display:inline-block}
+:root{--green:#1A4731;--gl:#2a6644;--pu:#7c3aed}
+header{background:var(--green);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.logo h1{color:#fff;font-size:1rem;font-weight:700}
+.logo p{color:rgba(255,255,255,.6);font-size:.7rem;margin-top:2px}
+.back{background:rgba(255,255,255,.15);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.76rem;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s}
 .back:hover{background:rgba(255,255,255,.25)}
-main{max-width:860px;margin:36px auto;padding:0 24px 60px}
-.card{background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;padding:26px;margin-bottom:18px}
-.card h2{font-size:.93rem;font-weight:700;color:#1e293b;margin-bottom:4px}
-.sub{font-size:.76rem;color:#64748b;margin-bottom:18px}
-.crit-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:8px}
-.crit-table th{background:#f8fafc;padding:7px 10px;text-align:left;font-size:.7rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #e2e8f0}
-.crit-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
-.tag{display:inline-block;padding:3px 9px;border-radius:8px;font-size:.68rem;font-weight:700}
-.tag.ok{background:#dcfce7;color:#14532d}.tag.smov{background:#fef3c7;color:#78350f}
-.tag.web{background:#ede9fe;color:#4c1d95}.tag.erro{background:#fee2e2;color:#7f1d1d}
+main{max-width:860px;margin:32px auto;padding:0 22px 60px}
 
-/* TWO UPLOAD ZONES */
-.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:600px){.upload-grid{grid-template-columns:1fr}}
-.dz{border:2px dashed #cbd5e1;border-radius:10px;padding:30px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.card{background:#fff;border-radius:13px;border:1.5px solid #e2e8f0;padding:24px;margin-bottom:16px}
+.card h2{font-size:.9rem;font-weight:700;color:#1e293b;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.sub{font-size:.74rem;color:#64748b;margin-bottom:16px;line-height:1.5}
+
+/* CRITERIA TABLE */
+.ct{width:100%;border-collapse:collapse;font-size:.76rem;margin-top:8px}
+.ct th{background:#f8fafc;padding:6px 9px;text-align:left;font-size:.67rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #e2e8f0}
+.ct td{padding:7px 9px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.ct tr:last-child td{border-bottom:none}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.67rem;font-weight:700}
+.tok{background:#dcfce7;color:#14532d}.tsm{background:#fef3c7;color:#78350f}
+.twb{background:#ede9fe;color:#4c1d95}.ter{background:#fee2e2;color:#7f1d1d}
+
+/* UPLOAD GRID */
+.ugrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:580px){.ugrid{grid-template-columns:1fr}}
+.dz-lbl{font-size:.68rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.dz{border:2px dashed #cbd5e1;border-radius:10px;padding:28px 14px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
 .dz:hover,.dz.over{border-color:var(--green);background:#f0fdf4}
-.dz.purple-dz:hover,.dz.purple-dz.over{border-color:var(--purple);background:#faf5ff}
-.dz input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.dz-icon{font-size:1.8rem;margin-bottom:6px}
-.dz-txt{font-size:.82rem;font-weight:600;color:#334155;margin-bottom:2px}
-.dz-sub{font-size:.7rem;color:#94a3b8}
-.fc{margin-top:6px;font-size:.73rem;font-weight:600;display:none}
-.fc.green{color:var(--green)}.fc.purple{color:var(--purple)}
-.dz-label{font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.dz.puz:hover,.dz.puz.over{border-color:var(--pu);background:#faf5ff}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-icon{font-size:1.7rem;margin-bottom:6px}
+.dz-txt{font-size:.8rem;font-weight:600;color:#334155;margin-bottom:2px}
+.dz-sub{font-size:.68rem;color:#94a3b8}
+.fc{margin-top:7px;font-size:.72rem;font-weight:600;display:none;padding:3px 8px;border-radius:6px}
+.fc.ok{background:#dcfce7;color:#14532d}
+.fc.pu{background:#ede9fe;color:#5b21b6}
 
-.prog{display:none;margin-top:18px}
-.ps{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:.8rem;color:#64748b;border-bottom:1px solid #f8fafc}
-.psi{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0}
+/* PROGRESS */
+.prog{display:none;margin-top:16px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
+.prog-hdr{background:#f8fafc;padding:9px 14px;font-size:.72rem;font-weight:700;color:#334155;border-bottom:1px solid #e2e8f0}
+.ps{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:.78rem;color:#64748b;border-bottom:1px solid #f8fafc}
+.ps:last-child{border-bottom:none}
+.psi{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;flex-shrink:0;transition:all .3s}
 .psi.pend{background:#e2e8f0;color:#94a3b8}
 .psi.run{background:#dbeafe;color:#2563eb;animation:pulse 1s infinite}
 .psi.done{background:#dcfce7;color:#16a34a}
 .psi.err{background:#fee2e2;color:#dc2626}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:12px}
-.pc{background:#f8fafc;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;text-align:center}
-.pc-n{font-size:1.25rem;font-weight:700;color:#1e293b}
-.pc-l{font-size:.65rem;color:#94a3b8;margin-top:2px}
+/* PREVIEW */
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px;margin-top:12px}
+.pc{background:#f8fafc;border-radius:8px;padding:9px 10px;border:1px solid #e2e8f0;text-align:center}
+.pc-n{font-size:1.2rem;font-weight:700;color:#1e293b}
+.pc-l{font-size:.63rem;color:#94a3b8;margin-top:2px}
 
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.btn-p{background:var(--green);color:#fff;border:none;padding:11px 24px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .2s}
-.btn-p:hover{background:var(--green-light)}
-.btn-s{background:#f1f5f9;color:#334155;border:1.5px solid #e2e8f0;padding:9px 20px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn-p{background:var(--green);color:#fff;border:none;padding:10px 22px;border-radius:9px;font-family:'Poppins',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s}
+.btn-p:hover{background:var(--gl)}
+.btn-p:disabled{background:#94a3b8;cursor:not-allowed}
+.btn-s{background:#f1f5f9;color:#334155;border:1.5px solid #e2e8f0;padding:9px 18px;border-radius:9px;font-family:'Poppins',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
 .btn-s:hover{border-color:var(--green);color:var(--green)}
 
-.rmsg{padding:10px 14px;border-radius:8px;font-size:.8rem;font-weight:600;margin-top:12px;display:none}
+.rmsg{padding:10px 14px;border-radius:8px;font-size:.78rem;font-weight:600;margin-top:12px;display:none;line-height:1.5}
 .rmsg.ok{background:#dcfce7;color:#14532d;border:1px solid #bbf7d0}
 .rmsg.er{background:#fee2e2;color:#7f1d1d;border:1px solid #fecaca}
 
 .steps-list{list-style:none;counter-reset:s}
-.steps-list li{counter-increment:s;display:flex;align-items:flex-start;gap:9px;padding:7px 0;font-size:.8rem;color:#475569;border-bottom:1px solid #f8fafc}
+.steps-list li{counter-increment:s;display:flex;align-items:flex-start;gap:8px;padding:6px 0;font-size:.78rem;color:#475569;border-bottom:1px solid #f8fafc}
 .steps-list li:last-child{border-bottom:none}
-.steps-list li::before{content:counter(s);background:var(--green);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.steps-list li::before{content:counter(s);background:var(--green);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:700;flex-shrink:0;margin-top:1px}
+
+.process-btn-wrap{margin-top:16px}
 </style>
 </head>
 <body>
@@ -77,309 +89,490 @@ main{max-width:860px;margin:36px auto;padding:0 24px 60px}
 </header>
 <main>
 
+  <!-- CRITERIA -->
   <div class="card">
     <h2>📐 Critérios de Classificação</h2>
-    <div class="sub">% Usabilidade = Corretos ÷ (Total − WEB) × 100</div>
-    <table class="crit-table">
+    <div class="sub">Fórmula: % Usabilidade = Corretos ÷ (Total − WEB) × 100</div>
+    <table class="ct">
       <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
       <tbody>
-        <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="tag ok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
-        <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag smov">📍 SEM MOVIMENTAÇÃO</span></td><td>✔ Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag web">🌐 VIA WEB</span></td><td>✘ Excluído</td></tr>
-        <tr><td colspan="3">Demais combinações</td><td><span class="tag erro">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
+        <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM ou NÃO</td><td><span class="tag tsm">📍 SEM MOVIMENTAÇÃO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>NÃO</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag twb">🌐 VIA WEB</span></td><td>✘ Excluído</td></tr>
+        <tr><td>NÃO</td><td>≤ 5 pts</td><td>NÃO</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>NÃO</td><td>&gt; 5 pts</td><td>SIM</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>NÃO</td><td>&gt; 5 pts</td><td>NÃO</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
       </tbody>
     </table>
   </div>
 
+  <!-- HOW TO -->
   <div class="card">
     <h2>ℹ️ Como atualizar</h2>
     <ol class="steps-list">
       <li>Baixe a planilha de atendimentos do sistema interno <strong>(.xlsx)</strong></li>
-      <li>Tenha também a planilha de implantação <strong>(.csv)</strong> atualizada</li>
-      <li>Carregue <strong>ambas</strong> nos campos abaixo</li>
-      <li>Clique em <strong>"Processar e Gerar data.js"</strong></li>
-      <li>Baixe o <strong>data.js</strong> e substitua no GitHub Pages</li>
+      <li>Tenha a planilha de implantação atualizada <strong>(.csv ou .xlsx)</strong></li>
+      <li>Carregue as <strong>duas planilhas</strong> nos campos abaixo</li>
+      <li>Clique em <strong>"Processar"</strong> e aguarde</li>
+      <li>Clique em <strong>"Baixar data.js"</strong> e substitua no GitHub Pages</li>
     </ol>
   </div>
 
+  <!-- UPLOAD -->
   <div class="card">
     <h2>📤 Carregar Planilhas</h2>
-    <div class="sub">Carregue as duas planilhas para gerar o data.js completo</div>
-    <div class="upload-grid">
+    <div class="sub">As duas planilhas são obrigatórias para gerar o <code>data.js</code> completo com status de treinamento.</div>
+    <div class="ugrid">
       <div>
-        <div class="dz-label">📊 Planilha de Atendimentos (.xlsx)</div>
+        <div class="dz-lbl">📊 Planilha de Atendimentos (.xlsx)</div>
         <div class="dz" id="dz1">
           <input type="file" accept=".xlsx,.xls" onchange="setFile(1,this.files[0])">
           <div class="dz-icon">📊</div>
           <div class="dz-txt">Arrastar ou clicar</div>
           <div class="dz-sub">Exportada do sistema IRIS</div>
-          <div class="fc green" id="fc1"></div>
+          <div class="fc ok" id="fc1"></div>
         </div>
       </div>
       <div>
-        <div class="dz-label">🟣 Planilha de Implantação (.csv)</div>
-        <div class="dz purple-dz" id="dz2">
+        <div class="dz-lbl">🟣 Planilha de Implantação (.csv / .xlsx)</div>
+        <div class="dz puz" id="dz2">
           <input type="file" accept=".csv,.xlsx,.xls" onchange="setFile(2,this.files[0])">
           <div class="dz-icon">🟣</div>
           <div class="dz-txt">Arrastar ou clicar</div>
           <div class="dz-sub">Status de treinamento e instalação</div>
-          <div class="fc purple" id="fc2"></div>
+          <div class="fc pu" id="fc2"></div>
         </div>
       </div>
     </div>
-    <div style="margin-top:14px">
-      <button class="btn-p" onclick="processAll()">⚙️ Processar e Gerar data.js</button>
+
+    <div class="process-btn-wrap">
+      <button class="btn-p" id="processBtn" onclick="processAll()">⚙️ Processar e Gerar data.js</button>
     </div>
+
     <div class="prog" id="prog">
-      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Lendo planilha de atendimentos…</span></div>
+      <div class="prog-hdr">Processando…</div>
+      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Aguardando…</span></div>
       <div class="ps"><div class="psi pend" id="s2i">2</div><span id="s2t">Lendo planilha de implantação…</span></div>
-      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Cruzando fornecedores…</span></div>
-      <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Calculando métricas…</span></div>
-      <div class="ps"><div class="psi pend" id="s5i">5</div><span id="s5t">Gerando data.js…</span></div>
+      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Classificando atendimentos…</span></div>
+      <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Calculando rankings…</span></div>
+      <div class="ps"><div class="psi pend" id="s5i">5</div><span id="s5t">Gerando data.js compacto…</span></div>
     </div>
     <div class="rmsg" id="rmsg"></div>
   </div>
 
+  <!-- PREVIEW -->
   <div class="card" id="previewCard" style="display:none">
-    <h2>📊 Preview dos Dados</h2>
+    <h2>📊 Preview — Dados Gerados</h2>
     <div class="sub" id="prevSub"></div>
     <div class="pg" id="pg"></div>
-    <div class="btn-row">
+    <div class="btns">
       <button class="btn-p" onclick="downloadJs()">⬇️ Baixar data.js</button>
-      <button class="btn-s" onclick="copyJs()">📋 Copiar</button>
+      <button class="btn-s" onclick="copyJs()">📋 Copiar conteúdo</button>
     </div>
     <div class="rmsg" id="dlmsg"></div>
   </div>
 
 </main>
 <script>
-const MESES={1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'};
-let file1=null, file2=null, genJs=null;
+/* =====================================================================
+   ADMIN — Gera data.js no formato compacto SD (compatível com index.html)
+   
+   Formato SD por fornecedor:
+   [ct, total, correto, sem_mov, web, erro, base, uso, rc, re, meses, tr]
+    0    1      2        3        4    5     6     7   8   9   10     11
 
-function setFile(n, f){
-  if(!f) return;
-  if(n===1){file1=f;document.getElementById('fc1').textContent='📄 '+f.name;document.getElementById('fc1').style.display='block';}
-  else{file2=f;document.getElementById('fc2').textContent='📄 '+f.name;document.getElementById('fc2').style.display='block';}
-}
+   ct: 0=NORMAL,1=PENDENTE,2=EM_INSTALACAO,3=NAO_USA,4=INTEGRADA
+   rc/re: ranking [[nome,correto,erro], ...]
+   meses[mn]: [label,total,correto,sem_mov,web,erro,base,uso,rc,re,atts]
+               0     1     2       3       4   5    6    7   8  9  10
+   atts: [num, dt, condutor, enf, cl_int]
+   tr: [status_int, utilizando, motivo, dt_trein, dias] | null
+       status: 1=Pendente,2=Agendado,3=Treinado
+===================================================================== */
+
+const MESES = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',
+               7:'Jul',8:'Ago',9:'Set',10:'Out',11:'Nov',12:'Dez'};
+
+let file1 = null, file2 = null, genJs = null;
 
 // Drag & drop
-['dz1','dz2'].forEach((id,i)=>{
-  const el=document.getElementById(id);
-  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over')});
-  el.addEventListener('dragleave',()=>el.classList.remove('over'));
-  el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('over');setFile(i+1,e.dataTransfer.files[0])});
+['dz1','dz2'].forEach((id,i) => {
+  const el = document.getElementById(id);
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('over'));
+  el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('over'); setFile(i+1, e.dataTransfer.files[0]); });
 });
 
-function ss(n,state,txt){
-  const i=document.getElementById('s'+n+'i'),t=document.getElementById('s'+n+'t');
-  i.className='psi '+state;i.textContent=state==='done'?'✓':state==='err'?'✗':n;
-  if(txt)t.textContent=txt;
+function setFile(n, f) {
+  if (!f) return;
+  const fc = document.getElementById('fc'+n);
+  if (n === 1) { file1 = f; fc.textContent = '✓ ' + f.name; }
+  else         { file2 = f; fc.textContent = '✓ ' + f.name; }
+  fc.style.display = 'inline-block';
 }
-function msg(id,type,txt){const e=document.getElementById(id);e.className='rmsg '+type;e.textContent=txt;e.style.display='block'}
 
-function readFile(file){
-  return new Promise((resolve,reject)=>{
-    const r=new FileReader();
-    r.onload=e=>resolve(e.target.result);
-    r.onerror=reject;
-    r.readAsArrayBuffer(file);
+function ss(n, state, txt) {
+  const i = document.getElementById('s'+n+'i'), t = document.getElementById('s'+n+'t');
+  i.className = 'psi ' + state;
+  i.textContent = state==='done' ? '✓' : state==='err' ? '✗' : n;
+  if (txt) t.textContent = txt;
+}
+function showMsg(id, type, txt) {
+  const e = document.getElementById(id);
+  e.className = 'rmsg ' + type; e.innerHTML = txt; e.style.display = 'block';
+}
+
+function readFile(f) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.onerror = rej;
+    r.readAsArrayBuffer(f);
   });
 }
 
-function classify(token,horario,rastreios){
-  const t=token==='SIM', h=horario==='SIM', r=rastreios;
-  if(t&&r>5) return'CORRETO';
-  if(t&&r<=5&&h) return'SEM_MOVIMENTACAO';
-  if(!t&&h&&r<=5) return'WEB';
-  return'ERRO';
+/* ── CLASSIFICATION ──────────────────────────────────────── */
+function classify(token, horario, rastreios) {
+  const t = String(token).trim().toUpperCase().includes('SIM');
+  const h = String(horario).trim().toUpperCase().includes('SIM');
+  const r = parseFloat(rastreios) || 0;
+  if (t && r > 5)          return 0; // CORRETO
+  if (t && r <= 5)         return 1; // SEM_MOVIMENTACAO (any horario)
+  if (!t && h && r <= 5)   return 2; // WEB
+  return 3;                           // ERRO
 }
 
-function norm(s){return s.replace(/\s+/g,' ').trim().toUpperCase()}
+/* ── NORMALISE name for matching ─────────────────────────── */
+function norm(s) { return String(s||'').replace(/\s+/g,' ').trim().toUpperCase(); }
 
-function getCardType(fn, csvMap){
-  const n=norm(fn);
-  if(n.includes('H MED')&&n.includes('GESTÃO')) return'INTEGRADA';
-  // Try match
-  for(const [k,v] of Object.entries(csvMap)){
-    const match = n.startsWith(k.slice(0,12)) || k.startsWith(n.slice(0,12));
-    if(match){
-      if(v.status==='Pendente') return'PENDENTE';
-      if(v.motivo==='Em Instalação') return'EM_INSTALACAO';
-      if(v.utilizando==='Não') return'NAO_USA';
+/* ── CARD TYPE ───────────────────────────────────────────── */
+function getCardType(fn, csvMap) {
+  const n = norm(fn);
+  if (n.includes('H MED') && n.includes('GESTÃO')) return 4; // INTEGRADA
+  for (const [k, v] of Object.entries(csvMap)) {
+    if (n.startsWith(k.slice(0,12)) || k.startsWith(n.slice(0,12))) {
+      if (v.status === 'Pendente')          return 1;
+      if (v.motivo === 'Em Instalação')     return 2;
+      if (v.utilizando === 'Não')           return 3;
+      return 0;
     }
   }
-  return'NORMAL';
+  return 0;
 }
 
-function parseDateStr(s){
-  if(!s) return null;
-  const m=String(s).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-  if(m) return `${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')}/${m[3]} ${m[4].padStart(2,'0')}:${m[5]}`;
-  return String(s).slice(0,16);
+/* ── TRAINING INFO ───────────────────────────────────────── */
+function getTraining(fn, csvMap) {
+  const n = norm(fn);
+  let info = csvMap[n];
+  if (!info) {
+    for (const [k, v] of Object.entries(csvMap)) {
+      if (n.startsWith(k.slice(0,12)) || k.startsWith(n.slice(0,12))) { info = v; break; }
+    }
+  }
+  if (!info) return null;
+  const sInt = {Pendente:1, Agendado:2, Treinado:3}[info.status] || 0;
+  return [sInt, info.utilizando||'', info.motivo||'', info.dt_trein||'', info.dias||''];
 }
 
-async function processAll(){
-  if(!file1||!file2){msg('rmsg','er','❌ Carregue as duas planilhas antes de processar.');return;}
-  document.getElementById('prog').style.display='block';
-  document.getElementById('rmsg').style.display='none';
-  document.getElementById('previewCard').style.display='none';
-
-  try{
-    // Step 1: read xlsx
-    ss(1,'run','Lendo atendimentos...');
-    const buf1=await readFile(file1);
-    const wb1=XLSX.read(buf1,{type:'array'});
-    const ws1=wb1.Sheets[wb1.SheetNames[0]];
-    const raw1=XLSX.utils.sheet_to_json(ws1,{header:1});
-    let hi=0;
-    for(let i=0;i<Math.min(5,raw1.length);i++){if(raw1[i]&&raw1[i].some(c=>String(c||'').toUpperCase().includes('TOKEN'))){hi=i;break;}}
-    const hdrs=raw1[hi].map(h=>String(h||'').trim().toUpperCase());
-    const rows=raw1.slice(hi+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
-    const ci={rastreios:0,fornecedor:1,atendimento:2,data_reg:3,token:5,horario:6,equipe:8};
-    hdrs.forEach((h,i)=>{
-      if(h.includes('RASTREIO'))ci.rastreios=i;
-      if(h.includes('FORNECEDOR'))ci.fornecedor=i;
-      if(h.includes('ATENDIMENTO')&&(h.includes('Nº')||h.includes('N°')||h.includes('NUM')))ci.atendimento=i;
-      if(h.includes('REGISTRO'))ci.data_reg=i;
-      if(h==='TOKEN')ci.token=i;
-      if(h.includes('HORÁRIO')||h.includes('HORARIO'))ci.horario=i;
-      if(h.includes('EQUIPE')&&h.includes('ATENDIMENTO'))ci.equipe=i;
+/* ── RANKING from att list ───────────────────────────────── */
+function buildRanking(atts) {
+  // atts: [num, dt, condutor, enf, cl_int]
+  const cond = {}, enf = {};
+  for (const a of atts) {
+    if (a[4] === 2) continue; // skip WEB
+    const ok = a[4] === 0;
+    if (a[2]) {
+      if (!cond[a[2]]) cond[a[2]] = [0,0];
+      ok ? cond[a[2]][0]++ : cond[a[2]][1]++;
+    }
+    if (a[3]) {
+      if (!enf[a[3]])  enf[a[3]]  = [0,0];
+      ok ? enf[a[3]][0]++  : enf[a[3]][1]++;
+    }
+  }
+  const rank = d => Object.entries(d)
+    .map(([n,[c,e]]) => [n,c,e])
+    .sort((a,b) => {
+      const pa = a[1]+a[2]>0 ? a[1]/(a[1]+a[2]) : 0;
+      const pb = b[1]+b[2]>0 ? b[1]/(b[1]+b[2]) : 0;
+      return pb-pa || b[1]-a[1];
     });
-    ss(1,'done',`${rows.length} atendimentos lidos`);
+  return [rank(cond), rank(enf)];
+}
 
-    // Step 2: read csv
-    ss(2,'run','Lendo implantação...');
-    const buf2=await readFile(file2);
-    let csvRows=[];
-    // Try as xlsx first, else parse as csv
-    try{
-      const wb2=XLSX.read(buf2,{type:'array'});
-      const ws2=wb2.Sheets[wb2.SheetNames[0]];
-      csvRows=XLSX.utils.sheet_to_json(ws2);
-    }catch(e){
-      // Parse as CSV text
-      const text=new TextDecoder('latin1').decode(buf2);
-      const lines=text.split('\n').filter(l=>l.trim());
-      const csvHdrs=lines[0].split(';').map(h=>h.trim().replace(/"/g,''));
-      csvRows=lines.slice(1).map(l=>{
-        const vals=l.split(';').map(v=>v.trim().replace(/"/g,''));
-        const obj={};csvHdrs.forEach((h,i)=>obj[h]=vals[i]);return obj;
+/* ── PARSE DATE ──────────────────────────────────────────── */
+function parseDate(raw) {
+  if (!raw) return {mes:0, ano:0, dt:''};
+  let mes=0, ano=0, dt='';
+  if (typeof raw === 'number') {
+    const d = XLSX.SSF.parse_date_code(raw);
+    mes=d.m; ano=d.y;
+    dt = `${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;
+  } else {
+    const s = String(raw);
+    const m = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})[\s,T]+(\d{1,2}):(\d{2})/);
+    if (m) {
+      mes=+m[2]; ano=+m[3];
+      dt = `${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')} ${m[4].padStart(2,'0')}:${m[5]}`;
+    } else {
+      const m2 = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (m2) { mes=+m2[2]; ano=+m2[3]; dt=`${m2[1].padStart(2,'0')}/${m2[2].padStart(2,'0')}`; }
+    }
+  }
+  return {mes, ano, dt};
+}
+
+/* ── PARSE EQUIPE FIELD ──────────────────────────────────── */
+function parseEquipe(raw) {
+  // "NOME (Equipe de Enfermagem), NOME2 (Condutor)"
+  let condutor='', enf='';
+  if (!raw) return [condutor, enf];
+  const parts = String(raw).split(',');
+  for (const p of parts) {
+    const m = p.trim().match(/^(.+?)\s*\((.+?)\)$/);
+    if (!m) continue;
+    const name = m[1].trim(), role = m[2].trim().toUpperCase();
+    if (role.includes('CONDUTOR'))                         condutor = name;
+    else if (role.includes('ENFERMAGEM')||role.includes('TÉCNICO')||role.includes('TECNICO')||role.includes('ENFERMEIRO')) enf = name;
+  }
+  return [condutor, enf];
+}
+
+/* ── DETECT COLUMN INDEX ─────────────────────────────────── */
+function detectCols(hdrs) {
+  const ci = {rastreios:0, fornecedor:1, atendimento:2, data_reg:3, token:5, horario:6, equipe_atend:8, equipe_enf:9, condutor:10};
+  hdrs.forEach((h,i) => {
+    const u = h.toUpperCase();
+    if (u.includes('RASTREIO') && !u.includes('EMPRESA') && !u.includes('GPS')) ci.rastreios = i;
+    if (u.includes('FORNECEDOR'))                                                 ci.fornecedor = i;
+    if ((u.includes('Nº')||u.includes('N°')||u.includes('NUM'))&&u.includes('ATENDIMENTO')) ci.atendimento = i;
+    if (u.includes('REGISTRO')&&u.includes('DATA'))                               ci.data_reg = i;
+    if (u === 'TOKEN')                                                             ci.token = i;
+    if ((u.includes('HORÁRIO')||u.includes('HORARIO'))&&u.includes('APP'))        ci.horario = i;
+    if (u.includes('EQUIPE')&&u.includes('ATENDIMENTO')&&!u.includes('ENFERMAGEM')) ci.equipe_atend = i;
+    if (u.includes('EQUIPE')&&u.includes('ENFERMAGEM'))                           ci.equipe_enf = i;
+    if (u.includes('CONDUTOR'))                                                    ci.condutor = i;
+  });
+  return ci;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MAIN PROCESS
+══════════════════════════════════════════════════════════ */
+async function processAll() {
+  if (!file1 || !file2) {
+    showMsg('rmsg','er','❌ Carregue as <strong>duas planilhas</strong> antes de processar.'); return;
+  }
+  document.getElementById('prog').style.display = 'block';
+  document.getElementById('rmsg').style.display = 'none';
+  document.getElementById('previewCard').style.display = 'none';
+  document.getElementById('processBtn').disabled = true;
+
+  try {
+    /* ── STEP 1: Atendimentos ── */
+    ss(1,'run','Lendo planilha de atendimentos…');
+    const buf1 = await readFile(file1);
+    const wb1  = XLSX.read(buf1, {type:'array'});
+    const ws1  = wb1.Sheets[wb1.SheetNames[0]];
+    const raw1 = XLSX.utils.sheet_to_json(ws1, {header:1});
+
+    // Find header row (contains TOKEN)
+    let hi = 0;
+    for (let i = 0; i < Math.min(6, raw1.length); i++) {
+      if (raw1[i] && raw1[i].some(c => String(c||'').toUpperCase() === 'TOKEN')) { hi = i; break; }
+    }
+    const hdrs = raw1[hi].map(h => String(h||'').trim());
+    const rows = raw1.slice(hi+1).filter(r => r && r.some(c => c != null && c !== ''));
+    const ci   = detectCols(hdrs);
+    ss(1,'done',`${rows.length} atendimentos lidos (${hdrs.length} colunas detectadas)`);
+
+    /* ── STEP 2: Implantação ── */
+    ss(2,'run','Lendo planilha de implantação…');
+    const buf2 = await readFile(file2);
+    const csvMap = {};
+    try {
+      // Try as xlsx/xls first
+      const wb2 = XLSX.read(buf2, {type:'array'});
+      const ws2 = wb2.Sheets[wb2.SheetNames[0]];
+      const csvRows = XLSX.utils.sheet_to_json(ws2);
+      csvRows.forEach(row => {
+        const fn = norm(row['Fornecedor']||row['fornecedor']||'');
+        if (!fn) return;
+        csvMap[fn] = {
+          status:    String(row['STATUS']||'').trim(),
+          utilizando:String(row['UTILIZANDO']||'').trim(),
+          motivo:    String(row['Motivo N utilização']||'').trim(),
+          dt_trein:  String(row['dt_treinamento']||'').trim(),
+          dias:      String(row['Dias desde Treinamento']||'').trim(),
+        };
+      });
+    } catch(e) {
+      // Fallback: parse as CSV text (latin-1)
+      const text = new TextDecoder('latin1').decode(buf2);
+      const lines = text.split('\n').filter(l => l.trim());
+      const sep   = lines[0].includes(';') ? ';' : ',';
+      const cHdrs = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,''));
+      lines.slice(1).forEach(l => {
+        const vals = l.split(sep).map(v => v.trim().replace(/^"|"$/g,''));
+        const row  = {};
+        cHdrs.forEach((h,i) => row[h] = vals[i]||'');
+        const fn = norm(row['Fornecedor']||'');
+        if (!fn) return;
+        csvMap[fn] = {
+          status:    (row['STATUS']||'').trim(),
+          utilizando:(row['UTILIZANDO']||'').trim(),
+          motivo:    (row['Motivo N utilização']||'').trim(),
+          dt_trein:  (row['dt_treinamento']||'').trim(),
+          dias:      (row['Dias desde Treinamento']||'').trim(),
+        };
       });
     }
-    const csvMap={};
-    csvRows.forEach(row=>{
-      const fn=norm(row['Fornecedor']||row['fornecedor']||'');
-      if(!fn)return;
-      csvMap[fn]={
-        status:String(row['STATUS']||'').trim(),
-        utilizando:String(row['UTILIZANDO']||'').trim(),
-        motivo:String(row['Motivo N utilização']||'').trim()
-      };
-    });
-    ss(2,'done',`${Object.keys(csvMap).length} fornecedores na implantação`);
+    ss(2,'done',`${Object.keys(csvMap).length} fornecedores na planilha de implantação`);
 
-    // Step 3: cross-reference
-    ss(3,'run','Cruzando dados...');
-    const map={};
-    rows.forEach(r=>{
-      const fn=String(r[ci.fornecedor]||'').trim();if(!fn)return;
-      const rawT=String(r[ci.token]||'').toUpperCase();
-      const rawH=String(r[ci.horario]||'').toUpperCase();
-      const rastreios=parseFloat(r[ci.rastreios])||0;
-      const att=r[ci.atendimento]?parseInt(r[ci.atendimento]):null;
-      const token=rawT.includes('SIM')?'SIM':'NÃO';
-      const horario=rawH.includes('SIM')?'SIM':'NÃO';
-      let mes=0,ano=0,dataStr='';
-      const dr=r[ci.data_reg];
-      if(dr){
-        if(typeof dr==='number'){const d=XLSX.SSF.parse_date_code(dr);mes=d.m;ano=d.y;dataStr=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')}/${d.y} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;}
-        else{const s=String(dr);const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m){mes=parseInt(m[2]);ano=parseInt(m[3]);}dataStr=parseDateStr(s);}
+    /* ── STEP 3: Classify rows ── */
+    ss(3,'run','Classificando atendimentos…');
+
+    // Group by supplier
+    const supplierMap = {};
+    for (const r of rows) {
+      const fn = String(r[ci.fornecedor]||'').trim();
+      if (!fn) continue;
+      const token    = r[ci.token]   || '';
+      const horario  = r[ci.horario] || '';
+      const rastreios= r[ci.rastreios]|| 0;
+      const att      = r[ci.atendimento] ? +r[ci.atendimento] : 0;
+      const {mes, ano, dt} = parseDate(r[ci.data_reg]);
+
+      // Parse equipe — prefer separate columns, fallback to combined
+      let condutor='', enf='';
+      if (ci.condutor !== undefined && r[ci.condutor]) {
+        condutor = String(r[ci.condutor]).trim();
+        enf      = ci.equipe_enf !== undefined ? String(r[ci.equipe_enf]||'').trim() : '';
+      } else if (ci.equipe_atend !== undefined && r[ci.equipe_atend]) {
+        [condutor, enf] = parseEquipe(r[ci.equipe_atend]);
       }
-      const equipe=String(r[ci.equipe]||'').trim();
-      if(!map[fn])map[fn]=[];
-      map[fn].push({token,horario,rastreios,att,mes,ano,dataStr,equipe});
-    });
-    ss(3,'done',`${Object.keys(map).length} fornecedores cruzados`);
 
-    // Step 4: calculate
-    ss(4,'run','Calculando métricas...');
-    const result={};
-    Object.entries(map).forEach(([fn,rs])=>{
-      const total=rs.length;
-      let correto=0,sem_mov=0,web=0,erro=0;
-      rs.forEach(r=>{
-        const cl=classify(r.token,r.horario,r.rastreios);
-        if(cl==='CORRETO')correto++;
-        else if(cl==='SEM_MOVIMENTACAO')sem_mov++;
-        else if(cl==='WEB')web++;
+      const cl = classify(token, horario, rastreios);
+
+      if (!supplierMap[fn]) supplierMap[fn] = [];
+      supplierMap[fn].push({cl, att, dt, mes, ano, condutor, enf});
+    }
+    ss(3,'done',`${Object.keys(supplierMap).length} fornecedores classificados`);
+
+    /* ── STEP 4: Rankings & aggregation ── */
+    ss(4,'run','Calculando rankings e métricas…');
+
+    const result = {};
+    let globalCorreto = 0, globalBase = 0;
+
+    for (const [fn, rows_] of Object.entries(supplierMap)) {
+      const ct = getCardType(fn, csvMap);
+      const tr = getTraining(fn, csvMap);
+
+      let total=rows_.length, correto=0, sem_mov=0, web=0, erro=0;
+      rows_.forEach(r => {
+        if(r.cl===0)correto++;
+        else if(r.cl===1)sem_mov++;
+        else if(r.cl===2)web++;
         else erro++;
       });
-      const base=total-web;
-      const usabilidade=base>0?Math.round(correto/base*1000)/10:0;
-      const card_type=getCardType(fn,csvMap);
-      const mesMap={};
-      rs.forEach(r=>{
-        if(!r.mes)return;
-        const k=String(r.mes);
-        if(!mesMap[k]){mesMap[k]={label:(MESES[r.mes]||'Mês '+r.mes)+'/'+r.ano,total:0,correto:0,sem_movimentacao:0,web:0,erro:0,base:0,usabilidade:0,atendimentos:[]}}
-        const m=mesMap[k];m.total++;
-        const cl=classify(r.token,r.horario,r.rastreios);
-        if(cl==='CORRETO')m.correto++;
-        else if(cl==='SEM_MOVIMENTACAO')m.sem_movimentacao++;
-        else if(cl==='WEB')m.web++;
-        else m.erro++;
-        if(r.att)m.atendimentos.push({num:r.att,equipe:r.equipe,data:r.dataStr,class:cl});
-      });
-      Object.values(mesMap).forEach(m=>{
-        m.base=m.total-m.web;
-        m.usabilidade=m.base>0?Math.round(m.correto/m.base*1000)/10:0;
-        m.atendimentos.sort((a,b)=>a.num-b.num);
-      });
-      result[fn]={total,correto,sem_movimentacao:sem_mov,web,erro,base,usabilidade,card_type,meses:mesMap};
-    });
-    ss(4,'done',`${Object.keys(result).length} fornecedores calculados`);
+      const base = total - web;
+      const uso  = base > 0 ? Math.round(correto/base*1000)/10 : 0;
 
-    // Step 5: generate
-    ss(5,'run','Gerando data.js...');
-    genJs='const SUPPLIERS_DATA = '+JSON.stringify(result)+';';
-    ss(5,'done','data.js pronto!');
-    msg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores processados com sucesso!`);
-    showPreview(result);
-  }catch(er){
-    ss(3,'err','Erro: '+er.message);
-    msg('rmsg','er','❌ Erro: '+er.message);
-    console.error(er);
+      if (ct === 0) { globalCorreto += correto; globalBase += base; }
+
+      // Build compact atts per month
+      const mesMap = {};
+      for (const r of rows_) {
+        if (!r.mes) continue;
+        const k = String(r.mes);
+        if (!mesMap[k]) mesMap[k] = {label: MESES[r.mes]+'/'+r.ano, atts:[], correto:0, sem_mov:0, web:0, erro:0};
+        mesMap[k].atts.push([r.att, r.dt, r.condutor, r.enf, r.cl]);
+        if(r.cl===0)mesMap[k].correto++;
+        else if(r.cl===1)mesMap[k].sem_mov++;
+        else if(r.cl===2)mesMap[k].web++;
+        else mesMap[k].erro++;
+      }
+
+      // Global ranking from all atts
+      const allAtts = rows_.map(r => [r.att, r.dt, r.condutor, r.enf, r.cl]);
+      const [rc, re_] = buildRanking(allAtts);
+
+      // Build meses in compact format
+      const meses = {};
+      for (const [mn, m] of Object.entries(mesMap)) {
+        const atts = m.atts.sort((a,b) => a[0]-b[0]);
+        const mb   = m.atts.length - m.web;
+        const mu   = mb > 0 ? Math.round(m.correto/mb*1000)/10 : 0;
+        const [mrc, mre] = buildRanking(atts);
+        // [label,total,correto,sem_mov,web,erro,base,uso,rc,re,atts]
+        meses[mn] = [m.label, m.atts.length, m.correto, m.sem_mov, m.web, m.erro, mb, mu, mrc, mre, atts];
+      }
+
+      // [ct,total,correto,sem_mov,web,erro,base,uso,rc,re,meses,tr]
+      result[fn] = [ct, total, correto, sem_mov, web, erro, base, uso, rc, re_, meses, tr];
+    }
+
+    ss(4,'done',`Rankings calculados para ${Object.keys(result).length} fornecedores`);
+
+    /* ── STEP 5: Generate JS ── */
+    ss(5,'run','Gerando data.js compacto…');
+    const globalAvg = globalBase > 0 ? Math.round(globalCorreto/globalBase*1000)/10 : 0;
+    const gs = {avg: globalAvg, meta: 77};
+    genJs = `const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify(gs)};`;
+    ss(5,'done',`data.js gerado — ${(genJs.length/1024).toFixed(0)}KB`);
+
+    showMsg('rmsg','ok',`✅ <strong>${Object.keys(result).length} fornecedores</strong> processados. Média geral: <strong>${globalAvg}%</strong>`);
+    showPreview(result, globalAvg);
+
+  } catch(err) {
+    ss(3,'err','Erro: '+err.message);
+    showMsg('rmsg','er','❌ Erro durante o processamento: <strong>'+err.message+'</strong><br>Verifique se as planilhas estão no formato correto.');
+    console.error(err);
+  } finally {
+    document.getElementById('processBtn').disabled = false;
   }
 }
 
+/* ── PREVIEW ─────────────────────────────────────────────── */
 function catOf(p){return p>=92?'A':p>=82?'B':p>=72?'C':p>=62?'D':'F'}
 const CLR={A:'#16a34a',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 
-function showPreview(data){
-  const vals=Object.values(data);
-  const total=vals.length, totalAtt=vals.reduce((s,v)=>s+v.total,0);
-  const cats={A:0,B:0,C:0,D:0,F:0};
-  let purple=0;
-  vals.forEach(v=>{if(v.card_type!=='NORMAL')purple++;else cats[catOf(v.usabilidade)]++;});
-  document.getElementById('prevSub').textContent=`${total} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos`;
-  document.getElementById('pg').innerHTML=`
-    <div class="pc"><div class="pc-n">${total}</div><div class="pc-l">Fornecedores</div></div>
+function showPreview(data, avg) {
+  const vals = Object.values(data);
+  const totalAtt = vals.reduce((s,v)=>s+v[1],0);
+  const cats = {A:0,B:0,C:0,D:0,F:0};
+  let purple = 0;
+  vals.forEach(v => { if(v[0]!==0) purple++; else cats[catOf(v[7])]++; });
+
+  document.getElementById('prevSub').textContent =
+    `${Object.keys(data).length} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos · Média: ${avg}%`;
+
+  document.getElementById('pg').innerHTML = `
+    <div class="pc"><div class="pc-n">${Object.keys(data).length}</div><div class="pc-l">Fornecedores</div></div>
     <div class="pc"><div class="pc-n">${totalAtt.toLocaleString('pt-BR')}</div><div class="pc-l">Atendimentos</div></div>
+    <div class="pc"><div class="pc-n">${avg}%</div><div class="pc-l">Média Geral</div></div>
     ${Object.entries(cats).map(([c,n])=>`<div class="pc"><div class="pc-n" style="color:${CLR[c]}">${n}</div><div class="pc-l">Cat. ${c}</div></div>`).join('')}
     <div class="pc"><div class="pc-n" style="color:#7c3aed">${purple}</div><div class="pc-l">🟣 Especiais</div></div>`;
-  document.getElementById('previewCard').style.display='block';
+
+  document.getElementById('previewCard').style.display = 'block';
 }
 
-function downloadJs(){
-  if(!genJs)return;
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([genJs],{type:'application/javascript'}));
-  a.download='data.js';a.click();URL.revokeObjectURL(a.href);
-  msg('dlmsg','ok','✅ data.js baixado! Substitua na pasta do GitHub Pages.');
+/* ── DOWNLOAD ────────────────────────────────────────────── */
+function downloadJs() {
+  if (!genJs) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([genJs], {type:'application/javascript'}));
+  a.download = 'data.js';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showMsg('dlmsg','ok','✅ <strong>data.js</strong> baixado! Substitua o arquivo na pasta do GitHub Pages e atualize a página.');
 }
-function copyJs(){
-  if(!genJs)return;
-  navigator.clipboard.writeText(genJs).then(()=>msg('dlmsg','ok','✅ Copiado!')).catch(()=>msg('dlmsg','er','❌ Use o botão Baixar.'));
+function copyJs() {
+  if (!genJs) return;
+  navigator.clipboard.writeText(genJs)
+    .then(()  => showMsg('dlmsg','ok','✅ Conteúdo copiado para a área de transferência!'))
+    .catch(()  => showMsg('dlmsg','er','❌ Não foi possível copiar. Use o botão Baixar.'));
 }
 </script>
 </body>
