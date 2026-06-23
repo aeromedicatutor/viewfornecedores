@@ -425,10 +425,11 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 <script>
 // ═══════════════════════════════════════════════════════════════
 // DATA FORMAT
-// supplier: [ct,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,meses,tr,shifts,tok_delay]
-//            0   1     2       3       4       5   6    7   8   9  10 11    12  13     14
-// month:    [label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
-//            0     1     2       3       4       5   6    7   8   9  10 11   12     13
+// SUPPLIER: [ct,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,   re,   meses,tr,  shifts,tok_delay]
+//            0   1     2       3       4       5   6    7   8   9    10    11    12   13     14
+// MONTH:    [label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,   re,   atts,shifts,tok_delay]
+//            0     1     2       3       4       5   6    7   8   9    10    11   12     13
+// cl: 0=CORRETO,1=CORRETO_MOD,2=SEM_MOV,3=WEB,4=ERRO  |  rc/re=[[name,ok,err],...]
 // att:      [num,dt_rem,shift,cond,enf,cl,disp,dt_tok,delay,km,lat1,lon1,lat2,lon2,eo,ed]
 //            0   1      2     3    4   5  6    7       8     9  10   11   12   13   14 15
 // cl: 0=CORRETO, 1=CORRETO_MOD(sem disp), 2=SEM_MOV, 3=WEB, 4=ERRO
@@ -507,7 +508,7 @@ function render(){
       v[6]>0?`<span class="pill err">❌ ${v[6]}</span>`:'',
     ].filter(Boolean).join('');
     // Training chip
-    const tr=v[11];
+    const tr=v[12];
     let trChip='';
     if(tr){
       const st={1:'⏳ Pendente',2:'📅 Agendado',3:'✅ Treinado'}[tr[0]]||'❓';
@@ -594,7 +595,7 @@ function tokBadge(td){
 
 // ── TRAINING ALERT ───────────────────────────────────────────
 function trAlertHtml(v){
-  const tr=v[11];
+  const tr=v[12];
   if(!tr)return`<div class="tr-alert no-info"><div class="tr-icon">❓</div><div><div class="tr-title">Sem informação de treinamento</div><div style="font-size:.7rem;color:#9ca3af">Não encontrado na planilha de implantação.</div></div></div>`;
   const st={1:'⏳ Pendente',2:'📅 Agendado',3:'✅ Treinado'}[tr[0]]||'❓';
   const cls={1:'pending',2:'scheduled',3:'trained',0:'no-info'}[tr[0]]||'no-info';
@@ -650,7 +651,7 @@ function monthBlock(mn,m,pu,nid){
       <span class="mi-nm">📅 ${m[0]}</span>
       <div class="mi-r">
         <span class="mi-tot">${m[1]} atend.</span>
-        <span class="mi-pct" style="color:${mclr}">${m[7]}%</span>
+        <span class="mi-pct" style="color:${mclr}">${m[8]}%</span>
         <span class="mi-arr">▾</span>
       </div>
     </div>
@@ -695,7 +696,7 @@ function openM(name){
       <span class="mci">Total: <strong>${v[1]}</strong></span>
       <span class="mci">Base: <strong>${v[6]}</strong></span>`;
 
-  const sortedM=Object.entries(v[10]).sort((a,b)=>+a[0]-+b[0]);
+  const sortedM=Object.entries(v[11]).sort((a,b)=>+a[0]-+b[0]);
 
   document.getElementById('mbody').innerHTML=`
     <div class="um ${pu?'pum':''}">
