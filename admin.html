@@ -144,6 +144,16 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
         </div>
       </div>
     </div>
+    <div style="margin-top:12px">
+      <div class="dz-lbl">📋 Detalhamento de Transporte (.xlsx) — opcional</div>
+      <div class="dz" id="dz3">
+        <input type="file" accept=".xlsx,.xls" onchange="setFile(3,this.files[0])">
+        <div class="dz-icon">📋</div>
+        <div class="dz-txt">Arrastar ou clicar</div>
+        <div class="dz-sub">Dispositivo, horário do token, tempo de inserção</div>
+        <div class="fc ok" id="fc3"></div>
+      </div>
+    </div>
 
     <div class="process-btn-wrap">
       <button class="btn-p" id="processBtn" onclick="processAll()">⚙️ Processar e Gerar data.js</button>
@@ -153,6 +163,8 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
       <div class="prog-hdr">Processando…</div>
       <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Aguardando…</span></div>
       <div class="ps"><div class="psi pend" id="s2i">2</div><span id="s2t">Lendo planilha de implantação…</span></div>
+      <div class="ps"><div class="psi pend" id="s2bi">2b</div><span id="s2bt">Lendo detalhamento de transporte…</span></div>
+      <div class="ps"><div class="psi pend" id="s2bi">2b</div><span id="s2bt">Lendo detalhamento de transporte…</span></div>
       <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Classificando atendimentos…</span></div>
       <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Calculando rankings…</span></div>
       <div class="ps"><div class="psi pend" id="s5i">5</div><span id="s5t">Gerando data.js compacto…</span></div>
@@ -196,18 +208,21 @@ const MESES = {1:'Jan',2:'Fev',3:'Mar',4:'Abr',5:'Mai',6:'Jun',
 let file1 = null, file2 = null, genJs = null;
 
 // Drag & drop
-['dz1','dz2'].forEach((id,i) => {
+['dz1','dz2','dz3'].forEach((id,i) => {
   const el = document.getElementById(id);
   el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('over'); });
   el.addEventListener('dragleave', () => el.classList.remove('over'));
   el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('over'); setFile(i+1, e.dataTransfer.files[0]); });
 });
 
+let file3 = null;
 function setFile(n, f) {
   if (!f) return;
   const fc = document.getElementById('fc'+n);
-  if (n === 1) { file1 = f; fc.textContent = '✓ ' + f.name; }
-  else         { file2 = f; fc.textContent = '✓ ' + f.name; }
+  if (n === 1)      { file1 = f; }
+  else if (n === 2) { file2 = f; }
+  else              { file3 = f; }
+  fc.textContent = '✓ ' + f.name;
   fc.style.display = 'inline-block';
 }
 
@@ -370,7 +385,7 @@ async function processAll() {
 
   try {
     /* ── STEP 1: Atendimentos ── */
-    ss(1,'run','Lendo planilha de atendimentos…');
+    ss(1,'run','Lendo planilhas de atendimentos e detalhamento…');
     const buf1 = await readFile(file1);
     const wb1  = XLSX.read(buf1, {type:'array'});
     const ws1  = wb1.Sheets[wb1.SheetNames[0]];
@@ -429,6 +444,105 @@ async function processAll() {
     }
     ss(2,'done',`${Object.keys(csvMap).length} fornecedores na planilha de implantação`);
 
+    /* ── STEP 2b: Detalhamento (optional) ── */
+    ss('2b','run','Lendo detalhamento…');
+    const detMap = {};
+    if (file3) {
+      try {
+        const buf3 = await readFile(file3);
+        const wb3  = XLSX.read(buf3, {type:'array'});
+        const ws3  = wb3.Sheets[wb3.SheetNames[0]];
+        const raw3 = XLSX.utils.sheet_to_json(ws3, {header:1});
+        // Find header row
+        let hi3=0;
+        for(let i=0;i<Math.min(4,raw3.length);i++){
+          if(raw3[i]&&raw3[i].some(c=>String(c||'').includes('Atendimento'))){hi3=i;break;}
+        }
+        const h3=raw3[hi3].map(h=>String(h||'').trim());
+        const rows3=raw3.slice(hi3+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
+        const c_att=h3.findIndex(h=>h.includes('Atendimento')&&(h.includes('Nº')||h.includes('N°')));
+        const c_disp=h3.findIndex(h=>h.includes('Dispositivo'));
+        const c_tok=h3.findIndex(h=>h.includes('Inserção')&&h.includes('Token'));
+        const c_datAtt=h3.findIndex(h=>h.includes('Data')&&h.includes('atendimento'));
+        const c_eqAt=h3.findIndex(h=>h.includes('Equipe')&&h.includes('Atendimento')&&!h.includes('enfermagem'));
+        const c_eqEn=h3.findIndex(h=>h.includes('enfermagem'));
+        rows3.forEach(r=>{
+          const att=+r[c_att]; if(!att||isNaN(att))return;
+          const dtAtStr=r[c_datAtt]?String(r[c_datAtt]):'';
+          const dtTokStr=r[c_tok]?String(r[c_tok]):'';
+          let delay=null;
+          if(dtAtStr&&dtTokStr){
+            const dtAt=XLSX.SSF.parse_date_code(typeof r[c_datAtt]==='number'?r[c_datAtt]:0);
+            const dtTk=XLSX.SSF.parse_date_code(typeof r[c_tok]==='number'?r[c_tok]:0);
+            if(dtAt&&dtTk){
+              const msAt=Date.UTC(dtAt.y,dtAt.m-1,dtAt.d,dtAt.H,dtAt.M);
+              const msTk=Date.UTC(dtTk.y,dtTk.m-1,dtTk.d,dtTk.H,dtTk.M);
+              delay=Math.round((msTk-msAt)/60000);
+            }
+          }
+          // Format tok time
+          let dtTokFmt='';
+          if(typeof r[c_tok]==='number'){const d=XLSX.SSF.parse_date_code(r[c_tok]);if(d)dtTokFmt=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;}
+          else if(dtTokStr){const m=dtTokStr.match(/(\d{1,2})\/(\d{1,2})\/\d{4}\s+(\d{1,2}):(\d{2})/);if(m)dtTokFmt=`${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')} ${m[3].padStart(2,'0')}:${m[4]}`;}
+          const disp=c_disp>=0&&r[c_disp]?String(r[c_disp]):'';
+          const eqAt=c_eqAt>=0&&r[c_eqAt]?String(r[c_eqAt]):'';
+          const eqEn=c_eqEn>=0&&r[c_eqEn]?String(r[c_eqEn]):'';
+          detMap[att]={disp,dtTok:dtTokFmt,delay,eqAt,eqEn};
+        });
+        ss('2b','done',`${Object.keys(detMap).length} registros no detalhamento`);
+      } catch(e){ ss('2b','err','Erro no detalhamento: '+e.message); }
+    } else { ss('2b','done','Detalhamento não fornecido (opcional)'); }
+
+    /* ── STEP 2b: Detalhamento (optional) ── */
+    ss('2b','run','Lendo detalhamento…');
+    const detMap = {};
+    if (file3) {
+      try {
+        const buf3 = await readFile(file3);
+        const wb3  = XLSX.read(buf3, {type:'array'});
+        const ws3  = wb3.Sheets[wb3.SheetNames[0]];
+        const raw3 = XLSX.utils.sheet_to_json(ws3, {header:1});
+        let hi3=0;
+        for(let i=0;i<Math.min(4,raw3.length);i++){
+          if(raw3[i]&&raw3[i].some(h=>String(h||'').includes('Atendimento'))){hi3=i;break;}
+        }
+        const h3=raw3[hi3].map(h=>String(h||'').trim());
+        const rows3=raw3.slice(hi3+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
+        const fi={
+          att:  h3.findIndex(h=>h.includes('Atendimento')&&(h.includes('N'))),
+          disp: h3.findIndex(h=>h.includes('Dispositivo')),
+          tok:  h3.findIndex(h=>h.includes('Token')&&h.includes('Hora')),
+          dat:  h3.findIndex(h=>h.includes('Data')&&h.includes('atendimento')),
+          eqAt: h3.findIndex(h=>h.includes('Atendimento')&&!h.includes('Data')&&!h.includes('N')),
+          eqEn: h3.findIndex(h=>h.toLowerCase().includes('enfermagem')),
+        };
+        rows3.forEach(r=>{
+          const att=+r[fi.att];if(!att||isNaN(att))return;
+          const disp=fi.disp>=0&&r[fi.disp]?String(r[fi.disp]):'';
+          const eqAt=fi.eqAt>=0&&r[fi.eqAt]?String(r[fi.eqAt]):'';
+          const eqEn=fi.eqEn>=0&&r[fi.eqEn]?String(r[fi.eqEn]):'';
+          let dtTokFmt='',delay=null;
+          const rawDat=r[fi.dat],rawTok=r[fi.tok];
+          if(rawTok){
+            if(typeof rawTok==='number'){
+              const d=XLSX.SSF.parse_date_code(rawTok);
+              if(d)dtTokFmt=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;
+              if(typeof rawDat==='number'){
+                const da=XLSX.SSF.parse_date_code(rawDat);
+                if(da){const msAt=Date.UTC(da.y,da.m-1,da.d,da.H,da.M);const msTk=Date.UTC(d.y,d.m-1,d.d,d.H,d.M);delay=Math.round((msTk-msAt)/60000);}
+              }
+            } else {
+              const s=String(rawTok);
+              const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+              if(m)dtTokFmt=`${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')} ${m[4].padStart(2,'0')}:${m[5]}`;
+            }
+          }
+          detMap[att]={disp,dtTok:dtTokFmt,delay,eqAt,eqEn};
+        });
+        ss('2b','done',`${Object.keys(detMap).length} registros de detalhamento`);
+      } catch(e){ss('2b','err','Detalhamento: '+e.message);}
+    } else { ss('2b','done','Detalhamento não fornecido (opcional)'); }
+
     /* ── STEP 3: Classify rows ── */
     ss(3,'run','Classificando atendimentos…');
 
@@ -442,20 +556,32 @@ async function processAll() {
       const rastreios= r[ci.rastreios]|| 0;
       const att      = r[ci.atendimento] ? +r[ci.atendimento] : 0;
       const {mes, ano, dt} = parseDate(r[ci.data_reg]);
+      const dtRemCol = ci.data_remocao !== undefined ? r[ci.data_remocao] : null;
+      const {dt: dtReg} = dtRemCol ? parseDate(dtRemCol) : {dt:''};
+      const {dt: dtReg}    = parseDate(r[ci.data_remocao] !== undefined ? r[ci.data_remocao] : r[ci.data_reg]);
 
       // Parse equipe — prefer separate columns, fallback to combined
       let condutor='', enf='';
-      if (ci.condutor !== undefined && r[ci.condutor]) {
+      const det = detMap[att] || {};
+      if (det.eqAt) {
+        [condutor, enf] = parseEquipe(det.eqAt);
+        if (!enf && det.eqEn) enf = det.eqEn;
+      } else if (ci.condutor !== undefined && r[ci.condutor]) {
         condutor = String(r[ci.condutor]).trim();
         enf      = ci.equipe_enf !== undefined ? String(r[ci.equipe_enf]||'').trim() : '';
       } else if (ci.equipe_atend !== undefined && r[ci.equipe_atend]) {
         [condutor, enf] = parseEquipe(r[ci.equipe_atend]);
       }
+      const disp   = det.disp   || '';
+      const dtTok  = det.dtTok  || '';
+      const delay  = det.delay !== undefined ? det.delay : null;
 
       const cl = classify(token, horario, rastreios);
 
       if (!supplierMap[fn]) supplierMap[fn] = [];
-      supplierMap[fn].push({cl, att, dt, mes, ano, condutor, enf});
+      const shift = getShift(dt);
+      // [num,dt_rem,dt_reg,shift,cond,enf,cl,disp,dt_tok,delay,mes,ano]
+      supplierMap[fn].push([att, dt, dtReg, shift, condutor, enf, cl, disp, dtTok, delay, mes, ano]);
     }
     ss(3,'done',`${Object.keys(supplierMap).length} fornecedores classificados`);
 
@@ -466,51 +592,52 @@ async function processAll() {
     let globalCorreto = 0, globalBase = 0;
 
     for (const [fn, rows_] of Object.entries(supplierMap)) {
+      // rows_ = [[num,dt_rem,dt_reg,shift,cond,enf,cl,disp,dtTok,delay,mes,ano], ...]
       const ct = getCardType(fn, csvMap);
       const tr = getTraining(fn, csvMap);
 
-      let total=rows_.length, correto=0, sem_mov=0, web=0, erro=0;
-      rows_.forEach(r => {
-        if(r.cl===0)correto++;
-        else if(r.cl===1)sem_mov++;
-        else if(r.cl===2)web++;
+      const total=rows_.length;
+      let correto=0,sem_mov=0,web=0,erro=0;
+      rows_.forEach(r=>{
+        if(r[6]===0)correto++;
+        else if(r[6]===1)sem_mov++;
+        else if(r[6]===2)web++;
         else erro++;
       });
-      const base = total - web;
-      const uso  = base > 0 ? Math.round(correto/base*1000)/10 : 0;
+      const base=total-web;
+      const uso=base>0?Math.round(correto/base*1000)/10:0;
+      if(ct===0){globalCorreto+=correto;globalBase+=base;}
 
-      if (ct === 0) { globalCorreto += correto; globalBase += base; }
+      const compact=r=>r.slice(0,10); // drop mes,ano
+      const allC=rows_.map(compact);
+      const [rc,re_]=buildRanking(allC);
+      const shAll=buildShifts(allC);
+      const tdAll=buildTokDelay(allC);
 
-      // Build compact atts per month
-      const mesMap = {};
-      for (const r of rows_) {
-        if (!r.mes) continue;
-        const k = String(r.mes);
-        if (!mesMap[k]) mesMap[k] = {label: MESES[r.mes]+'/'+r.ano, atts:[], correto:0, sem_mov:0, web:0, erro:0};
-        mesMap[k].atts.push([r.att, r.dt, r.condutor, r.enf, r.cl]);
-        if(r.cl===0)mesMap[k].correto++;
-        else if(r.cl===1)mesMap[k].sem_mov++;
-        else if(r.cl===2)mesMap[k].web++;
-        else mesMap[k].erro++;
+      // Monthly
+      const mesMap={};
+      for(const r of rows_){
+        if(!r[10])continue;
+        const k=String(r[10]);
+        if(!mesMap[k])mesMap[k]={label:MESES[r[10]]+'/'+r[11],rows:[]};
+        mesMap[k].rows.push(r);
+      }
+      const meses={};
+      for(const[mn,m] of Object.entries(mesMap)){
+        const mc_=m.rows.map(compact).sort((a,b)=>a[0]-b[0]);
+        let mc=0,ms=0,mw=0,me=0;
+        m.rows.forEach(r=>{if(r[6]===0)mc++;else if(r[6]===1)ms++;else if(r[6]===2)mw++;else me++;});
+        const mb=m.rows.length-mw;
+        const mu=mb>0?Math.round(mc/mb*1000)/10:0;
+        const[mrc,mre]=buildRanking(mc_);
+        const msh=buildShifts(mc_);
+        const mtd=buildTokDelay(mc_);
+        // [label,total,correto,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
+        meses[mn]=[m.label,m.rows.length,mc,ms,mw,me,mb,mu,mrc,mre,mc_,msh,mtd];
       }
 
-      // Global ranking from all atts
-      const allAtts = rows_.map(r => [r.att, r.dt, r.condutor, r.enf, r.cl]);
-      const [rc, re_] = buildRanking(allAtts);
-
-      // Build meses in compact format
-      const meses = {};
-      for (const [mn, m] of Object.entries(mesMap)) {
-        const atts = m.atts.sort((a,b) => a[0]-b[0]);
-        const mb   = m.atts.length - m.web;
-        const mu   = mb > 0 ? Math.round(m.correto/mb*1000)/10 : 0;
-        const [mrc, mre] = buildRanking(atts);
-        // [label,total,correto,sem_mov,web,erro,base,uso,rc,re,atts]
-        meses[mn] = [m.label, m.atts.length, m.correto, m.sem_mov, m.web, m.erro, mb, mu, mrc, mre, atts];
-      }
-
-      // [ct,total,correto,sem_mov,web,erro,base,uso,rc,re,meses,tr]
-      result[fn] = [ct, total, correto, sem_mov, web, erro, base, uso, rc, re_, meses, tr];
+      // [ct,total,correto,sem_mov,web,erro,base,uso,rc,re,meses,tr,shifts,tok_delay]
+      result[fn]=[ct,total,correto,sem_mov,web,erro,base,uso,rc,re_,meses,tr,shAll,tdAll];
     }
 
     ss(4,'done',`Rankings calculados para ${Object.keys(result).length} fornecedores`);
@@ -518,7 +645,10 @@ async function processAll() {
     /* ── STEP 5: Generate JS ── */
     ss(5,'run','Gerando data.js compacto…');
     const globalAvg = globalBase > 0 ? Math.round(globalCorreto/globalBase*1000)/10 : 0;
-    const gs = {avg: globalAvg, meta: 77};
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const updated = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    const gs = {avg: globalAvg, meta: 77, updated};
     genJs = `const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify(gs)};`;
     ss(5,'done',`data.js gerado — ${(genJs.length/1024).toFixed(0)}KB`);
 

@@ -216,6 +216,67 @@ hr.rd{border:none;border-top:1px solid #e2e8f0;margin:12px 0}
 .nodata{text-align:center;padding:48px 20px;color:#94a3b8}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}
+
+/* TRAINING ALERT */
+.tr-alert{display:flex;align-items:flex-start;gap:10px;border-radius:10px;padding:11px 14px;border:1px solid;margin-top:10px}
+.tr-alert.trained{background:#f0fdf4;border-color:#bbf7d0}
+.tr-alert.pending{background:#fff7ed;border-color:#fed7aa}
+.tr-alert.scheduled{background:#eff6ff;border-color:#bfdbfe}
+.tr-alert.no-info{background:#f8fafc;border-color:#e2e8f0}
+.tr-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px}
+.tr-body{}
+.tr-title{font-size:.75rem;font-weight:700;margin-bottom:3px}
+.tr-alert.trained .tr-title{color:#14532d}
+.tr-alert.pending .tr-title{color:#9a3412}
+.tr-alert.scheduled .tr-title{color:#1e40af}
+.tr-alert.no-info .tr-title{color:#475569}
+.tr-details{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.tr-tag{font-size:.68rem;padding:2px 8px;border-radius:6px;font-weight:600}
+.tr-tag.green{background:#dcfce7;color:#14532d}
+.tr-tag.orange{background:#ffedd5;color:#9a3412}
+.tr-tag.blue{background:#dbeafe;color:#1e40af}
+.tr-tag.gray{background:#f1f5f9;color:#475569}
+.tr-tag.red{background:#fee2e2;color:#7f1d1d}
+.tr-tag.purple{background:#ede9fe;color:#5b21b6}
+
+/* MONTH TABS */
+.mtabs{display:flex;gap:5px;flex-wrap:wrap;padding:10px 16px 0;border-bottom:1px solid #e2e8f0;background:#fff;position:sticky;top:0;z-index:5}
+.mtab{padding:5px 12px;border-radius:8px 8px 0 0;font-size:.72rem;font-weight:600;cursor:pointer;border:1px solid #e2e8f0;border-bottom:none;color:#64748b;background:#f8fafc;transition:all .15s}
+.mtab.active{background:#fff;color:var(--green);border-color:#e2e8f0;border-bottom:1px solid #fff;margin-bottom:-1px}
+.mtab.all-tab.active{color:var(--green)}
+
+/* SHIFT BADGES */
+.shift-row{display:flex;gap:8px;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid #f1f5f9;background:#fafafa}
+.shift-bdg{border-radius:10px;padding:7px 12px;border:1px solid;cursor:pointer;transition:all .2s;flex:1;min-width:110px;text-align:center}
+.shift-bdg:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.1)}
+.shift-bdg.manha{background:#fef9c3;border-color:#fde047}
+.shift-bdg.tarde{background:#fef3c7;border-color:#fbbf24}
+.shift-bdg.noite{background:#dbeafe;border-color:#93c5fd}
+.shift-title{font-size:.68rem;font-weight:700;margin-bottom:3px}
+.manha .shift-title{color:#713f12}.tarde .shift-title{color:#78350f}.noite .shift-title{color:#1e3a8a}
+.shift-pct{font-size:1.1rem;font-weight:700}
+.manha .shift-pct{color:#ca8a04}.tarde .shift-pct{color:#d97706}.noite .shift-pct{color:#2563eb}
+.shift-sub{font-size:.63rem;color:#64748b;margin-top:2px}
+/* TOKEN DELAY */
+.tok-delay-box{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid #f1f5f9;background:#faf5ff;flex-wrap:wrap}
+.tok-delay-icon{font-size:1.1rem;flex-shrink:0}
+.tok-delay-body{flex:1}
+.tok-delay-title{font-size:.68rem;font-weight:700;color:#5b21b6;margin-bottom:2px}
+.tok-delay-vals{display:flex;gap:10px;flex-wrap:wrap}
+.tok-delay-chip{font-size:.66rem;padding:2px 8px;border-radius:6px;font-weight:600}
+.tdc-avg{background:#ede9fe;color:#5b21b6}
+.tdc-ok{background:#dcfce7;color:#14532d}
+.tdc-warn{background:#fef3c7;color:#78350f}
+.tdc-bad{background:#fee2e2;color:#7f1d1d}
+/* SHIFT MODAL */
+.shift-detail-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:3000;display:none;align-items:center;justify-content:center;padding:14px}
+.shift-detail-ov.open{display:flex}
+.shift-detail-modal{background:#fff;border-radius:12px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.2)}
+.sdm-hdr{padding:12px 16px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center}
+.sdm-hdr h3{color:#fff;font-size:.85rem;font-weight:700}
+.sdm-body{padding:14px 16px}
+.sdm-chips{display:flex;flex-wrap:wrap;gap:5px}
+.sdm-chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px;background:#f1f5f9;color:#334155;cursor:default}
 </style>
 </head>
 <body>
@@ -269,6 +330,20 @@ hr.rd{border:none;border-top:1px solid #e2e8f0;margin:12px 0}
   </div>
 </div>
 
+<!-- SHIFT DETAIL MODAL -->
+<div class="shift-detail-ov" id="shiftDetailOv" onclick="if(event.target===this)closeShiftDetail()">
+  <div class="shift-detail-modal">
+    <div class="sdm-hdr" id="sdm_hdr">
+      <h3 id="sdm_lbl"></h3>
+      <button class="mcls" onclick="closeShiftDetail()">✕</button>
+    </div>
+    <div class="sdm-body">
+      <p style="font-size:.72rem;color:#64748b;margin-bottom:10px" id="sdm_count"></p>
+      <div class="sdm-chips" id="sdm_chips"></div>
+    </div>
+  </div>
+</div>
+
 <!-- RULES MODAL -->
 <div class="rov" id="rov" onclick="if(event.target===this)closeRules()">
   <div class="rmodal">
@@ -276,16 +351,20 @@ hr.rd{border:none;border-top:1px solid #e2e8f0;margin:12px 0}
     <div class="rbody">
       <p style="font-size:.78rem;color:#475569;margin-bottom:10px">Como cada atendimento é classificado e como a % de usabilidade é calculada.</p>
       <table class="rt">
-        <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Classificação</th></tr></thead>
+        <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Inserção Token</th><th>Classificação</th></tr></thead>
         <tbody>
-          <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="rtag ok">✅ CORRETO</span></td></tr>
-          <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM ou NÃO</td><td><span class="rtag sm">📍 SEM MOVIMENTAÇÃO</span></td></tr>
-          <tr><td>NÃO</td><td>≤ 5 pts</td><td>SIM</td><td><span class="rtag wb">🌐 VIA WEB</span></td></tr>
-          <tr><td>NÃO</td><td>≤ 5 pts</td><td>NÃO</td><td><span class="rtag er">❌ ERRO</span></td></tr>
-          <tr><td>NÃO</td><td>&gt; 5 pts</td><td>SIM</td><td><span class="rtag er">❌ ERRO</span></td></tr>
-          <tr><td>NÃO</td><td>&gt; 5 pts</td><td>NÃO</td><td><span class="rtag er">❌ ERRO</span></td></tr>
+          <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td>Com horário</td><td><span class="rtag ok">✅ CORRETO</span></td></tr>
+          <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM ou NÃO</td><td>Com horário</td><td><span class="rtag sm">📍 SEM MOVIMENTAÇÃO</span></td></tr>
+          <tr><td>NÃO</td><td>≤ 5 pts</td><td>SIM</td><td>Sem horário</td><td><span class="rtag wb">🌐 VIA WEB</span></td></tr>
+          <tr><td>NÃO</td><td>≤ 5 pts</td><td>NÃO</td><td>Sem horário</td><td><span class="rtag er">❌ ERRO</span></td></tr>
+          <tr><td>NÃO</td><td>&gt; 5 pts</td><td>SIM</td><td>Sem horário</td><td><span class="rtag er">❌ ERRO</span></td></tr>
+          <tr><td>NÃO</td><td>&gt; 5 pts</td><td>NÃO</td><td>Sem horário</td><td><span class="rtag er">❌ ERRO</span></td></tr>
         </tbody>
       </table>
+      <hr class="rd">
+      <div class="rsec"><strong>⏱️ Tempo de Inserção do Token:</strong> Diferença entre o horário de início do transporte e o horário de inserção do token. Negativo = inseriu antes. Calculado apenas para atendimentos CORRETO.</div>
+      <hr class="rd">
+      <div class="rsec"><strong>🌅 Turnos (base: data de remoção):</strong> Manhã 06h–12h · Tarde 12h–18h · Noite 18h–06h. % = corretos ÷ total do turno (excl. WEB).</div>
       <hr class="rd">
       <div class="rsec"><strong>📐 Fórmula:</strong> % = Corretos ÷ (Total − WEB) × 100<br>Atendimentos WEB são excluídos da base de cálculo.</div>
       <hr class="rd">
@@ -327,6 +406,80 @@ function pctBg(p){return p>=80?'#dcfce7':p>=60?'#fef3c7':'#fee2e2'}
 function pctCl(p){return p>=80?'#14532d':p>=60?'#78350f':'#7f1d1d'}
 function pc(pos){return pos===1?'p1':pos===2?'p2':pos===3?'p3':'pn'}
 
+// Training helpers
+// tr = [status_int, utilizando, motivo, dt_trein, dias]
+// status: 1=Pendente,2=Agendado,3=Treinado,0/null=Sem info
+const TR_STATUS={1:'Pendente',2:'Agendado',3:'Treinado'};
+const MOTIVO_TAG={'Em Instalação':'purple','Sem Dispositivo':'red','Usa Outro Sistema':'orange','iOS Incompatível':'red','Recusa/Objeção':'red','Inativo':'gray','Não Quis':'gray'};
+
+function trClass(tr){
+  if(!tr)return'no-info';
+  if(tr[0]===3)return'trained';
+  if(tr[0]===2)return'scheduled';
+  if(tr[0]===1)return'pending';
+  return'no-info';
+}
+function trIcon(tr){
+  if(!tr)return'❓';
+  if(tr[0]===3)return'✅';
+  if(tr[0]===2)return'📅';
+  if(tr[0]===1)return'⏳';
+  return'❓';
+}
+
+function cardTrBadge(v){
+  const tr=v[11];
+  if(!tr) return'<div style="margin-top:5px;font-size:.62rem;color:#94a3b8;font-style:italic">Sem info de treinamento</div>';
+  const st=TR_STATUS[tr[0]]||'Sem info';
+  const cls=trClass(tr);
+  const clr={trained:'#14532d',pending:'#9a3412',scheduled:'#1e40af',no_info:'#475569'}[cls]||'#475569';
+  const bg={trained:'#dcfce7',pending:'#ffedd5',scheduled:'#dbeafe',no_info:'#f1f5f9'}[cls]||'#f1f5f9';
+  const icon=trIcon(tr);
+  let extra='';
+  if(tr[0]===3&&tr[3]) extra=`<span class="tr-tag green" style="font-size:.6rem">📅 ${tr[3]}</span>`;
+  if(tr[0]===3&&tr[1]==='Não'&&tr[2]) extra+=`<span class="tr-tag ${MOTIVO_TAG[tr[2]]||'gray'}" style="font-size:.6rem">${tr[2]}</span>`;
+  if(tr[0]===3&&tr[1]==='WEB') extra+=`<span class="tr-tag blue" style="font-size:.6rem">🌐 Usa WEB</span>`;
+  return`<div style="margin-top:6px;padding:5px 8px;border-radius:7px;border:1px solid;background:${bg};border-color:${bg};display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+    <span style="font-size:.75rem">${icon}</span>
+    <span style="font-size:.66rem;font-weight:700;color:${clr}">${st}</span>
+    ${extra}
+  </div>`;
+}
+
+function trAlertHtml(v){
+  const tr=v[11];
+  if(!tr) return`<div class="tr-alert no-info"><div class="tr-icon">❓</div><div class="tr-body"><div class="tr-title">Sem informação de treinamento</div><div style="font-size:.7rem;color:#64748b">Fornecedor não encontrado na planilha de implantação.</div></div></div>`;
+  const st=TR_STATUS[tr[0]]||'Sem info';
+  const cls=trClass(tr);
+  const icon=trIcon(tr);
+  const tags=[];
+  if(tr[0]===3){
+    if(tr[3]) tags.push(`<span class="tr-tag green">📅 Treinado em: ${tr[3]}</span>`);
+    if(tr[4]&&tr[4]!=='nan') tags.push(`<span class="tr-tag gray">🕐 ${Math.round(+tr[4])} dias desde o treinamento</span>`);
+    if(tr[1]==='Sim') tags.push(`<span class="tr-tag green">✅ Usando o APP</span>`);
+    if(tr[1]==='Não') tags.push(`<span class="tr-tag orange">❌ Não está usando o APP</span>`);
+    if(tr[1]==='WEB') tags.push(`<span class="tr-tag blue">🌐 Usando via WEB</span>`);
+    if(tr[2]&&tr[2]!='nan') tags.push(`<span class="tr-tag ${MOTIVO_TAG[tr[2]]||'gray'}">⚠️ ${tr[2]}</span>`);
+  } else if(tr[0]===2){
+    tags.push(`<span class="tr-tag blue">📅 Treinamento Agendado</span>`);
+  } else {
+    tags.push(`<span class="tr-tag red">⚠️ Treinamento ainda não realizado</span>`);
+  }
+  const msg={
+    trained: tr[1]==='Sim'?'Fornecedor treinado e utilizando o APP corretamente.': tr[1]==='WEB'?'Fornecedor treinado, porém utilizando via plataforma WEB.':'Fornecedor treinado mas não está utilizando o APP no momento.',
+    pending:'Este fornecedor ainda não foi treinado. O treinamento está pendente de agendamento.',
+    scheduled:'Treinamento agendado. Aguardando realização.',
+    'no-info':'Fornecedor não localizado na planilha de implantação.'
+  }[cls]||'';
+  return`<div class="tr-alert ${cls}">
+    <div class="tr-icon">${icon}</div>
+    <div class="tr-body">
+      <div class="tr-title">${st} — ${msg}</div>
+      <div class="tr-details">${tags.join('')}</div>
+    </div>
+  </div>`;
+}
+
 function initHeader(){
   const vals=Object.values(D);
   const ta=vals.reduce((s,v)=>s+v[1],0);
@@ -339,11 +492,13 @@ function initHeader(){
     <div class="hs"><div class="hs-n" style="color:#fca5a5">${cats.F}</div><div class="hs-l">Cat.F</div></div>`;
   const a=GS2.avg;
   const col=a>=77?'#4ade80':a>=65?'#fbbf24':'#f87171';
+  const upd=GS2.updated||'';
   document.getElementById('avgMeter').innerHTML=`
     <div class="avg-top"><span class="avg-lbl">Média Geral de Usabilidade</span><span class="avg-pct" style="color:${col}">${a}%</span></div>
     <div class="avg-bar-outer">
       <div class="avg-bar-fill" style="width:${a}%;background:${col}"></div>
-    </div>`;
+    </div>
+    ${upd?`<div style="margin-top:4px;font-size:.58rem;color:rgba(255,255,255,.55)">🕐 Atualizado: ${upd}</div>`:''}`;
 }
 
 function setF(c,btn){activeF=c;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}
@@ -385,6 +540,7 @@ function render(){
         <div class="cs"><div class="cs-n" style="color:#dc2626">${v[5]+v[3]}</div><div class="cs-l">Erros</div></div>
       </div>
       ${pills?`<div class="cpills">${pills}</div>`:''}
+      ${cardTrBadge(v)}
     </div>`;
   }).join('');
 }
@@ -429,7 +585,13 @@ function openM(name){
       <span class="mci">Total: <strong>${v[1]}</strong></span>
       <span class="mci">Base: <strong>${v[6]}</strong></span>`;
 
-  const mhtml=Object.entries(v[10]).sort((a,b)=>+a[0]-+b[0]).map(([mn,m])=>{
+  // Sort months ascending
+  const sortedMeses=Object.entries(v[10]).sort((a,b)=>+a[0]-+b[0]);
+  
+  // Cumulative stats across all months
+  const cumCorreto=v[2], cumSemMov=v[3], cumWeb=v[4], cumErro=v[5], cumBase=v[6], cumUso=v[7];
+
+  const mhtml=sortedMeses.map(([mn,m])=>{
     // m = [label,total,correto,sem_mov,web,erro,base,uso,rc,re,atts]
     const mclr=pu?'#7c3aed':CCLR[cat(m[7])];
     const attRows=(m[10]||[]).map(a=>`
@@ -456,20 +618,25 @@ function openM(name){
           <div class="msc c2"><div class="msc-n">${m[4]}</div><div class="msc-l">🌐 WEB</div></div>
           <div class="msc c3"><div class="msc-n">${m[5]}</div><div class="msc-l">❌ Erro</div></div>
         </div>
+        ${shiftBadgesHtml(m[11],mn,name_id)}
+        ${m[12]?tokDelayHtml(m[12]):''}
+        ${shiftBadgesHtml(m[11],mn,name_id)}
+        ${m[12]?tokDelayHtml(m[12]):''}
         <div class="mrk">
           <div class="mrk-col"><h4>🚗 Condutores</h4>${miniRk(m[8])}</div>
           <div class="mrk-col"><h4>🩺 Enfermeiros</h4>${miniRk(m[9])}</div>
         </div>
         <div class="atw">
           <table class="att">
-            <thead><tr><th>Nº</th><th>Data/Hora</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th></tr></thead>
+            <thead><tr><th>Nº</th><th>Remoção</th><th>Registro</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token em</th><th>Δ min</th></tr></thead>
             <tbody>${attRows}</tbody>
           </table>
         </div>
       </div>
     </div>`;
-  }).join('');
+  });
 
+  const name_id = name.replace(/[^a-zA-Z0-9]/g,'_').slice(0,20);
   document.getElementById('mbody').innerHTML=`
     <div class="um ${pu?'pum':''}">
       <div class="utop"><span class="ulbl">Índice de Usabilidade</span><span class="upct" style="color:${clr}">${v[7]}%</span></div>
@@ -491,30 +658,118 @@ function openM(name){
       <div class="bk c3"><div class="bk-n">${v[5]}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
     </div>
 
-    <div class="stitle">🏆 Ranking da Equipe — Geral</div>
-    <div class="rkgrid">
-      <div class="rkcard">
-        <div class="rkcard-hdr"><span>🚗</span><h3>Condutores</h3></div>
-        <div class="rklist">${rkRows(v[8])}</div>
-      </div>
-      <div class="rkcard">
-        <div class="rkcard-hdr"><span>🩺</span><h3>Enfermeiros / Equipe</h3></div>
-        <div class="rklist">${rkRows(v[9])}</div>
-      </div>
+    ${trAlertHtml(v)}
+    ${shiftBadgesHtml(v[12],'all',name_id)}
+    ${tokDelayHtml(v[13])}
+    <div class="stitle">Detalhe por Mês</div>
+
+    <div class="mtabs" id="mtabs_${name_id}">
+      <div class="mtab all-tab active" onclick="filterMonth(this,'all','${name_id}')">📊 Acumulado</div>
+      ${sortedMeses.map(([mn,m])=>`<div class="mtab" onclick="filterMonth(this,'${mn}','${name_id}')">${m[0]}</div>`).join('')}
     </div>
 
-    <div class="stitle">Detalhe por Mês</div>
-    <div class="mlist">${mhtml}</div>`;
+    <div id="mview_${name_id}">
+      <!-- ACUMULADO VIEW -->
+      <div data-month="all" class="mib" style="display:block;padding:10px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0">
+        <div class="ms4">
+          <div class="msc c0"><div class="msc-n">${cumCorreto}</div><div class="msc-l">✅ Correto</div></div>
+          <div class="msc c1"><div class="msc-n">${cumSemMov}</div><div class="msc-l">📍 Sem Mov.</div></div>
+          <div class="msc c2"><div class="msc-n">${cumWeb}</div><div class="msc-l">🌐 WEB</div></div>
+          <div class="msc c3"><div class="msc-n">${cumErro}</div><div class="msc-l">❌ Erro</div></div>
+        </div>
+        <div style="margin-top:8px">
+          <div class="rkgrid">
+            <div class="rkcard">
+              <div class="rkcard-hdr"><span>🚗</span><h3>Condutores — Acumulado</h3></div>
+              <div class="rklist">${rkRows(v[8])}</div>
+            </div>
+            <div class="rkcard">
+              <div class="rkcard-hdr"><span>🩺</span><h3>Enfermeiros — Acumulado</h3></div>
+              <div class="rklist">${rkRows(v[9])}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- PER-MONTH VIEWS -->
+      ${mhtml.map((h,i)=>`<div data-month="${sortedMeses[i][0]}" style="display:none">${h}</div>`).join('')}
+    </div>`;
 
   document.getElementById('ov').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
+// ── SHIFT BADGES ───────────────────────────────────────────
+function shiftBadgesHtml(sh, mn, name_id){
+  if(!sh) return '';
+  const shifts=[
+    {k:'M',lbl:'🌅 Manhã',cls:'manha',sub:'06h – 12h'},
+    {k:'T',lbl:'☀️ Tarde',cls:'tarde',sub:'12h – 18h'},
+    {k:'N',lbl:'🌙 Noite',cls:'noite',sub:'18h – 06h'},
+  ];
+  const badges = shifts.map(s=>{
+    const d=sh[s.k]||[0,0,0,[]];
+    if(d[1]===0) return '';
+    const sid=`sh_${name_id}_${mn}_${s.k}`;
+    return`<div class="shift-bdg ${s.cls}" onclick="openShiftDetail('${sid}','${s.lbl}',${JSON.stringify(d[3])})" title="Clique para ver atendimentos">
+      <div class="shift-title">${s.lbl}</div>
+      <div class="shift-pct">${d[2]}%</div>
+      <div class="shift-sub">✓${d[0]} de ${d[1]} corretos · ${s.sub}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+  return badges?`<div class="shift-row">${badges}</div>`:'';
+}
+
+// ── TOKEN DELAY ─────────────────────────────────────────────
+function tokDelayHtml(td){
+  if(!td) return '';
+  const avg=td[0], n=td[1], mn=td[2], mx=td[3];
+  const avgCls=Math.abs(avg)<=15?'tdc-ok':Math.abs(avg)<=30?'tdc-warn':'tdc-bad';
+  const avgLbl=avg<0?`${Math.abs(avg)} min antes`:`${avg} min após`;
+  return`<div class="tok-delay-box">
+    <div class="tok-delay-icon">⏱️</div>
+    <div class="tok-delay-body">
+      <div class="tok-delay-title">Tempo de Inserção do Token (base: ${n} atendimentos corretos)</div>
+      <div class="tok-delay-vals">
+        <span class="tok-delay-chip ${avgCls}">Média: ${avgLbl}</span>
+        <span class="tok-delay-chip tdc-avg">Mín: ${mn} min</span>
+        <span class="tok-delay-chip tdc-avg">Máx: ${mx} min</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── SHIFT DETAIL MODAL ──────────────────────────────────────
+function openShiftDetail(sid, lbl, atts){
+  const isManha = lbl.includes('Manhã');
+  const isTarde = lbl.includes('Tarde');
+  const bg = isManha?'#ca8a04':isTarde?'#d97706':'#2563eb';
+  document.getElementById('sdm_hdr').style.background = bg;
+  document.getElementById('sdm_lbl').textContent = lbl;
+  const chips = atts.map(n=>`<span class="sdm-chip">#${n}</span>`).join('');
+  document.getElementById('sdm_chips').innerHTML = chips || '<span style="color:#94a3b8;font-size:.75rem">Sem atendimentos</span>';
+  document.getElementById('sdm_count').textContent = `${atts.length} atendimento(s)`;
+  document.getElementById('shiftDetailOv').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeShiftDetail(){document.getElementById('shiftDetailOv').classList.remove('open');document.body.style.overflow='';}
+
 function tg(id){document.getElementById(id).classList.toggle('open')}
+
+function filterMonth(btn, month, name_id){
+  // Update tab styles
+  btn.closest('.mtabs').querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  // Show/hide month views
+  const view = document.getElementById('mview_'+name_id);
+  if(!view) return;
+  view.querySelectorAll('[data-month]').forEach(el=>{
+    el.style.display = (el.dataset.month===month) ? 'block' : 'none';
+  });
+}
 function closeM(){document.getElementById('ov').classList.remove('open');document.body.style.overflow=''}
 function openRules(){document.getElementById('rov').classList.add('open');document.body.style.overflow='hidden'}
 function closeRules(){document.getElementById('rov').classList.remove('open');document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeRules();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeRules();closeShiftDetail();}});
 initHeader();render();
 </script>
 </body>
