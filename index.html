@@ -277,6 +277,20 @@ hr.rd{border:none;border-top:1px solid #e2e8f0;margin:12px 0}
 .sdm-body{padding:14px 16px}
 .sdm-chips{display:flex;flex-wrap:wrap;gap:5px}
 .sdm-chip{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px;background:#f1f5f9;color:#334155;cursor:default}
+
+/* MAP PIN BTN */
+.map-pin-btn{background:none;border:none;cursor:pointer;font-size:.9rem;padding:1px 4px;border-radius:4px;transition:background .15s}
+.map-pin-btn:hover{background:#dbeafe}
+/* MAP MODAL */
+.map-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;display:none;align-items:center;justify-content:center;padding:14px}
+.map-ov.open{display:flex}
+.map-modal{background:#fff;border-radius:14px;width:100%;max-width:680px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.map-hdr{background:var(--green);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.map-hdr h3{color:#fff;font-size:.85rem;font-weight:700}
+.map-info{padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;flex-shrink:0}
+.map-info-row{display:flex;gap:10px;flex-wrap:wrap;font-size:.72rem;color:#475569}
+.map-badge{padding:3px 10px;border-radius:6px;font-weight:600;font-size:.7rem}
+.map-iframe{flex:1;min-height:360px;border:none;width:100%}
 </style>
 </head>
 <body>
@@ -327,6 +341,20 @@ hr.rd{border:none;border-top:1px solid #e2e8f0;margin:12px 0}
       <div class="mcrw" id="mcrw"></div>
     </div>
     <div class="mbody" id="mbody"></div>
+  </div>
+</div>
+
+<!-- MAP MODAL -->
+<div class="map-ov" id="mapOv" onclick="if(event.target===this)closeMap()">
+  <div class="map-modal">
+    <div class="map-hdr">
+      <h3 id="mapTitle">🗺️ Mapa do Atendimento</h3>
+      <button class="mcls" onclick="closeMap()">✕</button>
+    </div>
+    <div class="map-info">
+      <div class="map-info-row" id="mapInfo"></div>
+    </div>
+    <iframe class="map-iframe" id="mapFrame" src="" allowfullscreen></iframe>
   </div>
 </div>
 
@@ -575,7 +603,7 @@ function miniRk(list,max=3){
 function openM(name){
   const v=D[name];if(!v)return;
   const pu=isPu(v),c=cat(v[7]),clr=pu?'#7c3aed':CCLR[c];
-  const name_id = name.replace(/[^a-zA-Z0-9]/g,'_').slice(0,20);
+  const name_id=name.replace(/[^a-zA-Z0-9]/g,'_').slice(0,20);
 
   document.getElementById('mhdr').className='mhdr '+(pu?'pu':'ng');
   document.getElementById('mtitle').textContent=name;
@@ -588,43 +616,42 @@ function openM(name){
       <span class="mci">Total: <strong>${v[1]}</strong></span>
       <span class="mci">Base: <strong>${v[6]}</strong></span>`;
 
+  // att: [num,dt_rem,shift,cond,enf,cl,disp,dt_tok,delay,km,lat1,lon1,lat2,lon2,end_orig,end_dest]
+  //       0   1      2     3    4   5  6    7       8     9  10   11   12   13   14       15
   const SHIFT_ICO={M:'🌅',T:'☀️',N:'🌙'};
   const SHIFT_TTL={M:'Manhã 6–12h',T:'Tarde 12–18h',N:'Noite 18–6h'};
 
-  // att format: [num, dt_rem, dt_reg, shift, cond, enf, cl, disp, dt_tok, delay]
-  //              0    1       2       3      4     5    6   7     8       9
   function attRow(a){
-    const cl=a[6]??3;
-    const rc=RCLS[cl]||'';
-    const tc=TCLS[cl]||'';
-    const lbl=CLBL[cl]||'?';
-    const delayVal=a[9];
+    const cl=a[5]??3;
+    const delayVal=a[8];
     const delayCl=delayVal===null||delayVal===undefined?'#94a3b8':Math.abs(delayVal)<=15?'#16a34a':Math.abs(delayVal)<=30?'#d97706':'#dc2626';
-    const dispShort=a[7]?a[7].split(' - ').pop():'—';
-    return`<tr class="${rc}">
+    const kmStr=a[9]!=null?`${a[9]} km`:'—';
+    const hasMap=a[10]!=null&&a[12]!=null;
+    return`<tr class="${RCLS[cl]||''}">
       <td><span class="anum">#${a[0]}</span></td>
       <td style="white-space:nowrap;color:#64748b;font-size:.65rem">${a[1]||'—'}</td>
-      <td style="white-space:nowrap;color:#94a3b8;font-size:.65rem">${a[2]||'—'}</td>
-      <td style="text-align:center;font-size:.8rem" title="${SHIFT_TTL[a[3]]||''}">${SHIFT_ICO[a[3]]||'?'}</td>
+      <td style="text-align:center;font-size:.82rem" title="${SHIFT_TTL[a[2]]||''}">${SHIFT_ICO[a[2]]||'?'}</td>
+      <td><span class="apers" title="${a[3]||''}">${a[3]||'—'}</span></td>
       <td><span class="apers" title="${a[4]||''}">${a[4]||'—'}</span></td>
-      <td><span class="apers" title="${a[5]||''}">${a[5]||'—'}</span></td>
-      <td><span class="atag ${tc}">${lbl}</span></td>
-      <td style="font-size:.62rem;color:#475569;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${a[7]||''}">${dispShort}</td>
-      <td style="white-space:nowrap;font-size:.65rem;color:#7c3aed;font-weight:600">${a[8]||'—'}</td>
-      <td style="text-align:center;font-size:.65rem;font-weight:700;color:${delayCl}">${(delayVal===null||delayVal===undefined)?'—':delayVal}</td>
+      <td><span class="atag ${TCLS[cl]}">${CLBL[cl]}</span></td>
+      <td style="font-size:.62rem;color:#475569;white-space:nowrap">${a[6]||'—'}</td>
+      <td style="white-space:nowrap;font-size:.65rem;color:#7c3aed;font-weight:600">${a[7]||'—'}</td>
+      <td style="text-align:center;font-size:.65rem;font-weight:700;color:${delayCl}">${(delayVal===null||delayVal===undefined)?'—':delayVal+'min'}</td>
+      <td style="text-align:center;font-size:.65rem;font-weight:600;color:#0369a1">${kmStr}</td>
+      <td style="text-align:center">${hasMap?`<button class="map-pin-btn" onclick="openMapAtt(${a[0]},${a[10]},${a[11]},${a[12]},${a[13]},'${(a[14]||'').replace(/'/g,"\\'")}','${(a[15]||'').replace(/'/g,"\\'")}')">📍</button>`:'—'}</td>
     </tr>`;
   }
 
   const sortedMeses=Object.entries(v[10]).sort((a,b)=>+a[0]-+b[0]);
   const cumCorreto=v[2],cumSemMov=v[3],cumWeb=v[4],cumErro=v[5];
 
-  const mhtml=sortedMeses.map(([mn,m])=>{
-    // m = [label,total,correto,sem_mov,web,erro,base,uso,rc_c,rc_e,atts,shifts,tok_delay]
-    //       0     1     2       3       4   5    6    7   8    9    10   11     12
+  function monthBlock(mn,m){
+    // m=[label,total,correto,sem_mov,web,erro,base,uso,rc_c,rc_e,atts,shifts,tok_delay]
+    //    0     1     2       3       4   5    6    7   8    9    10   11     12
     const mclr=pu?'#7c3aed':CCLR[cat(m[7])];
     const attRows=(m[10]||[]).map(attRow).join('');
-    return`<div class="mi" id="mi${mn}">
-      <div class="mih" onclick="tg('mi${mn}')">
+    return`<div class="mi" id="mi${mn}_${name_id}">
+      <div class="mih" onclick="tg('mi${mn}_${name_id}')">
         <span class="mi-nm">📅 ${m[0]}</span>
         <div class="mi-r">
           <span class="mi-tot">${m[1]} atend.</span>
@@ -647,13 +674,16 @@ function openM(name){
         </div>
         <div class="atw">
           <table class="att">
-            <thead><tr><th>Nº</th><th>Remoção</th><th>Registro</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token em</th><th>Δ min</th></tr></thead>
+            <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token em</th><th>Δ tempo</th><th>KM</th><th>Mapa</th></tr></thead>
             <tbody>${attRows}</tbody>
           </table>
         </div>
       </div>
     </div>`;
-  });
+  }
+
+  // Build month blocks
+  const mBlocks=sortedMeses.map(([mn,m])=>monthBlock(mn,m));
 
   document.getElementById('mbody').innerHTML=`
     <div class="um ${pu?'pum':''}">
@@ -681,11 +711,15 @@ function openM(name){
     ${tokDelayHtml(v[13])}
 
     <div class="stitle">Detalhe por Mês</div>
+
+    <!-- MONTH TABS -->
     <div class="mtabs" id="mtabs_${name_id}">
       <div class="mtab all-tab active" onclick="filterMonth(this,'all','${name_id}')">📊 Acumulado</div>
       ${sortedMeses.map(([mn,m])=>`<div class="mtab" onclick="filterMonth(this,'${mn}','${name_id}')">${m[0]}</div>`).join('')}
     </div>
+
     <div id="mview_${name_id}">
+      <!-- ACUMULADO -->
       <div data-month="all" style="display:block;padding:10px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0">
         <div class="ms4">
           <div class="msc c0"><div class="msc-n">${cumCorreto}</div><div class="msc-l">✅ Correto</div></div>
@@ -700,7 +734,8 @@ function openM(name){
           </div>
         </div>
       </div>
-      ${mhtml.map((h,i)=>`<div data-month="${sortedMeses[i][0]}" style="display:none">${h}</div>`).join('')}
+      <!-- MESES INDIVIDUAIS -->
+      ${mBlocks.map((h,i)=>`<div data-month="${sortedMeses[i][0]}" style="display:none">${h}</div>`).join('')}
     </div>`;
 
   document.getElementById('ov').classList.add('open');
@@ -765,6 +800,35 @@ function closeShiftDetail(){document.getElementById('shiftDetailOv').classList.r
 
 function tg(id){document.getElementById(id).classList.toggle('open')}
 
+function openMapAtt(num, lat1, lon1, lat2, lon2, endOrig, endDest){
+  document.getElementById('mapTitle').textContent = `🗺️ Atendimento #${num}`;
+  // KM recalculation using haversine
+  function hav(la1,lo1,la2,lo2){
+    const R=6371,toR=x=>x*Math.PI/180;
+    const dLat=toR(la2-la1),dLon=toR(lo2-lo1);
+    const a=Math.sin(dLat/2)**2+Math.cos(toR(la1))*Math.cos(toR(la2))*Math.sin(dLon/2)**2;
+    return(R*2*Math.asin(Math.sqrt(a))*1.35).toFixed(1);
+  }
+  const km=hav(lat1,lon1,lat2,lon2);
+  document.getElementById('mapInfo').innerHTML=`
+    <span class="map-badge" style="background:#dcfce7;color:#14532d">📍 Origem</span>
+    <span style="flex:1">${endOrig||'—'}</span>
+    <span class="map-badge" style="background:#dbeafe;color:#1e40af">🏁 Destino</span>
+    <span style="flex:1">${endDest||'—'}</span>
+    <span class="map-badge" style="background:#fef3c7;color:#78350f">📏 ${km} km estimado</span>
+  `;
+  // Embed Google Maps directions iframe
+  const url=`https://www.google.com/maps/embed/v1/directions?key=AIzaSyB-PLACEHOLDER&origin=${lat1},${lon1}&destination=${lat2},${lon2}&mode=driving`;
+  // Fallback: use openstreetmap
+  const osmUrl=`https://www.openstreetmap.org/export/embed.html?bbox=${Math.min(lon1,lon2)-0.05},${Math.min(lat1,lat2)-0.05},${Math.max(lon1,lon2)+0.05},${Math.max(lat1,lat2)+0.05}&layer=mapnik&marker=${lat1},${lon1}`;
+  // Use a static map approach via maps.google.com
+  const googleUrl=`https://maps.google.com/maps?q=${lat2},${lon2}&z=12&output=embed`;
+  document.getElementById('mapFrame').src=osmUrl;
+  document.getElementById('mapOv').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMap(){document.getElementById('mapOv').classList.remove('open');document.getElementById('mapFrame').src='';document.body.style.overflow='';}
+
 function filterMonth(btn, month, name_id){
   // Update tab styles
   btn.closest('.mtabs').querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
@@ -779,7 +843,7 @@ function filterMonth(btn, month, name_id){
 function closeM(){document.getElementById('ov').classList.remove('open');document.body.style.overflow=''}
 function openRules(){document.getElementById('rov').classList.add('open');document.body.style.overflow='hidden'}
 function closeRules(){document.getElementById('rov').classList.remove('open');document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeRules();closeShiftDetail();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeRules();closeShiftDetail();closeMap();}});
 initHeader();render();
 </script>
 </body>
