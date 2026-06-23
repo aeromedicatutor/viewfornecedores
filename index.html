@@ -233,13 +233,13 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .att th{text-align:left;padding:6px 8px;background:#f9fafb;color:#9ca3af;font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid #e5e7eb;white-space:nowrap;position:sticky;top:0}
 .att td{padding:6px 8px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
 .att tr:last-child td{border-bottom:none}
-.att tr.r0 td{background:#f0fdf4}.att tr.r1 td{background:#fffbeb}
-.att tr.r2 td{background:#f5f3ff}.att tr.r3 td{background:#fff1f2}
+.att tr.r0 td{background:#f0fdf4}.att tr.r1 td{background:#fefce8}
+.att tr.r2 td{background:#fffbeb}.att tr.r3 td{background:#f5f3ff}.att tr.r4 td{background:#fff1f2}
 .att tr:hover td{filter:brightness(.97)}
 .anum{font-weight:700;color:#111827;font-size:.72rem}
 .atag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:.6rem;font-weight:600;white-space:nowrap}
-.atag.t0{background:#dcfce7;color:#14532d}.atag.t1{background:#fef3c7;color:#92400e}
-.atag.t2{background:#ede9fe;color:#4c1d95}.atag.t3{background:#fee2e2;color:#991b1b}
+.atag.t0{background:#dcfce7;color:#14532d}.atag.t1{background:#fef9c3;color:#713f12}
+.atag.t2{background:#fef3c7;color:#92400e}.atag.t3{background:#ede9fe;color:#4c1d95}.atag.t4{background:#fee2e2;color:#991b1b}
 .apers{font-size:.65rem;color:#374151;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .map-btn{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:5px;padding:2px 7px;font-size:.62rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s}
 .map-btn:hover{background:#dbeafe}
@@ -384,11 +384,11 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
       <table class="rt">
         <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Inserção Token</th><th>Resultado</th></tr></thead>
         <tbody>
-          <tr><td>SIM</td><td>&gt;5 pts</td><td>SIM ou NÃO</td><td>Com horário</td><td><span class="rtag ok">✅ CORRETO</span></td></tr>
-          <tr><td>SIM</td><td>≤5 pts</td><td>SIM ou NÃO</td><td>Com horário</td><td><span class="rtag sm">📍 SEM MOVIMENTAÇÃO</span></td></tr>
-          <tr><td>NÃO</td><td>≤5 pts</td><td>SIM</td><td>Sem horário</td><td><span class="rtag wb">🌐 VIA WEB</span></td></tr>
-          <tr><td>NÃO</td><td>≤5 pts</td><td>NÃO</td><td>Sem horário</td><td><span class="rtag er">❌ ERRO</span></td></tr>
-          <tr><td>NÃO</td><td>&gt;5 pts</td><td>SIM ou NÃO</td><td>Sem horário</td><td><span class="rtag er">❌ ERRO</span></td></tr>
+          <tr><td>SIM</td><td>&gt;5 pts</td><td>—</td><td>Com dispositivo</td><td><span class="rtag ok">✅ CORRETO</span></td></tr>
+          <tr><td>SIM</td><td>&gt;5 pts</td><td>—</td><td>Sem dispositivo</td><td><span class="rtag" style="background:#fef9c3;color:#713f12">⚠️ CORRETO C/ MOD.</span></td></tr>
+          <tr><td>SIM</td><td>≤5 pts</td><td>—</td><td>—</td><td><span class="rtag sm">📍 SEM MOVIMENTAÇÃO</span></td></tr>
+          <tr><td>NÃO</td><td>≤5 pts</td><td>SIM</td><td>—</td><td><span class="rtag wb">🌐 VIA WEB</span></td></tr>
+          <tr><td>NÃO</td><td>qualquer</td><td>NÃO</td><td>—</td><td><span class="rtag er">❌ ERRO</span></td></tr>
         </tbody>
       </table>
       <hr class="rd">
@@ -425,13 +425,14 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 <script>
 // ═══════════════════════════════════════════════════════════════
 // DATA FORMAT
-// supplier: [ct,total,correto,sem_mov,web,erro,base,uso,rc,re,meses,tr,shifts,tok_delay]
-//            0   1     2       3       4   5    6   7   8  9  10    11  12     13
-// month:    [label,total,correto,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
-//            0     1     2       3       4   5    6   7   8  9  10   11     12
+// supplier: [ct,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,meses,tr,shifts,tok_delay]
+//            0   1     2       3       4       5   6    7   8   9  10 11    12  13     14
+// month:    [label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
+//            0     1     2       3       4       5   6    7   8   9  10 11   12     13
 // att:      [num,dt_rem,shift,cond,enf,cl,disp,dt_tok,delay,km,lat1,lon1,lat2,lon2,eo,ed]
 //            0   1      2     3    4   5  6    7       8     9  10   11   12   13   14 15
-// ranking:  [[name,correto,erro],...]
+// cl: 0=CORRETO, 1=CORRETO_MOD(sem disp), 2=SEM_MOV, 3=WEB, 4=ERRO
+// ranking:  [[name,correto,erro],...]  — 0+1 count as correto
 // shifts:   {M:[correto,total,pct,[nums]],T:...,N:...}
 // tok_delay:[avg,n,min,max]
 // training: [status_int,utilizando,motivo,dt_trein,dias]
@@ -444,9 +445,9 @@ let activeF='all';
 const CCLR={A:'#059669',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 const CTLBL={1:'⏳ Pendente',2:'🔧 Em Instalação',3:'📵 Não Usa APP',4:'🔗 Integrada IRIS'};
 const CTBNR={1:'bp',2:'bi',3:'bn',4:'bint'};
-const CLBL=['✅ Correto','📍 Sem Movimentação','🌐 WEB','❌ Erro'];
-const TCLS=['t0','t1','t2','t3'];
-const RCLS=['r0','r1','r2','r3'];
+const CLBL=['✅ Correto','⚠️ Correto c/ Mod.','📍 Sem Movimentação','🌐 WEB','❌ Erro'];
+const TCLS=['t0','t1','t2','t3','t4'];
+const RCLS=['r0','r1','r2','r3','r4'];
 const SHIFT_ICO={M:'🌅',T:'☀️',N:'🌙'};
 const SHIFT_TTL={M:'Manhã 6–12h',T:'Tarde 12–18h',N:'Noite 18–6h'};
 
@@ -500,9 +501,10 @@ function render(){
     const sn=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const bnr=pu?`<div class="cbnr ${CTBNR[v[0]]}">${CTLBL[v[0]]}</div>`:'';
     const pills=[
-      v[4]>0?`<span class="pill web">🌐 ${v[4]}</span>`:'',
-      v[3]>0?`<span class="pill sm">📍 ${v[3]}</span>`:'',
-      v[5]>0?`<span class="pill err">❌ ${v[5]}</span>`:'',
+      v[5]>0?`<span class="pill web">🌐 ${v[5]}</span>`:'',
+      v[3]>0?`<span class="pill" style="background:#fef3c7;color:#92400e">⚠️ ${v[3]}</span>`:'',
+      v[4]>0?`<span class="pill sm">📍 ${v[4]}</span>`:'',
+      v[6]>0?`<span class="pill err">❌ ${v[6]}</span>`:'',
     ].filter(Boolean).join('');
     // Training chip
     const tr=v[11];
@@ -521,9 +523,9 @@ function render(){
       <div class="pb"><div class="pbf" style="width:${v[7]}%"></div></div>
       <div class="cs4">
         <div class="cs"><div class="cs-n">${v[1]}</div><div class="cs-l">Total</div></div>
-        <div class="cs"><div class="cs-n" style="color:#059669">${v[2]}</div><div class="cs-l">Correto</div></div>
-        <div class="cs"><div class="cs-n" style="color:#7c3aed">${v[4]}</div><div class="cs-l">WEB</div></div>
-        <div class="cs"><div class="cs-n" style="color:#dc2626">${v[5]+v[3]}</div><div class="cs-l">Erros</div></div>
+        <div class="cs"><div class="cs-n" style="color:#059669">${v[2]+v[3]}</div><div class="cs-l">Correto</div></div>
+        <div class="cs"><div class="cs-n" style="color:#7c3aed">${v[5]}</div><div class="cs-l">WEB</div></div>
+        <div class="cs"><div class="cs-n" style="color:#dc2626">${v[6]+v[4]}</div><div class="cs-l">Erros</div></div>
       </div>
       ${pills?`<div class="cpills">${pills}</div>`:''}
       ${trChip}
@@ -573,19 +575,19 @@ function shiftHtml(sh,mn,nid){
   }).filter(Boolean).join('');
   return badges?`<div class="shift-row">${badges}</div>`:'';
 }
-function tokHtml(td){
-  if(!td)return'';
-  const avg=td[0],n=td[1],mn=td[2],mx=td[3];
-  const cls=Math.abs(avg)<=15?'tok-ok':Math.abs(avg)<=30?'tok-warn':'tok-bad';
-  const lbl=avg<0?`${Math.abs(avg)}min antes`:`${avg}min após`;
-  return`<div class="tok-box">
-    <div style="flex:1">
-      <div class="tok-title">⏱️ Tempo médio de inserção do token (${n} corretos)</div>
-      <div class="tok-vals">
-        <span class="tok-chip ${cls}">Média: ${lbl}</span>
-        <span class="tok-chip tok-gray">Mín ${mn}min</span>
-        <span class="tok-chip tok-gray">Máx ${mx}min</span>
-      </div>
+function tokBadge(td){
+  if(!td) return '';
+  const avg=td[0], n=td[1], mn=td[2], mx=td[3];
+  const absAvg=Math.abs(avg);
+  const clr=absAvg<=15?'#059669':absAvg<=30?'#d97706':'#dc2626';
+  const bg=absAvg<=15?'#dcfce7':absAvg<=30?'#fef3c7':'#fee2e2';
+  const lbl=avg<0?`${absAvg} min antes`:`${avg} min após`;
+  return`<div style="display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:20px;background:${bg};border:1px solid ${clr}30;margin:6px 0">
+    <span style="font-size:.85rem">⏱️</span>
+    <div>
+      <span style="font-size:.68rem;color:${clr};font-weight:700">Inserção do Token</span>
+      <span style="font-size:.68rem;color:${clr};margin-left:6px;font-weight:600">Média ${lbl}</span>
+      <span style="font-size:.63rem;color:#9ca3af;margin-left:6px">· Mín ${mn}min · Máx ${mx}min · ${n} atend.</span>
     </div>
   </div>`;
 }
@@ -639,8 +641,10 @@ function attRow(a){
 
 // ── MONTH BLOCK ──────────────────────────────────────────────
 function monthBlock(mn,m,pu,nid){
-  const mclr=pu?'#7c3aed':CCLR[cat(m[7])];
-  const rows=(m[10]||[]).map(attRow).join('');
+  // m=[label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
+  //    0     1     2       3       4       5   6    7   8   9  10 11   12     13
+  const mclr=pu?'#7c3aed':CCLR[cat(m[8])];
+  const rows=(m[11]||[]).map(attRow).join('');
   return`<div class="mi" id="mi_${nid}_${mn}">
     <div class="mih" onclick="tg('mi_${nid}_${mn}')">
       <span class="mi-nm">📅 ${m[0]}</span>
@@ -658,16 +662,16 @@ function monthBlock(mn,m,pu,nid){
         <div class="msc c3"><div class="msc-n">${m[5]}</div><div class="msc-l">❌ Erro</div></div>
       </div>
       <div style="padding:0 12px">
-        ${shiftHtml(m[11],mn,nid)}
-        ${tokHtml(m[12])}
+        ${shiftHtml(m[12],mn,nid)}
+        ${tokBadge(m[13])}
       </div>
       <div class="mrk">
-        <div class="mrk-col"><h4>🚗 Condutores</h4>${miniRk(m[8])}</div>
-        <div class="mrk-col"><h4>🩺 Enfermeiros</h4>${miniRk(m[9])}</div>
+        <div class="mrk-col"><h4>🚗 Condutores</h4>${miniRk(m[9])}</div>
+        <div class="mrk-col"><h4>🩺 Enfermeiros</h4>${miniRk(m[10])}</div>
       </div>
       <div class="atw">
         <table class="att">
-          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token em</th><th>Δ tempo</th><th>KM</th><th>Mapa</th></tr></thead>
+          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo · Token</th><th>KM</th><th>Mapa</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -708,23 +712,24 @@ function openM(name){
 
     <div class="stitle">Resultado dos Atendimentos</div>
     <div class="bkgrid">
-      <div class="bk c0"><div class="bk-n">${v[2]}</div><div class="bk-lbl">✅ CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5 pts</div></div>
-      <div class="bk c1"><div class="bk-n">${v[3]}</div><div class="bk-lbl">📍 SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
-      <div class="bk c2"><div class="bk-n">${v[4]}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
-      <div class="bk c3"><div class="bk-n">${v[5]}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
+      <div class="bk c0"><div class="bk-n">${v[2]}</div><div class="bk-lbl">✅ CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5 + Dispositivo</div></div>
+      <div class="bk" style="background:#fffbeb;border-color:#fde68a"><div class="bk-n" style="color:#d97706">${v[3]}</div><div class="bk-lbl" style="color:#92400e">⚠️ CORRETO C/ MODIFICAÇÃO</div><div class="bk-sub">Token SIM + Rastreio &gt;5 · sem dispositivo</div></div>
+      <div class="bk c1"><div class="bk-n">${v[4]}</div><div class="bk-lbl">📍 SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
+      <div class="bk c2"><div class="bk-n">${v[5]}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
+      <div class="bk c3"><div class="bk-n">${v[6]}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
     </div>
 
     <div class="stitle">Treinamento</div>
     ${trAlertHtml(v)}
 
     <div class="stitle">Turnos — Geral</div>
-    ${shiftHtml(v[12],'all',nid)||'<div style="font-size:.72rem;color:#9ca3af">Sem dados de turno</div>'}
-    ${tokHtml(v[13])}
+    ${shiftHtml(v[13],'all',nid)||'<div style="font-size:.72rem;color:#9ca3af">Sem dados de turno</div>'}
+    ${tokBadge(v[14])}
 
     <div class="stitle">Ranking da Equipe — Acumulado</div>
     <div class="rkgrid">
-      <div class="rkcard"><div class="rkcard-hdr"><span>🚗</span><h3>Condutores</h3></div><div class="rklist">${rkRows(v[8])}</div></div>
-      <div class="rkcard"><div class="rkcard-hdr"><span>🩺</span><h3>Enfermeiros</h3></div><div class="rklist">${rkRows(v[9])}</div></div>
+      <div class="rkcard"><div class="rkcard-hdr"><span>🚗</span><h3>Condutores</h3></div><div class="rklist">${rkRows(v[9])}</div></div>
+      <div class="rkcard"><div class="rkcard-hdr"><span>🩺</span><h3>Enfermeiros</h3></div><div class="rklist">${rkRows(v[10])}</div></div>
     </div>
 
     <div class="stitle">Detalhe por Mês</div>
