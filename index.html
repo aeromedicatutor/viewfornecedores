@@ -464,7 +464,7 @@ function initHeader(){
   const vals=Object.values(D);
   const ta=vals.reduce((s,v)=>s+v[1],0);
   const cats={A:0,B:0,C:0,D:0,F:0};let pu=0;
-  vals.forEach(v=>{if(isPu(v))pu++;else cats[cat(v[7])]++;});
+  vals.forEach(v=>{if(isPu(v))pu++;else cats[cat(v[8])]++;});
   document.getElementById('hstats').innerHTML=`
     <div class="hs"><div class="hs-n">${Object.keys(D).length}</div><div class="hs-l">Fornecedores</div></div>
     <div class="hs"><div class="hs-n">${ta.toLocaleString('pt-BR')}</div><div class="hs-l">Atendimentos</div></div>
@@ -487,23 +487,23 @@ function render(){
     const mq=!q||n.toLowerCase().includes(q);
     if(activeF==='pu')  return mq&&isPu(v);
     if(activeF==='all') return mq;
-    return mq&&!isPu(v)&&cat(v[7])===activeF;
+    return mq&&!isPu(v)&&cat(v[8])===activeF;
   }).sort((a,b)=>{
     const ap=isPu(a[1])?1:0,bp=isPu(b[1])?1:0;
     if(ap!==bp)return ap-bp;
-    return b[1][7]-a[1][7];
+    return b[1][8]-a[1][8];
   });
   document.getElementById('ri').textContent=`${entries.length} de ${Object.keys(D).length} fornecedores`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
 
   document.getElementById('grid').innerHTML=entries.map(([n,v])=>{
-    const pu=isPu(v),cl=pu?'cpu':catcls(cat(v[7]));
+    const pu=isPu(v),cl=pu?'cpu':catcls(cat(v[8]));
     const sn=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const bnr=pu?`<div class="cbnr ${CTBNR[v[0]]}">${CTLBL[v[0]]}</div>`:'';
     const pills=[
       v[5]>0?`<span class="pill web">🌐 ${v[5]}</span>`:'',
-      v[3]>0?`<span class="pill" style="background:#fef3c7;color:#92400e">⚠️ ${v[3]}</span>`:'',
+      v[3]>0?`<span class="pill" style="background:#fef9c3;color:#713f12">⚠️ ${v[3]}</span>`:'',
       v[4]>0?`<span class="pill sm">📍 ${v[4]}</span>`:'',
       v[6]>0?`<span class="pill err">❌ ${v[6]}</span>`:'',
     ].filter(Boolean).join('');
@@ -518,10 +518,10 @@ function render(){
     }
     return`<div class="card ${cl}" data-name="${sn}" onclick="openM(this.dataset.name)">
       ${bnr}
-      <div class="ch"><div class="cn">${n}</div><span class="cbdg ${cl}">${pu?CTLBL[v[0]]:'CAT '+cat(v[7])}</span></div>
-      <div class="cpct">${v[7]}%</div>
-      <div class="cpl">usabilidade · base ${v[6]} atend.</div>
-      <div class="pb"><div class="pbf" style="width:${v[7]}%"></div></div>
+      <div class="ch"><div class="cn">${n}</div><span class="cbdg ${cl}">${pu?CTLBL[v[0]]:'CAT '+cat(v[8])}</span></div>
+      <div class="cpct">${v[8]}%</div>
+      <div class="cpl">usabilidade · base ${v[7]} atend.</div>
+      <div class="pb"><div class="pbf" style="width:${v[8]}%"></div></div>
       <div class="cs4">
         <div class="cs"><div class="cs-n">${v[1]}</div><div class="cs-l">Total</div></div>
         <div class="cs"><div class="cs-n" style="color:#059669">${v[2]+v[3]}</div><div class="cs-l">Correto</div></div>
@@ -683,16 +683,16 @@ function monthBlock(mn,m,pu,nid){
 // ── OPEN MODAL ───────────────────────────────────────────────
 function openM(name){
   const v=D[name];if(!v)return;
-  const pu=isPu(v),c=cat(v[7]),clr=pu?'#7c3aed':CCLR[c];
+  const pu=isPu(v),c=cat(v[8]),clr=pu?'#7c3aed':CCLR[c];
   const nid=name.replace(/[^a-zA-Z0-9]/g,'_').slice(0,20);
 
   document.getElementById('mhdr').className='mhdr '+(pu?'pu':'ng');
   document.getElementById('mtitle').textContent=name;
   document.getElementById('mcrw').innerHTML=pu
     ?`<span class="mcbdg" style="background:rgba(255,255,255,.18);color:#fff">${CTLBL[v[0]]}</span>
-      <span class="mci">Usabilidade: <strong>${v[7]}%</strong></span><span class="mci">Total: <strong>${v[1]}</strong></span>`
+      <span class="mci">Usabilidade: <strong>${v[8]}%</strong></span><span class="mci">Total: <strong>${v[1]}</strong></span>`
     :`<span class="mcbdg" style="background:${clr}22;color:${clr}">CATEGORIA ${c}</span>
-      <span class="mci">Usabilidade: <strong>${v[7]}%</strong></span>
+      <span class="mci">Usabilidade: <strong>${v[8]}%</strong></span>
       <span class="mci">Total: <strong>${v[1]}</strong></span>
       <span class="mci">Base: <strong>${v[6]}</strong></span>`;
 
@@ -700,8 +700,8 @@ function openM(name){
 
   document.getElementById('mbody').innerHTML=`
     <div class="um ${pu?'pum':''}">
-      <div class="utop"><span class="ulbl">Índice de Usabilidade</span><span class="upct" style="color:${clr}">${v[7]}%</span></div>
-      <div class="ubar"><div class="ubf" style="width:${v[7]}%;background:${clr}"></div></div>
+      <div class="utop"><span class="ulbl">Índice de Usabilidade</span><span class="upct" style="color:${clr}">${v[8]}%</span></div>
+      <div class="ubar"><div class="ubf" style="width:${v[8]}%;background:${clr}"></div></div>
       <div class="uleg">
         <div class="uli"><div class="uld" style="background:#059669"></div>A 100–92%</div>
         <div class="uli"><div class="uld" style="background:#2563eb"></div>B 91–82%</div>
