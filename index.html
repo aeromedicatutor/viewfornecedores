@@ -290,7 +290,7 @@ hr.rd{border:none;border-top:1px solid #e2e8f0;margin:12px 0}
 .map-info{padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;flex-shrink:0}
 .map-info-row{display:flex;gap:10px;flex-wrap:wrap;font-size:.72rem;color:#475569}
 .map-badge{padding:3px 10px;border-radius:6px;font-weight:600;font-size:.7rem}
-.map-iframe{flex:1;min-height:360px;border:none;width:100%}
+/* leaflet map is a div now */
 </style>
 </head>
 <body>
@@ -354,7 +354,12 @@ hr.rd{border:none;border-top:1px solid #e2e8f0;margin:12px 0}
     <div class="map-info">
       <div class="map-info-row" id="mapInfo"></div>
     </div>
-    <iframe class="map-iframe" id="mapFrame" src="" allowfullscreen></iframe>
+    <div id="mapRouteStats" style="padding:7px 14px;background:#eff6ff;border-bottom:1px solid #bfdbfe;display:none">
+      <span id="mapRouteDist" style="font-size:.75rem;font-weight:700;color:#1e40af;margin-right:14px"></span>
+      <span id="mapRouteTime" style="font-size:.75rem;font-weight:700;color:#1e40af"></span>
+      <span style="font-size:.68rem;color:#64748b;margin-left:10px">via rota real (OSRM)</span>
+    </div>
+    <div id="leafletMap" style="flex:1;min-height:380px;width:100%"></div>
   </div>
 </div>
 
@@ -801,32 +806,121 @@ function closeShiftDetail(){document.getElementById('shiftDetailOv').classList.r
 function tg(id){document.getElementById(id).classList.toggle('open')}
 
 function openMapAtt(num, lat1, lon1, lat2, lon2, endOrig, endDest){
-  document.getElementById('mapTitle').textContent = `🗺️ Atendimento #${num}`;
-  // KM recalculation using haversine
+  document.getElementById('mapTitle').textContent=`🗺️ Atendimento #${num}`;
+  
+  // Haversine estimate while route loads
   function hav(la1,lo1,la2,lo2){
-    const R=6371,toR=x=>x*Math.PI/180;
-    const dLat=toR(la2-la1),dLon=toR(lo2-lo1);
-    const a=Math.sin(dLat/2)**2+Math.cos(toR(la1))*Math.cos(toR(la2))*Math.sin(dLon/2)**2;
+    const R=6371,r=x=>x*Math.PI/180,dLat=r(la2-la1),dLon=r(lo2-lo1);
+    const a=Math.sin(dLat/2)**2+Math.cos(r(la1))*Math.cos(r(la2))*Math.sin(dLon/2)**2;
     return(R*2*Math.asin(Math.sqrt(a))*1.35).toFixed(1);
   }
-  const km=hav(lat1,lon1,lat2,lon2);
+  const kmEst=hav(lat1,lon1,lat2,lon2);
+
   document.getElementById('mapInfo').innerHTML=`
     <span class="map-badge" style="background:#dcfce7;color:#14532d">📍 Origem</span>
-    <span style="flex:1">${endOrig||'—'}</span>
+    <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${endOrig||lat1+','+lon1}</span>
     <span class="map-badge" style="background:#dbeafe;color:#1e40af">🏁 Destino</span>
-    <span style="flex:1">${endDest||'—'}</span>
-    <span class="map-badge" style="background:#fef3c7;color:#78350f">📏 ${km} km estimado</span>
+    <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${endDest||lat2+','+lon2}</span>
+    <span class="map-badge" style="background:#fef3c7;color:#78350f">📏 ~${kmEst} km estimado</span>
   `;
-  // Embed Google Maps directions iframe
-  const url=`https://www.google.com/maps/embed/v1/directions?key=AIzaSyB-PLACEHOLDER&origin=${lat1},${lon1}&destination=${lat2},${lon2}&mode=driving`;
-  // Fallback: use openstreetmap
-  const osmUrl=`https://www.openstreetmap.org/export/embed.html?bbox=${Math.min(lon1,lon2)-0.05},${Math.min(lat1,lat2)-0.05},${Math.max(lon1,lon2)+0.05},${Math.max(lat1,lat2)+0.05}&layer=mapnik&marker=${lat1},${lon1}`;
-  // Use a static map approach via maps.google.com
-  const googleUrl=`https://maps.google.com/maps?q=${lat2},${lon2}&z=12&output=embed`;
-  document.getElementById('mapFrame').src=osmUrl;
+  document.getElementById('mapRouteStats').style.display='none';
   document.getElementById('mapOv').classList.add('open');
   document.body.style.overflow='hidden';
+
+  // Init Leaflet map after modal is visible
+  setTimeout(()=>initLeafletMap(lat1,lon1,lat2,lon2), 80);
 }
+
+function initLeafletMap(lat1,lon1,lat2,lon2){
+  const el=document.getElementById('leafletMap');
+  el.innerHTML=''; // clear previous
+
+  // Lazy-load Leaflet CSS + JS if not yet loaded
+  function loadLeaflet(cb){
+    if(window.L){cb();return;}
+    const css=document.createElement('link');
+    css.rel='stylesheet';
+    css.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(css);
+    const js=document.createElement('script');
+    js.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    js.onload=()=>{
+      // Load Leaflet Routing Machine
+      const js2=document.createElement('script');
+      js2.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js';
+      const css2=document.createElement('link');
+      css2.rel='stylesheet';
+      css2.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.css';
+      document.head.appendChild(css2);
+      js2.onload=cb;
+      document.head.appendChild(js2);
+    };
+    document.head.appendChild(js);
+  }
+
+  loadLeaflet(()=>{
+    const midLat=(lat1+lat2)/2, midLon=(lon1+lon2)/2;
+    const map=L.map(el).setView([midLat,midLon],10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© OpenStreetMap',maxZoom:18
+    }).addTo(map);
+
+    // Custom markers
+    const iconO=L.divIcon({className:'',html:`<div style="background:#16a34a;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
+    const iconD=L.divIcon({className:'',html:`<div style="background:#dc2626;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`,iconSize:[14,14],iconAnchor:[7,7]});
+    L.marker([lat1,lon1],{icon:iconO}).addTo(map).bindPopup('📍 Origem').openPopup();
+    L.marker([lat2,lon2],{icon:iconD}).addTo(map).bindPopup('🏁 Destino');
+
+    // Route via OSRM
+    if(window.L.Routing){
+      const ctrl=L.Routing.control({
+        waypoints:[L.latLng(lat1,lon1),L.latLng(lat2,lon2)],
+        router:L.Routing.osrmv1({serviceUrl:'https://router.project-osrm.org/route/v1'}),
+        routeWhileDragging:false,
+        addWaypoints:false,
+        show:false, // hide turn-by-turn panel
+        lineOptions:{styles:[{color:'#2563eb',opacity:0.85,weight:5}]}
+      }).addTo(map);
+
+      ctrl.on('routesfound',function(e){
+        const r=e.routes[0].summary;
+        const km=(r.totalDistance/1000).toFixed(1);
+        const min=Math.round(r.totalTime/60);
+        const hrs=Math.floor(min/60);
+        const timeStr=hrs>0?`${hrs}h ${min%60}min`:`${min} min`;
+        document.getElementById('mapRouteDist').textContent=`🛣️ ${km} km (rota real)`;
+        document.getElementById('mapRouteTime').textContent=`⏱️ ${timeStr} estimado`;
+        document.getElementById('mapRouteStats').style.display='block';
+      });
+      ctrl.on('routingerror',function(){
+        // Fallback: draw straight line
+        L.polyline([[lat1,lon1],[lat2,lon2]],{color:'#f59e0b',dashArray:'8,6',weight:3}).addTo(map);
+      });
+    } else {
+      // LRM not loaded: just draw line
+      L.polyline([[lat1,lon1],[lat2,lon2]],{color:'#f59e0b',dashArray:'8,6',weight:3}).addTo(map);
+    }
+
+    // Fit bounds
+    const bounds=L.latLngBounds([[lat1,lon1],[lat2,lon2]]).pad(0.2);
+    map.fitBounds(bounds);
+
+    // Store map ref to destroy on close
+    el._leaflet_map=map;
+  });
+}
+
+function closeMap(){
+  const el=document.getElementById('leafletMap');
+  if(el&&el._leaflet_map){
+    try{el._leaflet_map.remove();}catch(e){}
+    el._leaflet_map=null;
+  }
+  el.innerHTML='';
+  document.getElementById('mapOv').classList.remove('open');
+  document.body.style.overflow='';
+}
+
 function closeMap(){document.getElementById('mapOv').classList.remove('open');document.getElementById('mapFrame').src='';document.body.style.overflow='';}
 
 function filterMonth(btn, month, name_id){
