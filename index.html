@@ -299,7 +299,8 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
   <div class="hright">
     <div class="hstats" id="hstats"></div>
     <div class="avg-box" id="avgBox"></div>
-    <button class="ibtn" onclick="openRules()" title="Regras">ⓘ</button>
+    <button class="ibtn" onclick="openRules()" title="Regras de classificação">ⓘ</button>
+    <button class="ibtn" onclick="doLogout()" title="Sair" style="background:rgba(220,38,38,.25);border-color:rgba(220,38,38,.4)">⏻</button>
   </div>
 </header>
 
@@ -405,6 +406,22 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 </div>
 
 <script src="data.js"></script>
+<script>
+// ── SESSION GUARD ────────────────────────────────────────────
+(function guardSession(){
+  const SESSION_KEY = 'amb_session';
+  const SESSION_TTL = 8 * 60 * 60 * 1000;
+  try {
+    const s = JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
+    if(!s || s.exp < Date.now()){
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.replace('login.html');
+    }
+  } catch(e){
+    window.location.replace('login.html');
+  }
+})();
+</script>
 <script>
 // ═══════════════════════════════════════════════════════════════
 // DATA FORMAT
@@ -834,6 +851,11 @@ function openRules(){document.getElementById('rov').classList.add('open');docume
 function closeRules(){document.getElementById('rov').classList.remove('open');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeRules();closeSd();closeMap();}});
 
+function doLogout(){
+  if(!confirm('Deseja sair do sistema?')) return;
+  sessionStorage.removeItem('amb_session');
+  window.location.replace('login.html');
+}
 initHeader();render();
 </script>
 </body>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Login — Monitoramento APP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f5132 0%,#1a7a4a 50%,#0d4027 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+
+.login-wrap{width:100%;max-width:380px}
+
+.login-brand{text-align:center;margin-bottom:28px}
+.login-icon{width:56px;height:56px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px}
+.login-brand h1{color:#fff;font-size:1.1rem;font-weight:700;line-height:1.3}
+.login-brand p{color:rgba(255,255,255,.55);font-size:.75rem;margin-top:4px}
+
+.login-card{background:#fff;border-radius:16px;padding:28px 28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.75rem;font-weight:600;color:#374151;margin-bottom:6px;letter-spacing:.01em}
+.field-wrap{position:relative}
+.field input{width:100%;padding:10px 40px 10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:'Inter',sans-serif;font-size:.85rem;color:#111827;outline:none;transition:all .2s;background:#f9fafb}
+.field input:focus{border-color:#0f5132;background:#fff;box-shadow:0 0 0 3px rgba(15,81,50,.08)}
+.field input::placeholder{color:#d1d5db}
+.toggle-pw{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#9ca3af;font-size:.85rem;padding:4px;transition:color .15s}
+.toggle-pw:hover{color:#374151}
+
+.error-msg{background:#fff1f2;border:1px solid #fecdd3;color:#881337;padding:9px 12px;border-radius:7px;font-size:.77rem;font-weight:500;margin-bottom:14px;display:none;align-items:center;gap:6px}
+.error-msg.show{display:flex}
+
+.btn-login{width:100%;padding:11px;background:linear-gradient(135deg,#0f5132,#1a7a4a);color:#fff;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px;letter-spacing:.01em}
+.btn-login:hover{background:linear-gradient(135deg,#0d4027,#155f3a);transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,81,50,.3)}
+.btn-login:active{transform:translateY(0)}
+.btn-login:disabled{background:#d1d5db;cursor:not-allowed;transform:none;box-shadow:none}
+
+.loading{display:none;align-items:center;justify-content:center;gap:8px;font-size:.8rem;color:#6b7280;margin-top:10px}
+.spinner{width:16px;height:16px;border:2px solid #e5e7eb;border-top-color:#0f5132;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.footer-note{text-align:center;margin-top:16px;font-size:.67rem;color:rgba(255,255,255,.4);line-height:1.5}
+.footer-note span{display:block}
+
+.lock-screen{display:none;text-align:center;padding:20px 0}
+.lock-screen .lock-icon{font-size:2rem;margin-bottom:10px}
+.lock-screen p{font-size:.8rem;color:#6b7280;margin-bottom:14px}
+.lock-countdown{font-size:1.2rem;font-weight:700;color:#dc2626}
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-brand">
+    <div class="login-icon">📡</div>
+    <h1>Monitoramento de Utilização do APP</h1>
+    <p>Fornecedores de Ambulância</p>
+  </div>
+
+  <div class="login-card">
+
+    <!-- NORMAL LOGIN FORM -->
+    <div id="loginForm">
+      <div class="error-msg" id="errMsg">
+        <span>⚠️</span><span id="errTxt">Usuário ou senha incorretos.</span>
+      </div>
+
+      <div class="field">
+        <label for="usr">Usuário</label>
+        <div class="field-wrap">
+          <input type="text" id="usr" placeholder="Digite seu usuário" autocomplete="username" autofocus>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pw">Senha</label>
+        <div class="field-wrap">
+          <input type="password" id="pw" placeholder="Digite sua senha" autocomplete="current-password">
+          <button class="toggle-pw" type="button" onclick="togglePw()" id="eyeBtn" title="Mostrar/ocultar senha">👁</button>
+        </div>
+      </div>
+
+      <button class="btn-login" id="loginBtn" onclick="doLogin()">Entrar</button>
+      <div class="loading" id="loading"><div class="spinner"></div><span>Verificando...</span></div>
+    </div>
+
+    <!-- LOCKED STATE -->
+    <div class="lock-screen" id="lockScreen">
+      <div class="lock-icon">🔒</div>
+      <p>Muitas tentativas incorretas.<br>Aguarde para tentar novamente.</p>
+      <div class="lock-countdown" id="countdown"></div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <span>🔒 Acesso restrito — dados protegidos por LGPD</span>
+    <span>As credenciais não são armazenadas neste dispositivo</span>
+  </div>
+</div>
+
+<script>
+// ── CREDENTIALS (SHA-256 hashes only — senha nunca exposta) ──
+// Para adicionar usuários, gere os hashes via:
+//   crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
+//   e converta para hex
+const CREDENTIALS = [
+  {
+    u: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+    p: '9949ccd35d2bcafe896a0effa77491c804d1d61a0abaa4387976d8a29cd93582'
+  },
+  {
+    u: '7de97367c9cdc3c6db31aa114057b65cea1a7bafc71cf0595a2931011526a0a3',
+    p: '65bcac4961a6aecc055b2ab18789c14c6fafb89b6069e508949c495bf5d1f181'
+  }
+];
+
+// Session config
+const SESSION_KEY   = 'amb_session';
+const SESSION_TTL   = 8 * 60 * 60 * 1000; // 8 horas
+const MAX_ATTEMPTS  = 5;
+const LOCK_DURATION = 5 * 60 * 1000;       // 5 minutos
+
+let lockTimer = null;
+
+// ── CHECK EXISTING SESSION ───────────────────────────────────
+(function checkSession(){
+  const s = getSession();
+  if(s && s.exp > Date.now()){
+    window.location.replace('index.html');
+  }
+})();
+
+function getSession(){
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch{ return null; }
+}
+function setSession(user){
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({user, exp: Date.now() + SESSION_TTL}));
+}
+
+// ── BRUTE FORCE PROTECTION ───────────────────────────────────
+function getAttempts(){
+  try {
+    const d = JSON.parse(localStorage.getItem('_auth_att')||'{}');
+    if(d.reset && Date.now() > d.reset){ localStorage.removeItem('_auth_att'); return {n:0}; }
+    return d;
+  } catch { return {n:0}; }
+}
+function incAttempts(){
+  const d = getAttempts();
+  d.n = (d.n||0) + 1;
+  if(d.n >= MAX_ATTEMPTS) d.reset = Date.now() + LOCK_DURATION;
+  localStorage.setItem('_auth_att', JSON.stringify(d));
+  return d;
+}
+function clearAttempts(){
+  localStorage.removeItem('_auth_att');
+}
+
+// ── SHA-256 VIA WEB CRYPTO API ───────────────────────────────
+async function sha256(str){
+  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── LOGIN LOGIC ──────────────────────────────────────────────
+async function doLogin(){
+  const usr = document.getElementById('usr').value.trim().toLowerCase();
+  const pw  = document.getElementById('pw').value;
+
+  if(!usr || !pw){ showErr('Preencha usuário e senha.'); return; }
+
+  // Check lock
+  const att = getAttempts();
+  if(att.n >= MAX_ATTEMPTS && att.reset > Date.now()){
+    showLock(att.reset); return;
+  }
+
+  // Show loading
+  setLoading(true);
+
+  // Hash inputs
+  const [hUser, hPass] = await Promise.all([sha256(usr), sha256(pw)]);
+
+  // Compare against stored hashes (constant-time approach)
+  let match = false;
+  for(const c of CREDENTIALS){
+    if(c.u === hUser && c.p === hPass){ match = true; break; }
+  }
+
+  setLoading(false);
+
+  if(match){
+    clearAttempts();
+    setSession(usr);
+    // Animate success
+    const btn = document.getElementById('loginBtn');
+    btn.textContent = '✓ Acesso liberado';
+    btn.style.background = 'linear-gradient(135deg,#059669,#047857)';
+    setTimeout(()=>{ window.location.replace('index.html'); }, 600);
+  } else {
+    const d = incAttempts();
+    const left = MAX_ATTEMPTS - d.n;
+    if(d.n >= MAX_ATTEMPTS){
+      showLock(d.reset);
+    } else {
+      showErr(`Usuário ou senha incorretos. ${left > 1 ? left+' tentativas restantes.' : '1 tentativa restante antes do bloqueio.'}`);
+      document.getElementById('pw').value = '';
+      document.getElementById('pw').focus();
+    }
+  }
+}
+
+function showErr(msg){
+  const e = document.getElementById('errMsg');
+  document.getElementById('errTxt').textContent = msg;
+  e.classList.add('show');
+  setTimeout(()=>e.classList.remove('show'), 5000);
+}
+
+function setLoading(on){
+  document.getElementById('loginBtn').disabled = on;
+  document.getElementById('loading').style.display = on ? 'flex' : 'none';
+  if(on) document.getElementById('errMsg').classList.remove('show');
+}
+
+function showLock(resetTime){
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('lockScreen').style.display = 'block';
+  startCountdown(resetTime);
+}
+
+function startCountdown(resetTime){
+  function tick(){
+    const left = Math.max(0, resetTime - Date.now());
+    const m = Math.floor(left/60000);
+    const s = Math.floor((left%60000)/1000);
+    document.getElementById('countdown').textContent = `${m}:${String(s).padStart(2,'0')}`;
+    if(left <= 0){
+      clearInterval(lockTimer);
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('lockScreen').style.display = 'none';
+      clearAttempts();
+    }
+  }
+  tick();
+  lockTimer = setInterval(tick, 1000);
+}
+
+function togglePw(){
+  const f = document.getElementById('pw');
+  const b = document.getElementById('eyeBtn');
+  if(f.type === 'password'){ f.type = 'text';    b.textContent = '🙈'; }
+  else                     { f.type = 'password'; b.textContent = '👁';  }
+}
+
+// Enter key
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Enter') doLogin();
+});
+
+// Check lock on load
+(function checkLock(){
+  const att = getAttempts();
+  if(att.n >= MAX_ATTEMPTS && att.reset > Date.now()) showLock(att.reset);
+})();
+</script>
+</body>
+</html>
