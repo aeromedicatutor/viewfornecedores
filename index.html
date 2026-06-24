@@ -67,6 +67,35 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .ri{font-size:.72rem;color:#9ca3af;margin-bottom:10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 
+/* ── EXECUTIVE PANELS ───────────────── */
+.intel{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:1100px){.intel{grid-template-columns:1fr}}
+.ipanel{background:#fff;border:1px solid #e5e7eb;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.ip-h{padding:11px 13px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ip-title{font-size:.72rem;font-weight:800;color:#111827;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:6px}
+.ip-sub{font-size:.62rem;color:#9ca3af;font-weight:600;white-space:nowrap}
+.ip-body{padding:10px 12px}
+.action-list,.alert-list,.device-list{display:flex;flex-direction:column;gap:7px}
+.act,.alert,.devrow{border:1px solid #f1f5f9;background:#f9fafb;border-radius:8px;padding:8px 9px}
+.act{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start}
+.act-rank{width:24px;height:24px;border-radius:50%;background:#111827;color:#fff;font-size:.66rem;font-weight:800;display:flex;align-items:center;justify-content:center}
+.act-name{font-size:.7rem;font-weight:750;color:#111827;line-height:1.25;margin-bottom:4px}
+.act-meta,.alert-meta,.dev-meta{display:flex;gap:4px;flex-wrap:wrap}
+.mini{font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:20px;background:#fff;border:1px solid #e5e7eb;color:#64748b}
+.mini.red{background:#fee2e2;color:#991b1b;border-color:#fecaca}.mini.orange{background:#ffedd5;color:#9a3412;border-color:#fed7aa}
+.mini.yellow{background:#fef9c3;color:#713f12;border-color:#fde68a}.mini.green{background:#dcfce7;color:#14532d;border-color:#bbf7d0}
+.act-score{font-size:.65rem;font-weight:800;color:#991b1b;background:#fee2e2;border-radius:7px;padding:5px 7px;white-space:nowrap}
+.alert{display:flex;align-items:flex-start;gap:8px}
+.alert-ico{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;flex-shrink:0}
+.alert.danger .alert-ico{background:#fee2e2;color:#991b1b}.alert.warn .alert-ico{background:#ffedd5;color:#9a3412}.alert.info .alert-ico{background:#dbeafe;color:#1e40af}
+.alert-title{font-size:.69rem;font-weight:780;color:#111827;line-height:1.25;margin-bottom:3px}
+.dev-top{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:9px}
+.dev-kpi{border:1px solid #f1f5f9;background:#f9fafb;border-radius:8px;padding:8px;text-align:center}
+.dev-n{font-size:1.05rem;font-weight:800;color:#111827}.dev-l{font-size:.57rem;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-top:1px}
+.devrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.dev-name{font-size:.68rem;font-weight:750;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dev-count{font-size:.68rem;font-weight:800;color:#0369a1;background:#e0f2fe;border-radius:20px;padding:2px 7px}
+
 /* ── CARDS ──────────────────────────── */
 .card{background:#fff;border-radius:var(--radius);border:1px solid #e5e7eb;padding:14px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;box-shadow:var(--shadow)}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
@@ -340,6 +369,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
     <div class="li"><div class="ld" style="background:#dc2626"></div>F &lt;62%</div>
     <div class="li"><div class="ld" style="background:#7c3aed"></div>Pendente / Em instalação / Não usa / Integrada</div>
   </div>
+  <section class="intel" id="intel"></section>
   <div class="ri" id="ri"></div>
   <div class="grid" id="grid"></div>
   <div class="nodata" id="nodata" style="display:none">
@@ -472,6 +502,94 @@ function isPu(v){return v[0]!==0}
 function pc(i){return i===0?'p1':i===1?'p2':i===2?'p3':'pn'}
 function pctBg(p){return p>=80?'#dcfce7':p>=60?'#fef3c7':'#fee2e2'}
 function pctCl(p){return p>=80?'#14532d':p>=60?'#92400e':'#991b1b'}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function allAtts(v){return Object.values(v[11]||{}).flatMap(m=>m[11]||[])}
+function devParts(disp){
+  if(!disp)return null;
+  const parts=String(disp).split('·');
+  return {model:(parts[0]||'').trim()||'Sem modelo',version:(parts[1]||'sem versão').trim()||'sem versão'};
+}
+
+// ── INTELLIGENCE LAYER ───────────────────────────────────────
+function buildInsights(){
+  const entries=Object.entries(D);
+  const suppliers=entries.map(([name,v])=>{
+    const total=v[1]||0, base=v[7]||total, ok=(v[2]||0)+(v[3]||0), sem=v[4]||0, web=v[5]||0, erro=v[6]||0, mod=v[3]||0;
+    const tr=v[12]||null;
+    const score=Math.round((Math.max(0,100-(v[8]||0))*1.4)+(total*.35)+(erro*2.1)+(sem*1.2)+(mod*1.4)+(isPu(v)?10:0));
+    return {name,v,total,base,ok,sem,web,erro,mod,pct:v[8]||0,score,tr};
+  });
+  const action=suppliers.filter(s=>s.total>0&&(s.erro+s.sem+s.mod>0||s.pct<77||isPu(s.v)))
+    .sort((a,b)=>b.score-a.score||b.total-a.total).slice(0,5);
+
+  const atts=entries.flatMap(([name,v])=>allAtts(v).map(a=>({name,a})));
+  const missingToken=atts.filter(x=>(x.a[5]===1||x.a[5]===0)&&!x.a[7]).length;
+  const modGop=atts.filter(x=>x.a[5]===1).length;
+  const semMov=atts.filter(x=>x.a[5]===2).length;
+  const erros=atts.filter(x=>x.a[5]===4).length;
+  const noDevice=atts.filter(x=>!x.a[6]).length;
+  const highVolumeLow=suppliers.filter(s=>s.total>=10&&s.pct<62).length;
+  const trainedNotUsing=suppliers.filter(s=>s.tr&&s.tr[0]===3&&s.tr[1]==='Não').length;
+  const pending=suppliers.filter(s=>s.tr&&s.tr[0]===1).length;
+  const alerts=[
+    {type:'danger',ico:'!',title:`${highVolumeLow} fornecedores de alto volume em categoria F`,meta:[`${erros} erros`,`${semMov} sem mov.`]},
+    {type:'warn',ico:'G',title:`${modGop} atendimentos marcados como Mod. GOP`,meta:[`${missingToken} sem horário token`]},
+    {type:'warn',ico:'T',title:`${pending} fornecedores pendentes de treinamento`,meta:[`${trainedNotUsing} treinados sem uso`]},
+    {type:'info',ico:'D',title:`${noDevice} atendimentos sem dispositivo registrado`,meta:[`${atts.length} atendimentos analisados`]},
+  ];
+
+  const devs=new Map(), versions=new Map();
+  atts.forEach(({a})=>{
+    const p=devParts(a[6]); if(!p)return;
+    devs.set(p.model,(devs.get(p.model)||0)+1);
+    versions.set(p.version,(versions.get(p.version)||0)+1);
+  });
+  const devTop=[...devs.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const verTop=[...versions.entries()].sort((a,b)=>b[1]-a[1]);
+  const latest=verTop.map(v=>v[0]).filter(v=>v!=='sem versão').sort((a,b)=>b.localeCompare(a,undefined,{numeric:true}))[0]||'sem versão';
+  const outdated=verTop.filter(([v])=>v!=='sem versão'&&v!==latest).reduce((s,[,n])=>s+n,0);
+  return {action,alerts,device:{models:devTop,versions:verTop,latest,outdated,total:[...devs.values()].reduce((s,n)=>s+n,0)}};
+}
+function renderIntel(){
+  const el=document.getElementById('intel'); if(!el)return;
+  const ins=buildInsights();
+  el.innerHTML=`
+    <div class="ipanel">
+      <div class="ip-h"><div class="ip-title">🎯 Plano de ação</div><div class="ip-sub">prioridade operacional</div></div>
+      <div class="ip-body"><div class="action-list">
+        ${ins.action.map((s,i)=>`<div class="act" onclick="openM(decodeURIComponent('${encodeURIComponent(s.name)}'))">
+          <div class="act-rank">${i+1}</div>
+          <div><div class="act-name">${esc(s.name)}</div><div class="act-meta">
+            <span class="mini red">${s.pct}% uso</span><span class="mini">${s.total} atend.</span>
+            ${s.erro?`<span class="mini red">${s.erro} erros</span>`:''}${s.sem?`<span class="mini orange">${s.sem} sem mov.</span>`:''}${s.mod?`<span class="mini yellow">${s.mod} GOP</span>`:''}
+          </div></div>
+          <div class="act-score">${s.score}</div>
+        </div>`).join('')}
+      </div></div>
+    </div>
+    <div class="ipanel">
+      <div class="ip-h"><div class="ip-title">💡 Alertas inteligentes</div><div class="ip-sub">riscos atuais</div></div>
+      <div class="ip-body"><div class="alert-list">
+        ${ins.alerts.map(a=>`<div class="alert ${a.type}">
+          <div class="alert-ico">${a.ico}</div><div><div class="alert-title">${esc(a.title)}</div>
+          <div class="alert-meta">${a.meta.map(m=>`<span class="mini">${esc(m)}</span>`).join('')}</div></div>
+        </div>`).join('')}
+      </div></div>
+    </div>
+    <div class="ipanel">
+      <div class="ip-h"><div class="ip-title">📱 Saúde dos dispositivos</div><div class="ip-sub">app e aparelhos</div></div>
+      <div class="ip-body">
+        <div class="dev-top">
+          <div class="dev-kpi"><div class="dev-n">${ins.device.total}</div><div class="dev-l">com device</div></div>
+          <div class="dev-kpi"><div class="dev-n">${esc(ins.device.latest)}</div><div class="dev-l">versão atual</div></div>
+          <div class="dev-kpi"><div class="dev-n">${ins.device.outdated}</div><div class="dev-l">desatual.</div></div>
+        </div>
+        <div class="device-list">
+          ${ins.device.models.map(([m,n])=>`<div class="devrow"><div><div class="dev-name">${esc(m)}</div><div class="dev-meta"><span class="mini">modelo recorrente</span></div></div><div class="dev-count">${n}</div></div>`).join('')||'<div class="devrow"><div class="dev-name">Sem dispositivos registrados</div></div>'}
+        </div>
+      </div>
+    </div>`;
+}
 
 // ── HEADER ──────────────────────────────────────────────────
 function initHeader(){
@@ -904,7 +1022,7 @@ function doLogout(){
   sessionStorage.removeItem('amb_session');
   window.location.replace('login.html');
 }
-initHeader();render();
+initHeader();renderIntel();render();
 </script>
 </body>
 </html>
