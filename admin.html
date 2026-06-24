@@ -618,7 +618,7 @@ function showPreview(data, avg) {
   const totalAtt = vals.reduce((s,v)=>s+v[1],0);
   const cats = {A:0,B:0,C:0,D:0,F:0};
   let purple = 0;
-  vals.forEach(v => { if(v[0]!==0) purple++; else cats[catOf(v[7])]++; });
+  vals.forEach(v => { if(v[0]!==0) purple++; else cats[catOf(v[8])]++; });
 
   document.getElementById('prevSub').textContent =
     `${Object.keys(data).length} fornecedores · ${totalAtt.toLocaleString('pt-BR')} atendimentos · Média: ${avg}%`;
