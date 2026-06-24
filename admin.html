@@ -371,296 +371,242 @@ function detectCols(hdrs) {
   return ci;
 }
 
+/* ── HELPERS ─────────────────────────────────────────────── */
+function fixCoord(v){
+  if(v===null||v===undefined||v===''||isNaN(+v)) return null;
+  const f=+v;
+  if(f>=-180&&f<=180) return Math.round(f*1e6)/1e6;
+  const fk=f/1000; if(Math.abs(fk)>1&&fk>=-90&&fk<=90) return Math.round(fk*1e6)/1e6;
+  for(let e=13;e<=16;e++){const fx=f/Math.pow(10,e);if(Math.abs(fx)>1&&fx>=-90&&fx<=90)return Math.round(fx*1e6)/1e6;}
+  return null;
+}
+function isBrazil(lat,lon){return lat!==null&&lon!==null&&lat>-33.9&&lat<5.4&&lon>-73.9&&lon<-28.8;}
+function haversineKm(la1,lo1,la2,lo2){
+  if(!isBrazil(la1,lo1)||!isBrazil(la2,lo2))return null;
+  const R=6371,r=x=>x*Math.PI/180,dL=r(la2-la1),dO=r(lo2-lo1);
+  const a=Math.sin(dL/2)**2+Math.cos(r(la1))*Math.cos(r(la2))*Math.sin(dO/2)**2;
+  return Math.round(R*2*Math.asin(Math.sqrt(a))*1.35*10)/10;
+}
+function getShift(dt){
+  if(!dt)return'N';
+  const m=dt.match(/(\d{1,2})\/(\d{1,2})\s+(\d{1,2}):/);
+  if(!m)return'N';
+  const h=+m[3];
+  return h>=6&&h<12?'M':h>=12&&h<18?'T':'N';
+}
+function buildShifts(atts){
+  const sh={M:[0,0,[]],T:[0,0,[]],N:[0,0,[]]};
+  for(const a of atts){const cl=a[5];if(cl===3)continue;const s=a[2];if(!sh[s])continue;sh[s][1]++;if(cl===0||cl===1)sh[s][0]++;sh[s][2].push(a[0]);}
+  return Object.fromEntries(Object.entries(sh).map(([k,v])=>[k,[v[0],v[1],v[1]>0?+(v[0]/v[1]*100).toFixed(1):0,v[2]]]));
+}
+function buildTokDelay(atts){
+  const ds=atts.filter(a=>a[8]!==null&&a[8]!==undefined&&(a[5]===0||a[5]===1)).map(a=>a[8]);
+  if(!ds.length)return null;
+  const avg=+(ds.reduce((s,v)=>s+v,0)/ds.length).toFixed(1);
+  return[avg,ds.length,Math.min(...ds),Math.max(...ds)];
+}
+
 /* ══════════════════════════════════════════════════════════
    MAIN PROCESS
 ══════════════════════════════════════════════════════════ */
-async function processAll() {
-  if (!file1 || !file2) {
-    showMsg('rmsg','er','❌ Carregue as <strong>duas planilhas</strong> antes de processar.'); return;
-  }
-  document.getElementById('prog').style.display = 'block';
-  document.getElementById('rmsg').style.display = 'none';
-  document.getElementById('previewCard').style.display = 'none';
-  document.getElementById('processBtn').disabled = true;
+async function processAll(){
+  if(!file1||!file2){showMsg('rmsg','er','❌ Carregue as planilhas de Atendimentos e Implantação.');return;}
+  document.getElementById('prog').style.display='block';
+  document.getElementById('rmsg').style.display='none';
+  document.getElementById('previewCard').style.display='none';
+  document.getElementById('processBtn').disabled=true;
 
-  try {
-    /* ── STEP 1: Atendimentos ── */
-    ss(1,'run','Lendo planilhas de atendimentos e detalhamento…');
-    const buf1 = await readFile(file1);
-    const wb1  = XLSX.read(buf1, {type:'array'});
-    const ws1  = wb1.Sheets[wb1.SheetNames[0]];
-    const raw1 = XLSX.utils.sheet_to_json(ws1, {header:1});
+  try{
+    /* STEP 1: Atendimentos */
+    ss(1,'run','Lendo atendimentos...');
+    const buf1=await readFile(file1);
+    const wb1=XLSX.read(buf1,{type:'array'});
+    const raw1=XLSX.utils.sheet_to_json(wb1.Sheets[wb1.SheetNames[0]],{header:1});
+    let hi=0;
+    for(let i=0;i<Math.min(6,raw1.length);i++){if(raw1[i]&&raw1[i].some(c=>String(c||'').toUpperCase()==='TOKEN')){hi=i;break;}}
+    const hdrs=raw1[hi].map(h=>String(h||'').trim());
+    const rows=raw1.slice(hi+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
+    const ci={rastreios:0,fornecedor:1,atendimento:2,data_reg:3,data_rem:4,token:5,horario:6};
+    hdrs.forEach((h,i)=>{const u=h.toUpperCase();
+      if(u.includes('RASTREIO')&&!u.includes('NOME'))ci.rastreios=i;
+      if(u.includes('FORNECEDOR'))ci.fornecedor=i;
+      if((u.includes('Nº')||u.includes('N°')||u.includes('NUM'))&&u.includes('ATENDIMENTO'))ci.atendimento=i;
+      if(u.includes('REGISTRO')&&u.includes('DATA'))ci.data_reg=i;
+      if(u.includes('REMO')&&u.includes('DATA'))ci.data_rem=i;
+      if(u==='TOKEN')ci.token=i;
+      if((u.includes('HORÁRIO')||u.includes('HORARIO'))&&u.includes('APP'))ci.horario=i;
+    });
+    ss(1,'done',`${rows.length} atendimentos`);
 
-    // Find header row (contains TOKEN)
-    let hi = 0;
-    for (let i = 0; i < Math.min(6, raw1.length); i++) {
-      if (raw1[i] && raw1[i].some(c => String(c||'').toUpperCase() === 'TOKEN')) { hi = i; break; }
-    }
-    const hdrs = raw1[hi].map(h => String(h||'').trim());
-    const rows = raw1.slice(hi+1).filter(r => r && r.some(c => c != null && c !== ''));
-    const ci   = detectCols(hdrs);
-    ss(1,'done',`${rows.length} atendimentos lidos (${hdrs.length} colunas detectadas)`);
-
-    /* ── STEP 2: Implantação ── */
-    ss(2,'run','Lendo planilha de implantação…');
-    const buf2 = await readFile(file2);
-    const csvMap = {};
-    try {
-      // Try as xlsx/xls first
-      const wb2 = XLSX.read(buf2, {type:'array'});
-      const ws2 = wb2.Sheets[wb2.SheetNames[0]];
-      const csvRows = XLSX.utils.sheet_to_json(ws2);
-      csvRows.forEach(row => {
-        const fn = norm(row['Fornecedor']||row['fornecedor']||'');
-        if (!fn) return;
-        csvMap[fn] = {
-          status:    String(row['STATUS']||'').trim(),
-          utilizando:String(row['UTILIZANDO']||'').trim(),
-          motivo:    String(row['Motivo N utilização']||'').trim(),
-          dt_trein:  String(row['dt_treinamento']||'').trim(),
-          dias:      String(row['Dias desde Treinamento']||'').trim(),
-        };
+    /* STEP 2: Implantação */
+    ss(2,'run','Lendo implantação...');
+    const buf2=await readFile(file2);
+    const csvMap={};
+    try{
+      const wb2=XLSX.read(buf2,{type:'array'});
+      XLSX.utils.sheet_to_json(wb2.Sheets[wb2.SheetNames[0]]).forEach(row=>{
+        const fn=norm(row['Fornecedor']||row['fornecedor']||'');if(!fn)return;
+        csvMap[fn]={status:String(row['STATUS']||'').trim(),utilizando:String(row['UTILIZANDO']||'').trim(),
+          motivo:String(row['Motivo N utilização']||'').trim(),dt_trein:String(row['dt_treinamento']||'').trim(),
+          dias:String(row['Dias desde Treinamento']||'').trim()};
       });
-    } catch(e) {
-      // Fallback: parse as CSV text (latin-1)
-      const text = new TextDecoder('latin1').decode(buf2);
-      const lines = text.split('\n').filter(l => l.trim());
-      const sep   = lines[0].includes(';') ? ';' : ',';
-      const cHdrs = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,''));
-      lines.slice(1).forEach(l => {
-        const vals = l.split(sep).map(v => v.trim().replace(/^"|"$/g,''));
-        const row  = {};
-        cHdrs.forEach((h,i) => row[h] = vals[i]||'');
-        const fn = norm(row['Fornecedor']||'');
-        if (!fn) return;
-        csvMap[fn] = {
-          status:    (row['STATUS']||'').trim(),
-          utilizando:(row['UTILIZANDO']||'').trim(),
-          motivo:    (row['Motivo N utilização']||'').trim(),
-          dt_trein:  (row['dt_treinamento']||'').trim(),
-          dias:      (row['Dias desde Treinamento']||'').trim(),
-        };
+    }catch(e){
+      const text=new TextDecoder('latin1').decode(buf2);
+      const lines=text.split('\n').filter(l=>l.trim());
+      const sep=lines[0].includes(';')?';':',';
+      const cHdrs=lines[0].split(sep).map(h=>h.trim().replace(/^"|"$/g,''));
+      lines.slice(1).forEach(l=>{
+        const vals=l.split(sep).map(v=>v.trim().replace(/^"|"$/g,''));
+        const row={};cHdrs.forEach((h,i)=>row[h]=vals[i]||'');
+        const fn=norm(row['Fornecedor']||'');if(!fn)return;
+        csvMap[fn]={status:(row['STATUS']||'').trim(),utilizando:(row['UTILIZANDO']||'').trim(),
+          motivo:(row['Motivo N utilização']||'').trim(),dt_trein:(row['dt_treinamento']||'').trim(),
+          dias:(row['Dias desde Treinamento']||'').trim()};
       });
     }
-    ss(2,'done',`${Object.keys(csvMap).length} fornecedores na planilha de implantação`);
+    ss(2,'done',`${Object.keys(csvMap).length} fornecedores`);
 
-    /* ── STEP 2b: Detalhamento (optional) ── */
-    ss('2b','run','Lendo detalhamento…');
-    const detMap = {};
-    if (file3) {
-      try {
-        const buf3 = await readFile(file3);
-        const wb3  = XLSX.read(buf3, {type:'array'});
-        const ws3  = wb3.Sheets[wb3.SheetNames[0]];
-        const raw3 = XLSX.utils.sheet_to_json(ws3, {header:1});
-        // Find header row
+    /* STEP 2b: Detalhamento (opcional) */
+    ss('2b','run','Lendo detalhamento...');
+    const detMap={};
+    if(file3){
+      try{
+        const buf3=await readFile(file3);
+        const wb3=XLSX.read(buf3,{type:'array'});
+        const raw3=XLSX.utils.sheet_to_json(wb3.Sheets[wb3.SheetNames[0]],{header:1});
         let hi3=0;
-        for(let i=0;i<Math.min(4,raw3.length);i++){
-          if(raw3[i]&&raw3[i].some(c=>String(c||'').includes('Atendimento'))){hi3=i;break;}
-        }
+        for(let i=0;i<Math.min(5,raw3.length);i++){if(raw3[i]&&raw3[i].some(h=>String(h||'').includes('Atendimento'))){hi3=i;break;}}
         const h3=raw3[hi3].map(h=>String(h||'').trim());
-        const rows3=raw3.slice(hi3+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
-        const c_att=h3.findIndex(h=>h.includes('Atendimento')&&(h.includes('Nº')||h.includes('N°')));
-        const c_disp=h3.findIndex(h=>h.includes('Dispositivo'));
-        const c_tok=h3.findIndex(h=>h.includes('Inserção')&&h.includes('Token'));
-        const c_datAtt=h3.findIndex(h=>h.includes('Data')&&h.includes('atendimento'));
-        const c_eqAt=h3.findIndex(h=>h.includes('Equipe')&&h.includes('Atendimento')&&!h.includes('enfermagem'));
-        const c_eqEn=h3.findIndex(h=>h.includes('enfermagem'));
-        rows3.forEach(r=>{
-          const att=+r[c_att]; if(!att||isNaN(att))return;
-          const dtAtStr=r[c_datAtt]?String(r[c_datAtt]):'';
-          const dtTokStr=r[c_tok]?String(r[c_tok]):'';
-          let delay=null;
-          if(dtAtStr&&dtTokStr){
-            const dtAt=XLSX.SSF.parse_date_code(typeof r[c_datAtt]==='number'?r[c_datAtt]:0);
-            const dtTk=XLSX.SSF.parse_date_code(typeof r[c_tok]==='number'?r[c_tok]:0);
-            if(dtAt&&dtTk){
-              const msAt=Date.UTC(dtAt.y,dtAt.m-1,dtAt.d,dtAt.H,dtAt.M);
-              const msTk=Date.UTC(dtTk.y,dtTk.m-1,dtTk.d,dtTk.H,dtTk.M);
-              delay=Math.round((msTk-msAt)/60000);
-            }
-          }
-          // Format tok time
-          let dtTokFmt='';
-          if(typeof r[c_tok]==='number'){const d=XLSX.SSF.parse_date_code(r[c_tok]);if(d)dtTokFmt=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;}
-          else if(dtTokStr){const m=dtTokStr.match(/(\d{1,2})\/(\d{1,2})\/\d{4}\s+(\d{1,2}):(\d{2})/);if(m)dtTokFmt=`${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')} ${m[3].padStart(2,'0')}:${m[4]}`;}
-          const disp=c_disp>=0&&r[c_disp]?String(r[c_disp]):'';
-          const eqAt=c_eqAt>=0&&r[c_eqAt]?String(r[c_eqAt]):'';
-          const eqEn=c_eqEn>=0&&r[c_eqEn]?String(r[c_eqEn]):'';
-          detMap[att]={disp,dtTok:dtTokFmt,delay,eqAt,eqEn};
-        });
-        ss('2b','done',`${Object.keys(detMap).length} registros no detalhamento`);
-      } catch(e){ ss('2b','err','Erro no detalhamento: '+e.message); }
-    } else { ss('2b','done','Detalhamento não fornecido (opcional)'); }
-
-    /* ── STEP 2b: Detalhamento (optional) ── */
-    ss('2b','run','Lendo detalhamento…');
-    const detMap = {};
-    if (file3) {
-      try {
-        const buf3 = await readFile(file3);
-        const wb3  = XLSX.read(buf3, {type:'array'});
-        const ws3  = wb3.Sheets[wb3.SheetNames[0]];
-        const raw3 = XLSX.utils.sheet_to_json(ws3, {header:1});
-        let hi3=0;
-        for(let i=0;i<Math.min(4,raw3.length);i++){
-          if(raw3[i]&&raw3[i].some(h=>String(h||'').includes('Atendimento'))){hi3=i;break;}
-        }
-        const h3=raw3[hi3].map(h=>String(h||'').trim());
-        const rows3=raw3.slice(hi3+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
+        const r3=raw3.slice(hi3+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
         const fi={
-          att:  h3.findIndex(h=>h.includes('Atendimento')&&(h.includes('N'))),
-          disp: h3.findIndex(h=>h.includes('Dispositivo')),
-          tok:  h3.findIndex(h=>h.includes('Token')&&h.includes('Hora')),
-          dat:  h3.findIndex(h=>h.includes('Data')&&h.includes('atendimento')),
-          eqAt: h3.findIndex(h=>h.includes('Atendimento')&&!h.includes('Data')&&!h.includes('N')),
-          eqEn: h3.findIndex(h=>h.toLowerCase().includes('enfermagem')),
+          att: h3.findIndex(h=>{const u=h.toUpperCase();return u.includes('ATENDIMENTO')&&(u.includes('Nº')||u.includes('N°')||u.includes('NUM'));}),
+          disp:h3.findIndex(h=>h.includes('Dispositivo')),
+          tok: h3.findIndex(h=>h.toUpperCase().includes('TOKEN')&&h.toLowerCase().includes('hora')),
+          dat: h3.findIndex(h=>h.toLowerCase().includes('data')&&h.toLowerCase().includes('atendimento')),
+          eqAt:h3.findIndex(h=>h.includes('Equipe de Atendimento')),
+          eqEn:h3.findIndex(h=>h.toLowerCase().includes('enfermagem')),
+          lat1:h3.findIndex(h=>h.includes('Latitude')&&h.includes('Endereço')),
+          lon1:h3.findIndex(h=>h.includes('Longitude')&&h.includes('Endereço')),
+          lat2:h3.findIndex(h=>h.includes('Latitude')&&h.includes('Destino')),
+          lon2:h3.findIndex(h=>h.includes('Longitude')&&h.includes('Destino')),
+          eo:  h3.findIndex(h=>h.includes('Endereço Atendimento')),
+          ed:  h3.findIndex(h=>h.includes('Endereço Destino')),
         };
-        rows3.forEach(r=>{
+        r3.forEach(r=>{
           const att=+r[fi.att];if(!att||isNaN(att))return;
-          const disp=fi.disp>=0&&r[fi.disp]?String(r[fi.disp]):'';
-          const eqAt=fi.eqAt>=0&&r[fi.eqAt]?String(r[fi.eqAt]):'';
-          const eqEn=fi.eqEn>=0&&r[fi.eqEn]?String(r[fi.eqEn]):'';
+          const lat1=fixCoord(fi.lat1>=0?r[fi.lat1]:null), lon1=fixCoord(fi.lon1>=0?r[fi.lon1]:null);
+          const lat2=fixCoord(fi.lat2>=0?r[fi.lat2]:null), lon2=fixCoord(fi.lon2>=0?r[fi.lon2]:null);
+          const km=haversineKm(lat1,lon1,lat2,lon2);
           let dtTokFmt='',delay=null;
-          const rawDat=r[fi.dat],rawTok=r[fi.tok];
-          if(rawTok){
-            if(typeof rawTok==='number'){
-              const d=XLSX.SSF.parse_date_code(rawTok);
-              if(d)dtTokFmt=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;
-              if(typeof rawDat==='number'){
-                const da=XLSX.SSF.parse_date_code(rawDat);
-                if(da){const msAt=Date.UTC(da.y,da.m-1,da.d,da.H,da.M);const msTk=Date.UTC(d.y,d.m-1,d.d,d.H,d.M);delay=Math.round((msTk-msAt)/60000);}
-              }
-            } else {
-              const s=String(rawTok);
-              const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-              if(m)dtTokFmt=`${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')} ${m[4].padStart(2,'0')}:${m[5]}`;
+          const rawTok=fi.tok>=0?r[fi.tok]:null, rawDat=fi.dat>=0?r[fi.dat]:null;
+          if(rawTok&&typeof rawTok==='number'){
+            const d=XLSX.SSF.parse_date_code(rawTok);
+            if(d){
+              dtTokFmt=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;
+              if(rawDat&&typeof rawDat==='number'){const da=XLSX.SSF.parse_date_code(rawDat);if(da)delay=Math.round(((d.H*60+d.M)-(da.H*60+da.M))+(d.d-da.d)*1440);}
             }
+          } else if(rawTok){
+            const s=String(rawTok),m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+            if(m)dtTokFmt=`${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')} ${m[4].padStart(2,'0')}:${m[5]}`;
           }
-          detMap[att]={disp,dtTok:dtTokFmt,delay,eqAt,eqEn};
+          let eqAt=fi.eqAt>=0&&r[fi.eqAt]?String(r[fi.eqAt]):'';
+          let eqEn=fi.eqEn>=0&&r[fi.eqEn]?String(r[fi.eqEn]):'';
+          const rawDisp=fi.disp>=0&&r[fi.disp]?String(r[fi.disp]):'';
+          let dispFmt='';
+          if(rawDisp&&rawDisp.toLowerCase()!=='nan'){
+            const dm=rawDisp.match(/^(.+?)\s*\(.*?\)\s*-\s*([\d.]+)$/);
+            dispFmt=dm?(dm[1].trim()+'·'+dm[2]):rawDisp;
+          }
+          detMap[att]={disp:dispFmt,dtTok:dtTokFmt,delay,eqAt,eqEn,lat1,lon1,lat2,lon2,km,
+            eo:fi.eo>=0&&r[fi.eo]?String(r[fi.eo]):'',ed:fi.ed>=0&&r[fi.ed]?String(r[fi.ed]):''};
         });
-        ss('2b','done',`${Object.keys(detMap).length} registros de detalhamento`);
-      } catch(e){ss('2b','err','Detalhamento: '+e.message);}
-    } else { ss('2b','done','Detalhamento não fornecido (opcional)'); }
+        ss('2b','done',`${Object.keys(detMap).length} registros`);
+      }catch(e){ss('2b','err','Det: '+e.message);}
+    } else {ss('2b','done','Não fornecido (opcional)');}
 
-    /* ── STEP 3: Classify rows ── */
-    ss(3,'run','Classificando atendimentos…');
-
-    // Group by supplier
-    const supplierMap = {};
-    for (const r of rows) {
-      const fn = String(r[ci.fornecedor]||'').trim();
-      if (!fn) continue;
-      const token    = r[ci.token]   || '';
-      const horario  = r[ci.horario] || '';
-      const rastreios= r[ci.rastreios]|| 0;
-      const att      = r[ci.atendimento] ? +r[ci.atendimento] : 0;
-      const {mes, ano, dt} = parseDate(r[ci.data_reg]);
-      const dtRemCol = ci.data_remocao !== undefined ? r[ci.data_remocao] : null;
-      const {dt: dtReg} = dtRemCol ? parseDate(dtRemCol) : {dt:''};
-      const {dt: dtReg}    = parseDate(r[ci.data_remocao] !== undefined ? r[ci.data_remocao] : r[ci.data_reg]);
-
-      // Parse equipe — prefer separate columns, fallback to combined
-      let condutor='', enf='';
-      const det = detMap[att] || {};
-      if (det.eqAt) {
-        [condutor, enf] = parseEquipe(det.eqAt);
-        if (!enf && det.eqEn) enf = det.eqEn;
-      } else if (ci.condutor !== undefined && r[ci.condutor]) {
-        condutor = String(r[ci.condutor]).trim();
-        enf      = ci.equipe_enf !== undefined ? String(r[ci.equipe_enf]||'').trim() : '';
-      } else if (ci.equipe_atend !== undefined && r[ci.equipe_atend]) {
-        [condutor, enf] = parseEquipe(r[ci.equipe_atend]);
-      }
-      const disp   = det.disp   || '';
-      const dtTok  = det.dtTok  || '';
-      const delay  = det.delay !== undefined ? det.delay : null;
-
-      const cl = classify(token, horario, rastreios);
-
-      if (!supplierMap[fn]) supplierMap[fn] = [];
-      const shift = getShift(dt);
-      // [num,dt_rem,dt_reg,shift,cond,enf,cl,disp,dt_tok,delay,mes,ano]
-      supplierMap[fn].push([att, dt, dtReg, shift, condutor, enf, cl, disp, dtTok, delay, mes, ano]);
+    /* STEP 3: Classificar */
+    ss(3,'run','Classificando...');
+    const supplierMap={};
+    for(const r of rows){
+      const fn=String(r[ci.fornecedor]||'').trim();if(!fn)continue;
+      const tkn=String(r[ci.token]||'').toUpperCase().includes('SIM');
+      const hor=String(r[ci.horario]||'').toUpperCase().includes('SIM');
+      const rst=parseFloat(r[ci.rastreios])||0;
+      const att=+r[ci.atendimento]||0;
+      const det=detMap[att]||{};
+      let cond='',enf='';
+      if(det.eqAt){[cond,enf]=parseEquipe(det.eqAt);if(!enf&&det.eqEn)enf=det.eqEn;}
+      const disp=det.disp||'';
+      const hasD=!!(disp&&disp!=='nan');
+      // 0=CORRETO,1=CORRETO_MOD,2=SEM_MOV,3=WEB,4=ERRO
+      let cl;
+      if(tkn&&rst>5&&hasD)      cl=0;
+      else if(tkn&&rst>5&&!hasD) cl=1;
+      else if(tkn&&rst<=5)       cl=2;
+      else if(!tkn&&hor&&rst<=5) cl=3;
+      else                        cl=4;
+      const{mes,ano,dt}=parseDate(r[ci.data_rem]!==undefined?r[ci.data_rem]:r[ci.data_reg]);
+      const shift=getShift(dt);
+      if(!supplierMap[fn])supplierMap[fn]=[];
+      // [num,dt_rem,shift,cond,enf,cl,disp,dtTok,delay,km,lat1,lon1,lat2,lon2,eo,ed,mes,ano]
+      supplierMap[fn].push([att,dt,shift,cond,enf,cl,disp,
+        det.dtTok||'',det.delay!==undefined?det.delay:null,det.km!==undefined?det.km:null,
+        det.lat1||null,det.lon1||null,det.lat2||null,det.lon2||null,
+        det.eo||'',det.ed||'',mes,ano]);
     }
-    ss(3,'done',`${Object.keys(supplierMap).length} fornecedores classificados`);
+    ss(3,'done',`${Object.keys(supplierMap).length} fornecedores`);
 
-    /* ── STEP 4: Rankings & aggregation ── */
-    ss(4,'run','Calculando rankings e métricas…');
-
-    const result = {};
-    let globalCorreto = 0, globalBase = 0;
-
-    for (const [fn, rows_] of Object.entries(supplierMap)) {
-      // rows_ = [[num,dt_rem,dt_reg,shift,cond,enf,cl,disp,dtTok,delay,mes,ano], ...]
-      const ct = getCardType(fn, csvMap);
-      const tr = getTraining(fn, csvMap);
-
+    /* STEP 4: Agregar */
+    ss(4,'run','Calculando rankings...');
+    const result={};
+    let globalCorreto=0,globalBase=0;
+    for(const[fn,rows_] of Object.entries(supplierMap)){
+      const ct=getCardType(fn,csvMap);
+      const tr=getTraining(fn,csvMap);
       const total=rows_.length;
-      let correto=0,sem_mov=0,web=0,erro=0;
-      rows_.forEach(r=>{
-        if(r[6]===0)correto++;
-        else if(r[6]===1)sem_mov++;
-        else if(r[6]===2)web++;
-        else erro++;
-      });
+      let correto=0,cormod=0,sem_mov=0,web=0,erro=0;
+      rows_.forEach(r=>{if(r[5]===0)correto++;else if(r[5]===1)cormod++;else if(r[5]===2)sem_mov++;else if(r[5]===3)web++;else erro++;});
       const base=total-web;
-      const uso=base>0?Math.round(correto/base*1000)/10:0;
-      if(ct===0){globalCorreto+=correto;globalBase+=base;}
-
-      const compact=r=>r.slice(0,10); // drop mes,ano
-      const allC=rows_.map(compact);
-      const [rc,re_]=buildRanking(allC);
+      const uso=base>0?Math.round((correto+cormod)/base*1000)/10:0;
+      if(ct===0){globalCorreto+=correto+cormod;globalBase+=base;}
+      const cmpct=r=>r.slice(0,16);
+      const allC=rows_.map(cmpct);
+      const[rc,re_]=buildRanking(allC);
       const shAll=buildShifts(allC);
       const tdAll=buildTokDelay(allC);
-
-      // Monthly
-      const mesMap={};
-      for(const r of rows_){
-        if(!r[10])continue;
-        const k=String(r[10]);
-        if(!mesMap[k])mesMap[k]={label:MESES[r[10]]+'/'+r[11],rows:[]};
-        mesMap[k].rows.push(r);
-      }
+      const monthMap={};
+      for(const r of rows_){const mn=r[16];if(!mn)continue;if(!monthMap[mn])monthMap[mn]={label:MESES[mn]+'/'+r[17],rows:[]};monthMap[mn].rows.push(r);}
       const meses={};
-      for(const[mn,m] of Object.entries(mesMap)){
-        const mc_=m.rows.map(compact).sort((a,b)=>a[0]-b[0]);
-        let mc=0,ms=0,mw=0,me=0;
-        m.rows.forEach(r=>{if(r[6]===0)mc++;else if(r[6]===1)ms++;else if(r[6]===2)mw++;else me++;});
-        const mb=m.rows.length-mw;
-        const mu=mb>0?Math.round(mc/mb*1000)/10:0;
+      for(const[mn,md] of Object.entries(monthMap)){
+        const mc_=md.rows.map(cmpct).sort((a,b)=>a[0]-b[0]);
+        let mc=0,mm=0,ms=0,mw=0,me=0;
+        md.rows.forEach(r=>{if(r[5]===0)mc++;else if(r[5]===1)mm++;else if(r[5]===2)ms++;else if(r[5]===3)mw++;else me++;});
+        const mb=md.rows.length-mw;
+        const mu=mb>0?Math.round((mc+mm)/mb*1000)/10:0;
         const[mrc,mre]=buildRanking(mc_);
-        const msh=buildShifts(mc_);
-        const mtd=buildTokDelay(mc_);
-        // [label,total,correto,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
-        meses[mn]=[m.label,m.rows.length,mc,ms,mw,me,mb,mu,mrc,mre,mc_,msh,mtd];
+        // [label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
+        meses[mn]=[md.label,md.rows.length,mc,mm,ms,mw,me,mb,mu,mrc,mre,mc_,buildShifts(mc_),buildTokDelay(mc_)];
       }
-
-      // [ct,total,correto,sem_mov,web,erro,base,uso,rc,re,meses,tr,shifts,tok_delay]
-      result[fn]=[ct,total,correto,sem_mov,web,erro,base,uso,rc,re_,meses,tr,shAll,tdAll];
+      // [ct,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,meses,tr,shifts,tok_delay]
+      result[fn]=[ct,total,correto,cormod,sem_mov,web,erro,base,uso,rc,re_,meses,tr,shAll,tdAll];
     }
+    ss(4,'done',`${Object.keys(result).length} fornecedores calculados`);
 
-    ss(4,'done',`Rankings calculados para ${Object.keys(result).length} fornecedores`);
-
-    /* ── STEP 5: Generate JS ── */
-    ss(5,'run','Gerando data.js compacto…');
-    const globalAvg = globalBase > 0 ? Math.round(globalCorreto/globalBase*1000)/10 : 0;
-    const now = new Date();
-    const pad = n => String(n).padStart(2,'0');
-    const updated = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    const gs = {avg: globalAvg, meta: 77, updated};
-    genJs = `const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify(gs)};`;
-    ss(5,'done',`data.js gerado — ${(genJs.length/1024).toFixed(0)}KB`);
-
-    showMsg('rmsg','ok',`✅ <strong>${Object.keys(result).length} fornecedores</strong> processados. Média geral: <strong>${globalAvg}%</strong>`);
-    showPreview(result, globalAvg);
-
-  } catch(err) {
-    ss(3,'err','Erro: '+err.message);
-    showMsg('rmsg','er','❌ Erro durante o processamento: <strong>'+err.message+'</strong><br>Verifique se as planilhas estão no formato correto.');
+    /* STEP 5: Gerar */
+    ss(5,'run','Gerando data.js...');
+    const globalAvg=globalBase>0?Math.round(globalCorreto/globalBase*1000)/10:0;
+    const now=new Date(),pad=n=>String(n).padStart(2,'0');
+    const updated=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    genJs=`const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify({avg:globalAvg,meta:77,updated})};`;
+    ss(5,'done',`${(genJs.length/1024).toFixed(0)}KB`);
+    showMsg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores · Média ${globalAvg}%`);
+    showPreview(result,globalAvg);
+  }catch(err){
+    ss(3,'err',err.message);
+    showMsg('rmsg','er','❌ '+err.message);
     console.error(err);
-  } finally {
-    document.getElementById('processBtn').disabled = false;
+  }finally{
+    document.getElementById('processBtn').disabled=false;
   }
 }
 
