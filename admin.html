@@ -290,18 +290,19 @@ function getTraining(fn, csvMap) {
 
 /* ── RANKING from att list ───────────────────────────────── */
 function buildRanking(atts) {
-  // atts: [num, dt, condutor, enf, cl_int]
+  // att: [num,dt_rem,shift,cond,enf,cl,disp,dt_tok,delay,km,...]
+  //       0   1      2     3    4   5
   const cond = {}, enf = {};
   for (const a of atts) {
-    if (a[4] === 2) continue; // skip WEB
-    const ok = a[4] === 0;
-    if (a[2]) {
-      if (!cond[a[2]]) cond[a[2]] = [0,0];
-      ok ? cond[a[2]][0]++ : cond[a[2]][1]++;
-    }
+    if (a[5] === 3) continue; // skip WEB
+    const ok = a[5] === 0 || a[5] === 1; // CORRETO or CORRETO_MOD
     if (a[3]) {
-      if (!enf[a[3]])  enf[a[3]]  = [0,0];
-      ok ? enf[a[3]][0]++  : enf[a[3]][1]++;
+      if (!cond[a[3]]) cond[a[3]] = [0,0];
+      ok ? cond[a[3]][0]++ : cond[a[3]][1]++;
+    }
+    if (a[4]) {
+      if (!enf[a[4]])  enf[a[4]]  = [0,0];
+      ok ? enf[a[4]][0]++  : enf[a[3]][1]++;
     }
   }
   const rank = d => Object.entries(d)
@@ -498,15 +499,28 @@ async function processAll(){
           const km=haversineKm(lat1,lon1,lat2,lon2);
           let dtTokFmt='',delay=null;
           const rawTok=fi.tok>=0?r[fi.tok]:null, rawDat=fi.dat>=0?r[fi.dat]:null;
-          if(rawTok&&typeof rawTok==='number'){
-            const d=XLSX.SSF.parse_date_code(rawTok);
-            if(d){
-              dtTokFmt=`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`;
-              if(rawDat&&typeof rawDat==='number'){const da=XLSX.SSF.parse_date_code(rawDat);if(da)delay=Math.round(((d.H*60+d.M)-(da.H*60+da.M))+(d.d-da.d)*1440);}
+          // Helper: parse date to {d,m,y,H,M,totalMin}
+          function parseDT(raw){
+            if(!raw) return null;
+            if(typeof raw==='number'){
+              const p=XLSX.SSF.parse_date_code(raw);
+              if(!p) return null;
+              return {d:p.d,m:p.m,y:p.y,H:p.H,M:p.M,totalMin:p.H*60+p.M+(p.d*1440)};
             }
-          } else if(rawTok){
-            const s=String(rawTok),m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-            if(m)dtTokFmt=`${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')} ${m[4].padStart(2,'0')}:${m[5]}`;
+            const s=String(raw);
+            const mt=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+            if(mt) return {d:+mt[1],m:+mt[2],y:+mt[3],H:+mt[4],M:+mt[5],totalMin:+mt[4]*60+(+mt[5])+(+mt[1])*1440};
+            return null;
+          }
+          if(rawTok){
+            const dtTok=parseDT(rawTok);
+            if(dtTok){
+              dtTokFmt=`${String(dtTok.d).padStart(2,'0')}/${String(dtTok.m).padStart(2,'0')} ${String(dtTok.H).padStart(2,'0')}:${String(dtTok.M).padStart(2,'0')}`;
+              if(rawDat){
+                const dtAt=parseDT(rawDat);
+                if(dtAt) delay=Math.round(dtTok.totalMin - dtAt.totalMin);
+              }
+            }
           }
           let eqAt=fi.eqAt>=0&&r[fi.eqAt]?String(r[fi.eqAt]):'';
           let eqEn=fi.eqEn>=0&&r[fi.eqEn]?String(r[fi.eqEn]):'';
