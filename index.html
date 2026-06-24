@@ -47,6 +47,10 @@ header{background:var(--green);padding:0 28px;display:flex;align-items:center;ju
 .toolbar{background:#fff;padding:8px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
 .toolbar input{flex:1;min-width:150px;padding:7px 12px 7px 34px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:'Inter',sans-serif;font-size:.8rem;outline:none;transition:border .2s;background:#f9fafb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center}
 .toolbar input:focus{border-color:var(--green2);background:#fff}
+.toolbar select,.tb-action{height:33px;border:1.5px solid #e5e7eb;border-radius:8px;background:#fff;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;color:#4b5563;outline:none;transition:all .18s}
+.toolbar select{padding:0 30px 0 10px;cursor:pointer}
+.toolbar select:focus,.tb-action:hover{border-color:var(--green2);color:var(--green2)}
+.tb-action{padding:0 12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
 .fbtns{display:flex;gap:5px;flex-wrap:wrap}
 .fb{padding:5px 12px;border:1.5px solid #e5e7eb;border-radius:20px;background:#fff;font-family:'Inter',sans-serif;font-size:.72rem;cursor:pointer;transition:all .18s;font-weight:500;color:#6b7280}
 .fb:hover{border-color:var(--green2);color:var(--green2)}
@@ -89,7 +93,8 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .cs-l{font-size:.56rem;color:#9ca3af;margin-top:1px}
 .cpills{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
 .pill{font-size:.6rem;padding:2px 6px;border-radius:10px;font-weight:600}
-.pill.web{background:#ede9fe;color:#5b21b6}.pill.sm{background:#fef3c7;color:#92400e}.pill.err{background:#fee2e2;color:#991b1b}
+.pill.web{background:#ede9fe;color:#5b21b6}.pill.mod{background:#fef9c3;color:#713f12}
+.pill.sm{background:#fef3c7;color:#92400e}.pill.err{background:#fee2e2;color:#991b1b}
 .tr-chip{margin-top:6px;padding:4px 8px;border-radius:6px;font-size:.63rem;font-weight:600;display:inline-flex;align-items:center;gap:4px}
 
 /* ── OVERLAYS ───────────────────────── */
@@ -131,11 +136,11 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .bkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px}
 .bk{border-radius:var(--radius-sm);padding:10px 12px;border:1px solid}
 .bk.c0{background:#f0fdf4;border-color:#bbf7d0}.bk.c1{background:#fffbeb;border-color:#fde68a}
-.bk.c2{background:#f5f3ff;border-color:#ddd6fe}.bk.c3{background:#fff1f2;border-color:#fecdd3}
+.bk.c2{background:#fffbeb;border-color:#fde68a}.bk.c3{background:#f5f3ff;border-color:#ddd6fe}.bk.c4{background:#fff1f2;border-color:#fecdd3}
 .bk-n{font-size:1.25rem;font-weight:700}
-.c0 .bk-n{color:#059669}.c1 .bk-n{color:#d97706}.c2 .bk-n{color:#7c3aed}.c3 .bk-n{color:#e11d48}
+.c0 .bk-n{color:#059669}.c1 .bk-n{color:#d97706}.c2 .bk-n{color:#92400e}.c3 .bk-n{color:#7c3aed}.c4 .bk-n{color:#e11d48}
 .bk-lbl{font-size:.64rem;font-weight:700;margin-bottom:2px}
-.c0 .bk-lbl{color:#064e3b}.c1 .bk-lbl{color:#78350f}.c2 .bk-lbl{color:#4c1d95}.c3 .bk-lbl{color:#881337}
+.c0 .bk-lbl{color:#064e3b}.c1 .bk-lbl{color:#78350f}.c2 .bk-lbl{color:#78350f}.c3 .bk-lbl{color:#4c1d95}.c4 .bk-lbl{color:#881337}
 .bk-sub{font-size:.59rem;color:#9ca3af;line-height:1.3}
 
 /* ── TRAINING ALERT ─────────────────── */
@@ -209,14 +214,15 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .mi.open .mi-arr{transform:rotate(180deg)}
 .mib{display:none;border-top:1px solid #f3f4f6}
 .mi.open .mib{display:block}
-.ms4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px 12px;background:#f9fafb;border-bottom:1px solid #f3f4f6}
+.ms5{display:grid;gap:4px;padding:8px 12px;background:#f9fafb;border-bottom:1px solid #f3f4f6}
+.ms5{grid-template-columns:repeat(5,1fr)}
 .msc{border-radius:5px;padding:6px 8px;border:1px solid;text-align:center}
-.msc.c0{background:#f0fdf4;border-color:#bbf7d0}.msc.c1{background:#fffbeb;border-color:#fde68a}
-.msc.c2{background:#f5f3ff;border-color:#ddd6fe}.msc.c3{background:#fff1f2;border-color:#fecdd3}
+.msc.c0{background:#f0fdf4;border-color:#bbf7d0}.msc.c1{background:#fef9c3;border-color:#fde68a}
+.msc.c2{background:#fffbeb;border-color:#fde68a}.msc.c3{background:#f5f3ff;border-color:#ddd6fe}.msc.c4{background:#fff1f2;border-color:#fecdd3}
 .msc-n{font-size:.9rem;font-weight:700}
-.c0 .msc-n{color:#059669}.c1 .msc-n{color:#d97706}.c2 .msc-n{color:#7c3aed}.c3 .msc-n{color:#e11d48}
+.c0 .msc-n{color:#059669}.c1 .msc-n{color:#d97706}.c2 .msc-n{color:#92400e}.c3 .msc-n{color:#7c3aed}.c4 .msc-n{color:#e11d48}
 .msc-l{font-size:.58rem;font-weight:600}
-.c0 .msc-l{color:#064e3b}.c1 .msc-l{color:#78350f}.c2 .msc-l{color:#4c1d95}.c3 .msc-l{color:#881337}
+.c0 .msc-l{color:#064e3b}.c1 .msc-l{color:#78350f}.c2 .msc-l{color:#78350f}.c3 .msc-l{color:#4c1d95}.c4 .msc-l{color:#881337}
 .mrk{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 12px;background:#fafafa;border-bottom:1px solid #f3f4f6}
 .mrk-col h4{font-size:.62rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
 .mrk-row{display:flex;align-items:center;gap:4px;padding:2px 0;border-bottom:1px solid #f9fafb}
@@ -274,7 +280,7 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .rt th{background:#f9fafb;padding:6px 9px;text-align:left;font-size:.66rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #e5e7eb}
 .rt td{padding:7px 9px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
 .rtag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.67rem;font-weight:700}
-.rtag.ok{background:#dcfce7;color:#14532d}.rtag.sm{background:#fef3c7;color:#92400e}
+.rtag.ok{background:#dcfce7;color:#14532d}.rtag.mod{background:#fef9c3;color:#713f12}.rtag.sm{background:#fef3c7;color:#92400e}
 .rtag.wb{background:#ede9fe;color:#4c1d95}.rtag.er{background:#fee2e2;color:#991b1b}
 .rsec{font-size:.77rem;color:#374151;line-height:1.6;margin-top:10px}
 .rsec strong{color:#111827}
@@ -306,6 +312,14 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 
 <div class="toolbar">
   <input type="text" id="srch" placeholder="Buscar fornecedor..." oninput="render()">
+  <select id="sortBy" onchange="render()" title="Ordenar fornecedores">
+    <option value="best">Melhores primeiro</option>
+    <option value="worst">Piores primeiro</option>
+    <option value="volume">Mais atendimentos</option>
+    <option value="errors">Mais erros</option>
+    <option value="name">Nome A-Z</option>
+  </select>
+  <button class="tb-action" onclick="downloadFilteredCsv()" title="Exportar lista filtrada">⬇️ CSV</button>
   <div class="fbtns">
     <button class="fb fall on" onclick="setF('all',this)">Todos</button>
     <button class="fb fa" onclick="setF('A',this)">A</button>
@@ -382,19 +396,19 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
     <div class="rbody">
       <p style="font-size:.77rem;color:#6b7280;margin-bottom:10px">Como cada atendimento é classificado e como a % de usabilidade é calculada.</p>
       <table class="rt">
-        <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Inserção Token</th><th>Resultado</th></tr></thead>
+        <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Dispositivo</th><th>Resultado</th></tr></thead>
         <tbody>
-          <tr><td>SIM</td><td>&gt;5 pts</td><td>—</td><td>Com dispositivo</td><td><span class="rtag ok">✅ CORRETO</span></td></tr>
-          <tr><td>SIM</td><td>&gt;5 pts</td><td>—</td><td>Sem dispositivo</td><td><span class="rtag" style="background:#fef9c3;color:#713f12">⚠️ CORRETO C/ MOD.</span></td></tr>
+          <tr><td>SIM</td><td>&gt;5 pts</td><td>SIM ou com horário do token</td><td>Qualquer</td><td><span class="rtag ok">✅ CORRETO</span></td></tr>
+          <tr><td>SIM</td><td>&gt;5 pts</td><td>NÃO + sem horário do token</td><td>Qualquer</td><td><span class="rtag mod">⚠️ MOD. GOP</span></td></tr>
           <tr><td>SIM</td><td>≤5 pts</td><td>—</td><td>—</td><td><span class="rtag sm">📍 SEM MOVIMENTAÇÃO</span></td></tr>
           <tr><td>NÃO</td><td>≤5 pts</td><td>SIM</td><td>—</td><td><span class="rtag wb">🌐 VIA WEB</span></td></tr>
           <tr><td>NÃO</td><td>qualquer</td><td>NÃO</td><td>—</td><td><span class="rtag er">❌ ERRO</span></td></tr>
         </tbody>
       </table>
       <hr class="rd">
-      <div class="rsec"><strong>📐 Fórmula:</strong> % = Corretos ÷ (Total − WEB) × 100</div>
+      <div class="rsec"><strong>📐 Fórmula:</strong> % = (Corretos + Mod. GOP) ÷ (Total − WEB) × 100</div>
       <hr class="rd">
-      <div class="rsec"><strong>🏆 Ranking:</strong> Ranqueado por % de acertos. Conta apenas atendimentos CORRETO vs total (excl. WEB). Token inserido = confirma uso real do APP pelo colaborador.</div>
+      <div class="rsec"><strong>🏆 Ranking:</strong> Ranqueado por % de acertos. Conta CORRETO e MOD. GOP vs total (excl. WEB). Token inserido = confirma uso real do APP pelo colaborador.</div>
       <hr class="rd">
       <div class="rsec"><strong>🌅 Turnos (data da remoção):</strong> Manhã 06h–12h · Tarde 12h–18h · Noite 18h–06h</div>
       <hr class="rd">
@@ -429,10 +443,10 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 //            0   1     2       3       4       5   6    7   8   9    10    11    12   13     14
 // MONTH:    [label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,   re,   atts,shifts,tok_delay]
 //            0     1     2       3       4       5   6    7   8   9    10    11   12     13
-// cl: 0=CORRETO,1=CORRETO_MOD,2=SEM_MOV,3=WEB,4=ERRO  |  rc/re=[[name,ok,err],...]
+// cl: 0=CORRETO,1=MOD_GOP,2=SEM_MOV,3=WEB,4=ERRO  |  rc/re=[[name,ok,err],...]
 // att:      [num,dt_rem,shift,cond,enf,cl,disp,dt_tok,delay,km,lat1,lon1,lat2,lon2,eo,ed]
 //            0   1      2     3    4   5  6    7       8     9  10   11   12   13   14 15
-// cl: 0=CORRETO, 1=CORRETO_MOD(sem disp), 2=SEM_MOV, 3=WEB, 4=ERRO
+// cl: 0=CORRETO, 1=MOD_GOP, 2=SEM_MOV, 3=WEB, 4=ERRO
 // ranking:  [[name,correto,erro],...]  — 0+1 count as correto
 // shifts:   {M:[correto,total,pct,[nums]],T:...,N:...}
 // tok_delay:[avg,n,min,max]
@@ -446,7 +460,7 @@ let activeF='all';
 const CCLR={A:'#059669',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 const CTLBL={1:'⏳ Pendente',2:'🔧 Em Instalação',3:'📵 Não Usa APP',4:'🔗 Integrada IRIS'};
 const CTBNR={1:'bp',2:'bi',3:'bn',4:'bint'};
-const CLBL=['✅ Correto','⚠️ Correto c/ Mod.','📍 Sem Movimentação','🌐 WEB','❌ Erro'];
+const CLBL=['✅ Correto','⚠️ Mod. GOP','📍 Sem Movimentação','🌐 WEB','❌ Erro'];
 const TCLS=['t0','t1','t2','t3','t4'];
 const RCLS=['r0','r1','r2','r3','r4'];
 const SHIFT_ICO={M:'🌅',T:'☀️',N:'🌙'};
@@ -481,19 +495,32 @@ function initHeader(){
 // ── FILTER & RENDER ──────────────────────────────────────────
 function setF(c,btn){activeF=c;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}
 
-function render(){
+function supplierErrors(v){return (v[4]||0)+(v[6]||0)}
+function compareSuppliers(a,b,mode){
+  const [an,av]=a,[bn,bv]=b;
+  const ap=isPu(av)?1:0,bp=isPu(bv)?1:0;
+  if(ap!==bp&&mode!=='name')return ap-bp;
+  const byName=an.localeCompare(bn,'pt-BR');
+  if(mode==='worst') return av[8]-bv[8] || supplierErrors(bv)-supplierErrors(av) || byName;
+  if(mode==='volume')return bv[1]-av[1] || av[8]-bv[8] || byName;
+  if(mode==='errors')return supplierErrors(bv)-supplierErrors(av) || av[8]-bv[8] || byName;
+  if(mode==='name')  return byName;
+  return bv[8]-av[8] || supplierErrors(av)-supplierErrors(bv) || byName;
+}
+function filteredEntries(){
   const q=document.getElementById('srch').value.trim().toLowerCase();
-  const entries=Object.entries(D).filter(([n,v])=>{
+  const mode=document.getElementById('sortBy')?.value||'best';
+  return Object.entries(D).filter(([n,v])=>{
     const mq=!q||n.toLowerCase().includes(q);
     if(activeF==='pu')  return mq&&isPu(v);
     if(activeF==='all') return mq;
     return mq&&!isPu(v)&&cat(v[8])===activeF;
-  }).sort((a,b)=>{
-    const ap=isPu(a[1])?1:0,bp=isPu(b[1])?1:0;
-    if(ap!==bp)return ap-bp;
-    return b[1][8]-a[1][8];
-  });
-  document.getElementById('ri').textContent=`${entries.length} de ${Object.keys(D).length} fornecedores`;
+  }).sort((a,b)=>compareSuppliers(a,b,mode));
+}
+function render(){
+  const entries=filteredEntries();
+  const sum=entries.reduce((acc,[,v])=>{acc.att+=v[1]||0;acc.err+=supplierErrors(v);return acc;},{att:0,err:0});
+  document.getElementById('ri').textContent=`${entries.length} de ${Object.keys(D).length} fornecedores · ${sum.att.toLocaleString('pt-BR')} atend. · ${sum.err.toLocaleString('pt-BR')} erros/sem mov.`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
 
@@ -502,8 +529,8 @@ function render(){
     const sn=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const bnr=pu?`<div class="cbnr ${CTBNR[v[0]]}">${CTLBL[v[0]]}</div>`:'';
     const pills=[
+      v[3]>0?`<span class="pill mod">⚠️ GOP ${v[3]}</span>`:'',
       v[5]>0?`<span class="pill web">🌐 ${v[5]}</span>`:'',
-      v[3]>0?`<span class="pill" style="background:#fef9c3;color:#713f12">⚠️ ${v[3]}</span>`:'',
       v[4]>0?`<span class="pill sm">📍 ${v[4]}</span>`:'',
       v[6]>0?`<span class="pill err">❌ ${v[6]}</span>`:'',
     ].filter(Boolean).join('');
@@ -535,6 +562,20 @@ function render(){
 }
 
 // ── RANKING RENDERERS ────────────────────────────────────────
+function csvCell(v){return `"${String(v??'').replace(/"/g,'""')}"`}
+function downloadFilteredCsv(){
+  const rows=[['Fornecedor','Categoria/Status','Usabilidade','Total','Base','Correto','Mod. GOP','Sem movimentação','WEB','Erro']];
+  filteredEntries().forEach(([n,v])=>{
+    rows.push([n,isPu(v)?CTLBL[v[0]]:'CAT '+cat(v[8]),v[8],v[1],v[7],v[2],v[3],v[4],v[5],v[6]]);
+  });
+  const csv='\ufeff'+rows.map(r=>r.map(csvCell).join(';')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='fornecedores_filtrados.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 function rkRows(list){
   if(!list||!list.length)return`<div style="padding:10px 12px;font-size:.7rem;color:#9ca3af;font-style:italic">Sem dados de equipe</div>`;
   return list.map((r,i)=>{
@@ -656,11 +697,12 @@ function monthBlock(mn,m,pu,nid){
       </div>
     </div>
     <div class="mib">
-      <div class="ms4">
+      <div class="ms5">
         <div class="msc c0"><div class="msc-n">${m[2]}</div><div class="msc-l">✅ Correto</div></div>
-        <div class="msc c1"><div class="msc-n">${m[3]}</div><div class="msc-l">📍 Sem Mov.</div></div>
-        <div class="msc c2"><div class="msc-n">${m[4]}</div><div class="msc-l">🌐 WEB</div></div>
-        <div class="msc c3"><div class="msc-n">${m[5]}</div><div class="msc-l">❌ Erro</div></div>
+        <div class="msc c1"><div class="msc-n">${m[3]}</div><div class="msc-l">⚠️ GOP</div></div>
+        <div class="msc c2"><div class="msc-n">${m[4]}</div><div class="msc-l">📍 Sem Mov.</div></div>
+        <div class="msc c3"><div class="msc-n">${m[5]}</div><div class="msc-l">🌐 WEB</div></div>
+        <div class="msc c4"><div class="msc-n">${m[6]}</div><div class="msc-l">❌ Erro</div></div>
       </div>
       <div style="padding:0 12px">
         ${shiftHtml(m[12],mn,nid)}
@@ -672,7 +714,7 @@ function monthBlock(mn,m,pu,nid){
       </div>
       <div class="atw">
         <table class="att">
-          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo · Token</th><th>KM</th><th>Mapa</th></tr></thead>
+          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token</th><th>Δ Token</th><th>KM</th><th>Mapa</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -694,7 +736,7 @@ function openM(name){
     :`<span class="mcbdg" style="background:${clr}22;color:${clr}">CATEGORIA ${c}</span>
       <span class="mci">Usabilidade: <strong>${v[8]}%</strong></span>
       <span class="mci">Total: <strong>${v[1]}</strong></span>
-      <span class="mci">Base: <strong>${v[6]}</strong></span>`;
+      <span class="mci">Base: <strong>${v[7]}</strong></span>`;
 
   const sortedM=Object.entries(v[11]).sort((a,b)=>+a[0]-+b[0]);
 
@@ -713,11 +755,11 @@ function openM(name){
 
     <div class="stitle">Resultado dos Atendimentos</div>
     <div class="bkgrid">
-      <div class="bk c0"><div class="bk-n">${v[2]}</div><div class="bk-lbl">✅ CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5 + Dispositivo</div></div>
-      <div class="bk" style="background:#fffbeb;border-color:#fde68a"><div class="bk-n" style="color:#d97706">${v[3]}</div><div class="bk-lbl" style="color:#92400e">⚠️ CORRETO C/ MODIFICAÇÃO</div><div class="bk-sub">Token SIM + Rastreio &gt;5 · sem dispositivo</div></div>
-      <div class="bk c1"><div class="bk-n">${v[4]}</div><div class="bk-lbl">📍 SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
-      <div class="bk c2"><div class="bk-n">${v[5]}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
-      <div class="bk c3"><div class="bk-n">${v[6]}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
+      <div class="bk c0"><div class="bk-n">${v[2]}</div><div class="bk-lbl">✅ CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5</div></div>
+      <div class="bk c1"><div class="bk-n">${v[3]}</div><div class="bk-lbl">⚠️ MOD. GOP</div><div class="bk-sub">Sem horário token + Horário APP NÃO</div></div>
+      <div class="bk c2"><div class="bk-n">${v[4]}</div><div class="bk-lbl">📍 SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
+      <div class="bk c3"><div class="bk-n">${v[5]}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
+      <div class="bk c4"><div class="bk-n">${v[6]}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
     </div>
 
     <div class="stitle">Treinamento</div>

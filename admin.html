@@ -27,8 +27,8 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
 .ct td{padding:7px 9px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
 .ct tr:last-child td{border-bottom:none}
 .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.67rem;font-weight:700}
-.tok{background:#dcfce7;color:#14532d}.tsm{background:#fef3c7;color:#78350f}
-.twb{background:#ede9fe;color:#4c1d95}.ter{background:#fee2e2;color:#7f1d1d}
+.tok{background:#dcfce7;color:#14532d}.tmd{background:#fef9c3;color:#713f12}
+.tsm{background:#fef3c7;color:#78350f}.twb{background:#ede9fe;color:#4c1d95}.ter{background:#fee2e2;color:#7f1d1d}
 
 /* UPLOAD GRID */
 .ugrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -92,16 +92,15 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
   <!-- CRITERIA -->
   <div class="card">
     <h2>📐 Critérios de Classificação</h2>
-    <div class="sub">Fórmula: % Usabilidade = Corretos ÷ (Total − WEB) × 100</div>
+    <div class="sub">Fórmula: % Usabilidade = (Corretos + Mod. GOP) ÷ (Total − WEB) × 100</div>
     <table class="ct">
       <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
       <tbody>
-        <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou NÃO</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
+        <tr><td>SIM</td><td>&gt; 5 pts</td><td>SIM ou com horário do token</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
+        <tr><td>SIM</td><td>&gt; 5 pts</td><td>NÃO + sem horário do token</td><td><span class="tag tmd">⚠️ MOD. GOP</span></td><td>✔ Sim</td></tr>
         <tr><td>SIM</td><td>≤ 5 pts</td><td>SIM ou NÃO</td><td><span class="tag tsm">📍 SEM MOVIMENTAÇÃO</span></td><td>✔ Sim (erro)</td></tr>
         <tr><td>NÃO</td><td>≤ 5 pts</td><td>SIM</td><td><span class="tag twb">🌐 VIA WEB</span></td><td>✘ Excluído</td></tr>
-        <tr><td>NÃO</td><td>≤ 5 pts</td><td>NÃO</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>&gt; 5 pts</td><td>SIM</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>&gt; 5 pts</td><td>NÃO</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>NÃO</td><td>Qualquer</td><td>NÃO</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
       </tbody>
     </table>
   </div>
@@ -112,7 +111,7 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
     <ol class="steps-list">
       <li>Baixe a planilha de atendimentos do sistema interno <strong>(.xlsx)</strong></li>
       <li>Tenha a planilha de implantação atualizada <strong>(.csv ou .xlsx)</strong></li>
-      <li>Carregue as <strong>duas planilhas</strong> nos campos abaixo</li>
+      <li>Carregue as <strong>duas planilhas obrigatórias</strong> e, se disponível, o detalhamento de transporte</li>
       <li>Clique em <strong>"Processar"</strong> e aguarde</li>
       <li>Clique em <strong>"Baixar data.js"</strong> e substitua no GitHub Pages</li>
     </ol>
@@ -295,14 +294,14 @@ function buildRanking(atts) {
   const cond = {}, enf = {};
   for (const a of atts) {
     if (a[5] === 3) continue; // skip WEB
-    const ok = a[5] === 0 || a[5] === 1; // CORRETO or CORRETO_MOD
+    const ok = a[5] === 0 || a[5] === 1; // CORRETO or MOD_GOP
     if (a[3]) {
       if (!cond[a[3]]) cond[a[3]] = [0,0];
       ok ? cond[a[3]][0]++ : cond[a[3]][1]++;
     }
     if (a[4]) {
       if (!enf[a[4]])  enf[a[4]]  = [0,0];
-      ok ? enf[a[4]][0]++  : enf[a[3]][1]++;
+      ok ? enf[a[4]][0]++  : enf[a[4]][1]++;
     }
   }
   const rank = d => Object.entries(d)
@@ -550,11 +549,10 @@ async function processAll(){
       let cond='',enf='';
       if(det.eqAt){[cond,enf]=parseEquipe(det.eqAt);if(!enf&&det.eqEn)enf=det.eqEn;}
       const disp=det.disp||'';
-      const hasD=!!(disp&&disp!=='nan');
-      // 0=CORRETO,1=CORRETO_MOD,2=SEM_MOV,3=WEB,4=ERRO
+      // 0=CORRETO,1=MOD_GOP,2=SEM_MOV,3=WEB,4=ERRO
       let cl;
-      if(tkn&&rst>5&&hasD)      cl=0;
-      else if(tkn&&rst>5&&!hasD) cl=1;
+      if(tkn&&rst>5&&!det.dtTok&&!hor) cl=1;
+      else if(tkn&&rst>5)        cl=0;
       else if(tkn&&rst<=5)       cl=2;
       else if(!tkn&&hor&&rst<=5) cl=3;
       else                        cl=4;
