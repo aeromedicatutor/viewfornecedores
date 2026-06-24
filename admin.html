@@ -161,14 +161,13 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
 
     <div class="prog" id="prog">
       <div class="prog-hdr">Processando…</div>
-      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Aguardando…</span></div>
-      <div class="ps"><div class="psi pend" id="s2i">2</div><span id="s2t">Lendo planilha de implantação…</span></div>
-      <div class="ps"><div class="psi pend" id="s2bi">2b</div><span id="s2bt">Lendo detalhamento de transporte…</span></div>
-      <div class="ps"><div class="psi pend" id="s2bi">2b</div><span id="s2bt">Lendo detalhamento de transporte…</span></div>
-      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Classificando atendimentos…</span></div>
-      <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Calculando rankings…</span></div>
-      <div class="ps"><div class="psi pend" id="s5i">5</div><span id="s5t">Gerando data.js compacto…</span></div>
-    </div>
+      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Lendo atendimentos…</span></div>
+      <div class="ps"><div class="psi pend" id="s2i">2</div><span id="s2t">Lendo implantação…</span></div>
+      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Lendo detalhamento…</span></div>
+      <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Classificando atendimentos…</span></div>
+      <div class="ps"><div class="psi pend" id="s5i">5</div><span id="s5t">Calculando rankings…</span></div>
+      <div class="ps"><div class="psi pend" id="s6i">6</div><span id="s6t">Gerando data.js…</span></div>
+    </div></div>
     <div class="rmsg" id="rmsg"></div>
   </div>
 
@@ -467,7 +466,7 @@ async function processAll(){
     ss(2,'done',`${Object.keys(csvMap).length} fornecedores`);
 
     /* STEP 2b: Detalhamento (opcional) */
-    ss('2b','run','Lendo detalhamento...');
+    ss(3,'run','Lendo detalhamento...');
     const detMap={};
     if(file3){
       try{
@@ -520,12 +519,12 @@ async function processAll(){
           detMap[att]={disp:dispFmt,dtTok:dtTokFmt,delay,eqAt,eqEn,lat1,lon1,lat2,lon2,km,
             eo:fi.eo>=0&&r[fi.eo]?String(r[fi.eo]):'',ed:fi.ed>=0&&r[fi.ed]?String(r[fi.ed]):''};
         });
-        ss('2b','done',`${Object.keys(detMap).length} registros`);
-      }catch(e){ss('2b','err','Det: '+e.message);}
-    } else {ss('2b','done','Não fornecido (opcional)');}
+        ss(3,'done',`${Object.keys(detMap).length} registros`);
+      }catch(e){ss(3,'err','Det: '+e.message);}
+    } else {ss(3,'done','Não fornecido (opcional)');}
 
     /* STEP 3: Classificar */
-    ss(3,'run','Classificando...');
+    ss(4,'run','Classificando...');
     const supplierMap={};
     for(const r of rows){
       const fn=String(r[ci.fornecedor]||'').trim();if(!fn)continue;
@@ -554,10 +553,10 @@ async function processAll(){
         det.lat1||null,det.lon1||null,det.lat2||null,det.lon2||null,
         det.eo||'',det.ed||'',mes,ano]);
     }
-    ss(3,'done',`${Object.keys(supplierMap).length} fornecedores`);
+    ss(4,'done',`${Object.keys(supplierMap).length} fornecedores`);
 
     /* STEP 4: Agregar */
-    ss(4,'run','Calculando rankings...');
+    ss(5,'run','Calculando rankings...');
     const result={};
     let globalCorreto=0,globalBase=0;
     for(const[fn,rows_] of Object.entries(supplierMap)){
@@ -590,15 +589,15 @@ async function processAll(){
       // [ct,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,meses,tr,shifts,tok_delay]
       result[fn]=[ct,total,correto,cormod,sem_mov,web,erro,base,uso,rc,re_,meses,tr,shAll,tdAll];
     }
-    ss(4,'done',`${Object.keys(result).length} fornecedores calculados`);
+    ss(5,'done',`${Object.keys(result).length} fornecedores calculados`);
 
     /* STEP 5: Gerar */
-    ss(5,'run','Gerando data.js...');
+    ss(6,'run','Gerando data.js...');
     const globalAvg=globalBase>0?Math.round(globalCorreto/globalBase*1000)/10:0;
     const now=new Date(),pad=n=>String(n).padStart(2,'0');
     const updated=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
     genJs=`const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify({avg:globalAvg,meta:77,updated})};`;
-    ss(5,'done',`${(genJs.length/1024).toFixed(0)}KB`);
+    ss(6,'done',`${(genJs.length/1024).toFixed(0)}KB`);
     showMsg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores · Média ${globalAvg}%`);
     showPreview(result,globalAvg);
   }catch(err){
