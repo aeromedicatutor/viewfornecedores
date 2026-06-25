@@ -513,6 +513,7 @@ function pc(i){return i===0?'p1':i===1?'p2':i===2?'p3':'pn'}
 function pctBg(p){return p>=80?'#dcfce7':p>=60?'#fef3c7':'#fee2e2'}
 function pctCl(p){return p>=80?'#14532d':p>=60?'#92400e':'#991b1b'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function jsStr(s){return JSON.stringify(String(s??''))}
 function allAtts(v){return Object.values(v[11]||{}).flatMap(m=>m[11]||[])}
 function devParts(disp){
   if(!disp)return null;
@@ -831,9 +832,11 @@ function attRow(a){
   const cl=a[5]??3;
   const dv=a[8];
   const dcl=dv===null||dv===undefined?'#9ca3af':Math.abs(dv)<=15?'#059669':Math.abs(dv)<=30?'#d97706':'#dc2626';
-  const hasMap=a[10]!=null&&a[12]!=null;
-  const eo=(a[14]||'').replace(/'/g,"\\'");
-  const ed=(a[15]||'').replace(/'/g,"\\'");
+  const hasMap=a[10]!=null&&a[11]!=null&&a[12]!=null&&a[13]!=null;
+  const tokenLat=a[16],tokenLon=a[17],kmRod=a[18],parada=a[19]||'';
+  const kmTxt=kmRod!=null?kmRod+' km':(a[9]!=null?a[9]+' km':'—');
+  const mapKm=kmRod!=null?kmRod:(a[9]!=null?a[9]:null);
+  const numArg=v=>v==null?'null':Number(v);
   return`<tr class="${RCLS[cl]||''}">
     <td><span class="anum">#${a[0]}</span></td>
     <td style="white-space:nowrap;font-size:.65rem;color:#6b7280">${a[1]||'—'}</td>
@@ -844,8 +847,9 @@ function attRow(a){
     <td style="font-size:.62rem;color:#6b7280;white-space:nowrap">${a[6]||'—'}</td>
     <td style="white-space:nowrap;font-size:.65rem;color:#7c3aed;font-weight:600">${a[7]||'—'}</td>
     <td style="text-align:center;font-size:.65rem;font-weight:700;color:${dcl}">${(dv===null||dv===undefined)?'—':dv+'min'}</td>
-    <td style="text-align:center;font-size:.65rem;font-weight:600;color:#0369a1">${a[9]!=null?a[9]+' km':'—'}</td>
-    <td>${hasMap?`<button class="map-btn" onclick="openMapAtt(${a[0]},${a[10]},${a[11]},${a[12]},${a[13]},'${eo}','${ed}')">🗺️ Ver</button>`:'—'}</td>
+    <td style="text-align:center;font-size:.65rem;font-weight:600;color:#0369a1">${kmTxt}</td>
+    <td style="text-align:center;font-size:.65rem;color:#6b7280">${parada||'—'}</td>
+    <td>${hasMap?`<button class="map-btn" onclick="openMapAtt(${a[0]},${a[10]},${a[11]},${a[12]},${a[13]},${jsStr(a[14]||'')},${jsStr(a[15]||'')},${numArg(tokenLat)},${numArg(tokenLon)},${numArg(mapKm)},${jsStr(parada)})">🗺️ Ver</button>`:'—'}</td>
   </tr>`;
 }
 
@@ -882,7 +886,7 @@ function monthBlock(mn,m,pu,nid){
       </div>
       <div class="atw">
         <table class="att">
-          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token</th><th>Δ Token</th><th>KM</th><th>Mapa</th></tr></thead>
+          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token</th><th>Δ Token</th><th>KM Rodado</th><th>Parada</th><th>Mapa</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -988,18 +992,26 @@ function openSd(id,lbl,atts){
 function closeSd(){document.getElementById('sdov').classList.remove('open');document.body.style.overflow='';}
 
 // ── MAP ───────────────────────────────────────────────────────
-function openMapAtt(num,lat1,lon1,lat2,lon2,endOrig,endDest){
+function openMapAtt(num,lat1,lon1,lat2,lon2,endOrig,endDest,tokLat=null,tokLon=null,kmRodado=null,horaParada=''){
   document.getElementById('mapTitle').textContent=`Atendimento #${num}`;
   document.getElementById('mapStats').style.display='none';
+  document.getElementById('mapDist').innerHTML='';
+  document.getElementById('mapTime').innerHTML='';
   document.getElementById('mapAddrs').innerHTML=`
-    <div class="map-addr"><span>🟢</span><span>${endOrig||`${lat1}, ${lon1}`}</span></div>
-    <div class="map-addr"><span>🔴</span><span>${endDest||`${lat2}, ${lon2}`}</span></div>`;
+    <div class="map-addr"><span>🟢</span><span>${esc(endOrig||`${lat1}, ${lon1}`)}</span></div>
+    <div class="map-addr"><span>🔴</span><span>${esc(endDest||`${lat2}, ${lon2}`)}</span></div>
+    ${tokLat!=null&&tokLon!=null?`<div class="map-addr"><span>🟣</span><span>Token inserido em ${tokLat}, ${tokLon}</span></div>`:''}`;
+  if(kmRodado!=null||horaParada){
+    if(kmRodado!=null)document.getElementById('mapDist').innerHTML=`🛣️ <strong>${kmRodado} km rodados</strong>`;
+    if(horaParada)document.getElementById('mapTime').innerHTML=`⏸️ <strong>${esc(horaParada)} parada</strong>`;
+    document.getElementById('mapStats').style.display='flex';
+  }
   document.getElementById('mapov').classList.add('open');
   document.body.style.overflow='hidden';
-  setTimeout(()=>initMap(lat1,lon1,lat2,lon2),80);
+  setTimeout(()=>initMap(lat1,lon1,lat2,lon2,tokLat,tokLon,kmRodado,horaParada),80);
 }
 
-function initMap(lat1,lon1,lat2,lon2){
+function initMap(lat1,lon1,lat2,lon2,tokLat=null,tokLon=null,kmRodado=null,horaParada=''){
   const el=document.getElementById('leafletMap');
   el.innerHTML='';
   function load(cb){
@@ -1031,6 +1043,14 @@ function initMap(lat1,lon1,lat2,lon2){
 
     L.marker([lat1,lon1],{icon:icoA}).addTo(map).bindPopup('<strong>Ponto A — Origem</strong>');
     L.marker([lat2,lon2],{icon:icoB}).addTo(map).bindPopup('<strong>Ponto B — Destino</strong>');
+    if(tokLat!=null&&tokLon!=null){
+      const icoT=L.divIcon({className:'',iconSize:[28,28],iconAnchor:[14,28],html:`
+        <div style="position:relative;width:28px;height:28px">
+          <div style="background:#7c3aed;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>
+          <div style="position:absolute;top:5px;left:0;right:0;text-align:center;color:#fff;font-size:.7rem;font-weight:700">T</div>
+        </div>`});
+      L.marker([tokLat,tokLon],{icon:icoT}).addTo(map).bindPopup('<strong>Token inserido</strong>');
+    }
 
     // Fetch route from OSRM
     const url=`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`;
@@ -1043,8 +1063,8 @@ function initMap(lat1,lon1,lat2,lon2){
         const km=(route.distance/1000).toFixed(1);
         const min=Math.round(route.duration/60);
         const timeStr=min>=60?`${Math.floor(min/60)}h ${min%60}min`:`${min} min`;
-        document.getElementById('mapDist').innerHTML=`🛣️ <strong>${km} km</strong>`;
-        document.getElementById('mapTime').innerHTML=`⏱️ <strong>${timeStr}</strong>`;
+        if(kmRodado==null)document.getElementById('mapDist').innerHTML=`🛣️ <strong>${km} km</strong>`;
+        if(!horaParada)document.getElementById('mapTime').innerHTML=`⏱️ <strong>${timeStr}</strong>`;
         document.getElementById('mapStats').style.display='flex';
         map.fitBounds(L.polyline(coords).getBounds().pad(0.15));
       })
