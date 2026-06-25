@@ -172,6 +172,16 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .c0 .bk-lbl{color:#064e3b}.c1 .bk-lbl{color:#78350f}.c2 .bk-lbl{color:#78350f}.c3 .bk-lbl{color:#4c1d95}.c4 .bk-lbl{color:#881337}
 .bk-sub{font-size:.59rem;color:#9ca3af;line-height:1.3}
 
+/* ── SUPPLIER DEVICE HEALTH ─────────── */
+.dvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:6px}
+.dvcard{border:1px solid #e5e7eb;background:#f9fafb;border-radius:var(--radius-sm);padding:9px 11px}
+.dvcard.good{background:#f0fdf4;border-color:#bbf7d0}.dvcard.warn{background:#fffbeb;border-color:#fde68a}.dvcard.bad{background:#fff1f2;border-color:#fecdd3}
+.dv-k{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:3px}
+.dv-v{font-size:.95rem;font-weight:800;color:#111827;line-height:1.15}
+.dv-s{font-size:.6rem;color:#6b7280;margin-top:3px;line-height:1.3}
+.dvchips{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.dvchip{font-size:.6rem;font-weight:700;color:#374151;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:2px 7px}
+
 /* ── TRAINING ALERT ─────────────────── */
 .tr-alert{display:flex;align-items:flex-start;gap:10px;border-radius:var(--radius-sm);padding:10px 13px;border:1px solid}
 .tr-alert.trained{background:#f0fdf4;border-color:#bbf7d0}.tr-alert.pending{background:#fff7ed;border-color:#fed7aa}
@@ -506,8 +516,48 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function allAtts(v){return Object.values(v[11]||{}).flatMap(m=>m[11]||[])}
 function devParts(disp){
   if(!disp)return null;
-  const parts=String(disp).split('·');
+  const parts=String(disp).split(/[·Â?]/);
   return {model:(parts[0]||'').trim()||'Sem modelo',version:(parts[1]||'sem versão').trim()||'sem versão'};
+}
+function isSinceDay(dt,day,month){
+  const m=String(dt||'').match(/(\d{1,2})\/(\d{1,2})/);
+  if(!m)return false;
+  const d=+m[1],mo=+m[2];
+  return mo>month||(mo===month&&d>=day);
+}
+function topEntry(map){
+  const arr=[...map.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt-BR'));
+  return arr[0]||['—',0];
+}
+function versionPeriod(atts,pred){
+  const versions=new Map(),models=new Map();
+  let total=0,missing=0;
+  atts.filter(a=>pred(a)).forEach(a=>{
+    total++;
+    const p=devParts(a[6]);
+    if(!p){missing++;return;}
+    versions.set(p.version,(versions.get(p.version)||0)+1);
+    models.set(p.model,(models.get(p.model)||0)+1);
+  });
+  const [version,count]=topEntry(versions);
+  return {total,missing,version,count,versions,models};
+}
+function supplierDeviceHtml(v){
+  const atts=allAtts(v);
+  const since=versionPeriod(atts,a=>isSinceDay(a[1],23,6));
+  const before=versionPeriod(atts,a=>!isSinceDay(a[1],23,6));
+  const all=versionPeriod(atts,()=>true);
+  const [topModel,topModelCount]=topEntry(all.models);
+  const sinceCls=since.total&&since.version==='3.0.9'&&since.count===since.total?'good':since.total?'warn':'bad';
+  const beforeText=before.total?`${before.version}`:'—';
+  const sinceText=since.total?`${since.version}`:'—';
+  const chips=[...all.versions.entries()].sort((a,b)=>b[1]-a[1]).map(([ver,n])=>`<span class="dvchip">${esc(ver)} · ${n}</span>`).join('');
+  return`<div class="dvgrid">
+    <div class="dvcard ${sinceCls}"><div class="dv-k">Desde 23/06</div><div class="dv-v">${esc(sinceText)}</div><div class="dv-s">${since.count||0} de ${since.total} atend. com essa versão</div></div>
+    <div class="dvcard"><div class="dv-k">Antes de 23/06</div><div class="dv-v">${esc(beforeText)}</div><div class="dv-s">${before.count||0} de ${before.total} atend. com essa versão</div></div>
+    <div class="dvcard ${all.missing?'warn':'good'}"><div class="dv-k">Sem dispositivo</div><div class="dv-v">${all.missing}</div><div class="dv-s">${all.total} atendimentos no fornecedor</div></div>
+    <div class="dvcard"><div class="dv-k">Modelo mais usado</div><div class="dv-v">${esc(topModel)}</div><div class="dv-s">${topModelCount} registros com dispositivo</div></div>
+  </div>${chips?`<div class="dvchips">${chips}</div>`:''}`;
 }
 
 // ── INTELLIGENCE LAYER ───────────────────────────────────────
@@ -879,6 +929,9 @@ function openM(name){
       <div class="bk c3"><div class="bk-n">${v[5]}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
       <div class="bk c4"><div class="bk-n">${v[6]}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
     </div>
+
+    <div class="stitle">Versão do APP</div>
+    ${supplierDeviceHtml(v)}
 
     <div class="stitle">Treinamento</div>
     ${trAlertHtml(v)}

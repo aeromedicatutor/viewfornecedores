@@ -261,7 +261,7 @@ function norm(s) { return String(s||'').replace(/\s+/g,' ').trim().toUpperCase()
 /* ── CARD TYPE ───────────────────────────────────────────── */
 function getCardType(fn, csvMap) {
   const n = norm(fn);
-  if (n.includes('H MED') && n.includes('GESTÃO')) return 4; // INTEGRADA
+  if (n.includes('H MED') && n.includes('GEST')) return 4; // INTEGRADA
   for (const [k, v] of Object.entries(csvMap)) {
     if (n.startsWith(k.slice(0,12)) || k.startsWith(n.slice(0,12))) {
       if (v.status === 'Pendente')          return 1;
