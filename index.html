@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -127,12 +127,12 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .tr-chip{margin-top:6px;padding:4px 8px;border-radius:6px;font-size:.63rem;font-weight:600;display:inline-flex;align-items:center;gap:4px}
 
 /* ── OVERLAYS ───────────────────────── */
-.ov,.rov,.sdov,.mapov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(2px)}
+.ov,.rov,.sdov,.mapov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:8px;backdrop-filter:blur(2px)}
 .ov.open,.rov.open,.sdov.open,.mapov.open{display:flex}
 .rov{z-index:2000}.sdov{z-index:2000}.mapov{z-index:2000}
 
 /* ── MAIN MODAL ─────────────────────── */
-.modal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:980px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);display:flex;flex-direction:column}
+.modal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:1180px;max-height:95vh;overflow-y:auto;box-shadow:var(--shadow-lg);display:flex;flex-direction:column}
 .mhdr{padding:16px 22px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;position:sticky;top:0;z-index:10;flex-shrink:0}
 .mhdr.ng{background:var(--green)}.mhdr.pu{background:linear-gradient(135deg,#5b21b6,#7c3aed)}
 .mhdr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
@@ -290,7 +290,7 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .map-btn:hover{background:#dbeafe}
 
 /* ── SHIFT DETAIL MODAL ─────────────── */
-.sdmodal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:480px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.sdmodal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
 .sd-hdr{padding:12px 16px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;display:flex;justify-content:space-between;align-items:center}
 .sd-hdr h3{color:#fff;font-size:.85rem;font-weight:700}
 .sd-body{padding:14px 16px}
@@ -298,20 +298,38 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .sd-chip{font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:5px;background:#f3f4f6;color:#374151}
 
 /* ── MAP MODAL ──────────────────────── */
-.map-modal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:720px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
-.map-hdr{background:var(--green);padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0}
+.map-modal{background:#fff;border-radius:var(--radius-lg);width:98vw;max-width:1400px;height:96vh;max-height:96vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.map-hdr{background:var(--green);padding:8px 14px;display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0}
 .map-hdr-info{flex:1}
 .map-hdr h3{color:#fff;font-size:.85rem;font-weight:700}
-.map-addrs{margin-top:6px;display:flex;flex-direction:column;gap:3px}
+.map-addrs{margin-top:5px;display:grid;grid-template-columns:1fr 1fr;gap:3px 10px}
 .map-addr{font-size:.67rem;color:rgba(255,255,255,.8);display:flex;align-items:flex-start;gap:5px}
 .map-addr span{flex-shrink:0}
-.map-stats-bar{padding:7px 14px;background:#f0fdf4;border-bottom:1px solid #bbf7d0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0}
+.map-stats-bar{padding:5px 14px;background:#f0fdf4;border-bottom:1px solid #bbf7d0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0}
 .map-stat{font-size:.72rem;font-weight:700;color:#065f46;display:flex;align-items:center;gap:4px}
 .map-note{font-size:.63rem;color:#9ca3af;margin-left:auto}
-#leafletMap{flex:1;min-height:400px}
+#leafletMap{height:47vh;min-height:285px;max-height:420px;flex:0 0 auto}
+.route-panel{background:#fff;border-top:1px solid #e5e7eb;flex:1 1 auto;min-height:270px;overflow:auto;padding:8px 14px 12px}
+.route-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:6px}
+.route-card{border:1px solid #e5e7eb;border-radius:6px;padding:6px 8px;background:#f9fafb}
+.route-card strong{display:block;font-size:.68rem;color:#111827;margin-bottom:2px}
+.route-card span{font-size:.66rem;color:#6b7280}
+.route-table{width:100%;border-collapse:collapse;font-size:.68rem}
+.route-table th{font-size:.58rem;text-transform:uppercase;letter-spacing:.04em;color:#9ca3af;text-align:left;padding:4px 6px;border-bottom:1px solid #e5e7eb;background:#f9fafb;position:sticky;top:0}
+.route-table td{padding:4px 6px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:top}
+.route-table .route-km{font-weight:700;color:#ea580c;white-space:nowrap}
+.route-legend{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:7px 9px;box-shadow:0 4px 10px rgba(0,0,0,.12);font-size:.68rem;color:#374151;line-height:1.7}
+.route-legend-panel{display:flex;flex-wrap:wrap;gap:6px 12px;border:1px solid #e5e7eb;background:#fff;border-radius:6px;padding:6px 8px;margin-bottom:6px;font-size:.66rem;color:#374151}
+.route-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+@media(max-width:720px){
+  .map-modal{width:98vw;height:96vh;max-height:96vh}
+  .map-addrs{grid-template-columns:1fr}
+  #leafletMap{height:42vh;min-height:260px}
+  .route-grid{grid-template-columns:1fr 1fr}
+}
 
 /* ── RULES MODAL ────────────────────── */
-.rmodal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.rmodal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:720px;max-height:94vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
 .rhdr{background:var(--green);padding:14px 18px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;display:flex;justify-content:space-between;align-items:center}
 .rhdr h2{color:#fff;font-size:.88rem;font-weight:700}
 .rbody{padding:18px}
@@ -426,6 +444,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
       <span class="map-note">Rota calculada via OpenStreetMap</span>
     </div>
     <div id="leafletMap"></div>
+    <div class="route-panel" id="routePanel"></div>
   </div>
 </div>
 
@@ -459,7 +478,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
   </div>
 </div>
 
-<script src="data.js"></script>
+<script src="data.js?v=20260626-map8"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -484,8 +503,8 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 // MONTH:    [label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,   re,   atts,shifts,tok_delay]
 //            0     1     2       3       4       5   6    7   8   9    10    11   12     13
 // cl: 0=CORRETO,1=MOD_GOP,2=SEM_MOV,3=WEB,4=ERRO  |  rc/re=[[name,ok,err],...]
-// att:      [num,dt_rem,shift,cond,enf,cl,disp,dt_tok,delay,km,lat1,lon1,lat2,lon2,eo,ed]
-//            0   1      2     3    4   5  6    7       8     9  10   11   12   13   14 15
+// att:      [num,dt_rem,shift,cond,enf,cl,disp,dt_tok,delay,km,lat1,lon1,lat2,lon2,eo,ed,tokLat,tokLon,kmRod,horaParada,events]
+//            0   1      2     3    4   5  6    7       8     9  10   11   12   13   14 15 16     17     18    19         20
 // cl: 0=CORRETO, 1=MOD_GOP, 2=SEM_MOV, 3=WEB, 4=ERRO
 // ranking:  [[name,correto,erro],...]  — 0+1 count as correto
 // shifts:   {M:[correto,total,pct,[nums]],T:...,N:...}
@@ -496,6 +515,44 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 const D=typeof SD!=='undefined'?SD:{};
 const GS2=typeof GS!=='undefined'?GS:{avg:0,meta:77,updated:''};
 let activeF='all';
+const MAP_ATTS={};
+
+const META_SUPPLIER_KEYS=[
+  ['ACURA SOLUCOES EM SAUDE','ACURA'],
+  ['ALICIA REMOCOES','ALICIA'],
+  ['AMAZON RESGATE'],
+  ['AMO VIDA'],
+  ['ANILMED'],
+  ['ARCANJOS LIFE','ARCANJOS'],
+  ['BEM ESTAR REMOCOES','BEM ME CARE'],
+  ['CARDIOCENTER ESPECIALIDADES MEDICAS'],
+  ['CEMAC CENTRO ESPECIALIDADES','CEMAC'],
+  ['COPACARE SERRA COLONIAL','COPACARE'],
+  ['EMERGENCIA 01','EMERGENCIA 1'],
+  ['F1'],
+  ['GETAP MED'],
+  ['GR REMOCOES'],
+  ['HOSPITAL UNIMED PRONTO ATENDIMENTO POCOS','HOSPITAL UNIMED PRONTO ATENDIMENTO'],
+  ['LE FRANCE'],
+  ['LIFE REMOCENTER'],
+  ['MEDCALL JUIZ DE FORA','MEDCALL'],
+  ['MEDSUL'],
+  ['PULSAR'],
+  ['R R SERVICOS HOSPITALARES','R R EMERGENCIAS','RR EMERGENCIAS'],
+  ['REMOCOES MONLEVADE'],
+  ['REMOCOES RESENDE'],
+  ['SP VIDAS EMERGENCIAS MEDICAS','SP VIDAS'],
+  ['TRANS MEDI'],
+  ['TRANSCORDIS'],
+  ['TRANSVIDA SERVICO EM SAUDE','TRANSVIDA SERVICOS EM SAUDE'],
+  ['UDICOR GESTAO EM SAUDE','UDICOR'],
+  ['UNIMED CENTRO OESTE'],
+  ['UNIMED INCONFIDENTES'],
+  ['UNIMED SAO SEBASTIAO DO PARAISO'],
+  ['UNIMED SUL MINEIRA'],
+  ['VITALLE REMOCOES MEDICAS','VITALLE'],
+  ['ZELAR REMOCOES DE PACIENTE','ZELAR MOV','ZELAR']
+];
 
 const CCLR={A:'#059669',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 const CTLBL={1:'⏳ Pendente',2:'🔧 Em Instalação',3:'📵 Não Usa APP',4:'🔗 Integrada IRIS'};
@@ -513,6 +570,28 @@ function pc(i){return i===0?'p1':i===1?'p2':i===2?'p3':'pn'}
 function pctBg(p){return p>=80?'#dcfce7':p>=60?'#fef3c7':'#fee2e2'}
 function pctCl(p){return p>=80?'#14532d':p>=60?'#92400e':'#991b1b'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function normMeta(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&AMP;|&NBSP;/g,' ').replace(/[^A-Z0-9]+/gi,' ').replace(/\s+/g,' ').trim().toUpperCase()}
+function isHMedName(name){const n=normMeta(name);return n.includes('H MED')||n.includes('HMED')}
+function metaMatch(name,needle){
+  const n=normMeta(name), k=normMeta(needle);
+  if(!k||isHMedName(name))return false;
+  return n.includes(k)||k.includes(n)||n.startsWith(k.slice(0,Math.min(14,k.length)));
+}
+function isMetaSupplierName(name){return META_SUPPLIER_KEYS.some(keys=>keys.some(k=>metaMatch(name,k)))}
+function metaStats(){
+  const entries=Object.entries(D).filter(([n])=>isMetaSupplierName(n));
+  const cats={A:0,B:0,C:0,D:0,F:0};
+  let att=0,base=0,ok=0,err=0;
+  entries.forEach(([,v])=>{
+    att+=v[1]||0;
+    base+=v[7]||0;
+    ok+=(v[2]||0)+(v[3]||0);
+    err+=supplierErrors(v);
+    cats[cat(v[8]||0)]++;
+  });
+  const avg=base>0?Math.round(ok/base*1000)/10:0;
+  return {entries,targetTotal:META_SUPPLIER_KEYS.length,matched:entries.length,missing:META_SUPPLIER_KEYS.length-entries.length,att,base,ok,err,avg,cats};
+}
 function allAtts(v){return Object.values(v[11]||{}).flatMap(m=>m[11]||[])}
 function devParts(disp){
   if(!disp)return null;
@@ -562,7 +641,8 @@ function supplierDeviceHtml(v){
 
 // ── INTELLIGENCE LAYER ───────────────────────────────────────
 function buildInsights(){
-  const entries=Object.entries(D);
+  const meta=metaStats();
+  const entries=meta.entries;
   const suppliers=entries.map(([name,v])=>{
     const total=v[1]||0, base=v[7]||total, ok=(v[2]||0)+(v[3]||0), sem=v[4]||0, web=v[5]||0, erro=v[6]||0, mod=v[3]||0;
     const tr=v[12]||null;
@@ -643,21 +723,19 @@ function renderIntel(){
 
 // ── HEADER ──────────────────────────────────────────────────
 function initHeader(){
-  const vals=Object.values(D);
-  const ta=vals.reduce((s,v)=>s+v[1],0);
-  const cats={A:0,B:0,C:0,D:0,F:0};let pu=0;
-  vals.forEach(v=>{if(isPu(v))pu++;else cats[cat(v[8])]++;});
+  const meta=metaStats();
+  const cats=meta.cats;
   document.getElementById('hstats').innerHTML=`
-    <div class="hs"><div class="hs-n">${Object.keys(D).length}</div><div class="hs-l">Fornecedores</div></div>
-    <div class="hs"><div class="hs-n">${ta.toLocaleString('pt-BR')}</div><div class="hs-l">Atendimentos</div></div>
-    <div class="hs"><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div><div class="hs-l">A+B</div></div>
-    <div class="hs"><div class="hs-n" style="color:#fca5a5">${cats.F}</div><div class="hs-l">Cat F</div></div>`;
-  const a=GS2.avg;
+    <div class="hs"><div class="hs-n">${meta.targetTotal}</div><div class="hs-l">Base meta</div></div>
+    <div class="hs"><div class="hs-n">${meta.att.toLocaleString('pt-BR')}</div><div class="hs-l">Atend. foco</div></div>
+    <div class="hs"><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div><div class="hs-l">A+B foco</div></div>
+    <div class="hs"><div class="hs-n" style="color:#fca5a5">${cats.F}</div><div class="hs-l">Cat F foco</div></div>`;
+  const a=meta.avg||GS2.avg;
   const col=a>=77?'#4ade80':a>=60?'#fbbf24':'#f87171';
   document.getElementById('avgBox').innerHTML=`
-    <div class="avg-top"><span class="avg-lbl">Média Geral</span><span class="avg-val" style="color:${col}">${a}%</span></div>
+    <div class="avg-top"><span class="avg-lbl">Uso base foco</span><span class="avg-val" style="color:${col}">${a}%</span></div>
     <div class="avg-bar"><div class="avg-bar-fill" style="width:${a}%;background:${col}"></div></div>
-    ${GS2.updated?`<div class="avg-upd">🕐 ${GS2.updated}</div>`:''}`;
+    <div class="avg-upd">${meta.matched}/${meta.targetTotal} fornecedores da meta com dados · ${meta.base.toLocaleString('pt-BR')} atend. válidos${GS2.updated?` · ${GS2.updated}`:''}</div>`;
 }
 
 // ── FILTER & RENDER ──────────────────────────────────────────
@@ -688,7 +766,8 @@ function filteredEntries(){
 function render(){
   const entries=filteredEntries();
   const sum=entries.reduce((acc,[,v])=>{acc.att+=v[1]||0;acc.err+=supplierErrors(v);return acc;},{att:0,err:0});
-  document.getElementById('ri').textContent=`${entries.length} de ${Object.keys(D).length} fornecedores · ${sum.att.toLocaleString('pt-BR')} atend. · ${sum.err.toLocaleString('pt-BR')} erros/sem mov.`;
+  const meta=metaStats();
+  document.getElementById('ri').textContent=`${entries.length} de ${Object.keys(D).length} fornecedores exibidos · meta ${meta.matched}/${meta.targetTotal} · ${sum.att.toLocaleString('pt-BR')} atend. · ${sum.err.toLocaleString('pt-BR')} erros/sem mov.`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
 
@@ -828,10 +907,14 @@ function trAlertHtml(v){
 
 // ── ATT ROW ──────────────────────────────────────────────────
 function attRow(a){
+  MAP_ATTS[a[0]]=a;
   const cl=a[5]??3;
   const dv=a[8];
   const dcl=dv===null||dv===undefined?'#9ca3af':Math.abs(dv)<=15?'#059669':Math.abs(dv)<=30?'#d97706':'#dc2626';
-  const hasMap=a[10]!=null&&a[12]!=null;
+  const events=Array.isArray(a[20])?a[20]:[];
+  const hasMap=(a[10]!=null&&a[11]!=null&&a[12]!=null&&a[13]!=null)||events.length>0;
+  const kmTxt=a[18]!=null?a[18]+' km':(a[9]!=null?a[9]+' km':'—');
+  const parada=a[19]||'—';
   const eo=(a[14]||'').replace(/'/g,"\\'");
   const ed=(a[15]||'').replace(/'/g,"\\'");
   return`<tr class="${RCLS[cl]||''}">
@@ -844,8 +927,10 @@ function attRow(a){
     <td style="font-size:.62rem;color:#6b7280;white-space:nowrap">${a[6]||'—'}</td>
     <td style="white-space:nowrap;font-size:.65rem;color:#7c3aed;font-weight:600">${a[7]||'—'}</td>
     <td style="text-align:center;font-size:.65rem;font-weight:700;color:${dcl}">${(dv===null||dv===undefined)?'—':dv+'min'}</td>
-    <td style="text-align:center;font-size:.65rem;font-weight:600;color:#0369a1">${a[9]!=null?a[9]+' km':'—'}</td>
-    <td>${hasMap?`<button class="map-btn" onclick="openMapAtt(${a[0]},${a[10]},${a[11]},${a[12]},${a[13]},'${eo}','${ed}')">🗺️ Ver</button>`:'—'}</td>
+    <td style="text-align:center;font-size:.65rem;font-weight:600;color:#0369a1">${kmTxt}</td>
+    <td style="text-align:center;font-size:.65rem;color:#6b7280">${parada}</td>
+    <td style="text-align:center;font-size:.65rem;font-weight:700;color:#ea580c">${events.length||'—'}</td>
+    <td>${hasMap?`<button class="map-btn" onclick="openMapAtt(${a[0]})">🗺️ Ver</button>`:'—'}</td>
   </tr>`;
 }
 
@@ -882,7 +967,7 @@ function monthBlock(mn,m,pu,nid){
       </div>
       <div class="atw">
         <table class="att">
-          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token</th><th>Δ Token</th><th>KM</th><th>Mapa</th></tr></thead>
+          <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Enfermeiro</th><th>Status</th><th>Dispositivo</th><th>Token</th><th>Δ Token</th><th>KM Rodado</th><th>Parada</th><th>Eventos</th><th>Mapa</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -988,18 +1073,140 @@ function openSd(id,lbl,atts){
 function closeSd(){document.getElementById('sdov').classList.remove('open');document.body.style.overflow='';}
 
 // ── MAP ───────────────────────────────────────────────────────
-function openMapAtt(num,lat1,lon1,lat2,lon2,endOrig,endDest){
+function coordOk(p){return p&&p.lat!=null&&p.lon!=null&&!isNaN(+p.lat)&&!isNaN(+p.lon)}
+function fmtKm(v){return v==null?'—':`${(+v).toFixed(1)} km`}
+function fmtMin(v){if(v==null)return'—';const m=Math.round(v);return m>=60?`${Math.floor(m/60)}h ${m%60}min`:`${m} min`}
+function geoKm(a,b){
+  if(!coordOk(a)||!coordOk(b))return null;
+  const R=6371,r=x=>x*Math.PI/180,dLat=r(b.lat-a.lat),dLon=r(b.lon-a.lon);
+  const h=Math.sin(dLat/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dLon/2)**2;
+  return Math.round(R*2*Math.asin(Math.sqrt(h))*1.35*10)/10;
+}
+function legEstimate(a,b){const km=geoKm(a,b);return{km,min:km==null?null:Math.round(km/45*60),source:'estimado'}}
+function makeLeg(label,a,b,type='evento'){
+  const e=legEstimate(a,b);
+  return{label,from:a,to:b,type,km:e.km,min:e.min,source:e.source,coords:null};
+}
+function pointLabel(p){return p?.stageLabel||p?.label||'Ponto'}
+function evMap(events){return Object.fromEntries(events.filter(coordOk).map(e=>[e.key,e]))}
+function asPoint(p,stage,stageLabel,role,color){
+  if(!coordOk(p))return null;
+  return {...p,stage,stageLabel,role,color};
+}
+function operationalRoute(a){
+  const events=Array.isArray(a[20])?a[20].filter(coordOk):[];
+  const by=evMap(events);
+  const base=asPoint(by.token||by.saida_recurso||(a[16]!=null&&a[17]!=null?{key:'token',label:'Token inserido',lat:a[16],lon:a[17],time:a[7]}:null),0,'0 Base / Token','base','#7c3aed');
+  const officialOrigin=asPoint({key:'origem_ref',label:'Origem oficial',lat:a[10],lon:a[11]},null,'Origem oficial','origem-oficial','#059669');
+  const officialDest=asPoint({key:'destino_ref',label:'Destino oficial',lat:a[12],lon:a[13]},null,'Destino oficial','destino-oficial','#dc2626');
+  const clickedOrigin=asPoint(by.chegada_origem,1,'1 Clique na origem','origem-click','#ea580c');
+  const clickedDest=asPoint(by.chegada_destino,2,'2 Clique no destino','destino-click','#ea580c');
+  const origin=clickedOrigin||asPoint(officialOrigin,1,'1 Origem oficial','origem','#059669');
+  const dest=clickedDest||asPoint(officialDest,2,'2 Destino oficial','destino','#dc2626');
+  const returnOrigin=asPoint(by.chegada_origem_ret,3,'3 Volta à origem','retorno','#ef4444');
+  const release=asPoint(by.lib_recurso||by.finalizacao,null,'Liberação do recurso','liberacao','#374151');
+  if(release){
+    release.stage=returnOrigin?4:3;
+    release.stageLabel=returnOrigin?'4 Liberação/Base':'3 Liberação/Base';
+  }
+  const aux=[
+    asPoint(by.saida_recurso,null,'Saída da base','aux','#f59e0b'),
+    asPoint(by.saida_origem,null,'Saída da origem','aux','#f59e0b'),
+    asPoint(by.lib_destino,null,'Liberação do destino','aux','#f59e0b'),
+    asPoint(by.saida_origem_ret,null,'Saída origem volta','aux-ret','#ef4444')
+  ].filter(Boolean);
+
+  const main=[base,clickedOrigin,clickedDest,returnOrigin,release].filter(Boolean);
+  const official=[officialOrigin,officialDest].filter(Boolean);
+  const idaLine=[base,by.saida_recurso,origin,by.saida_origem,dest,by.lib_destino,!returnOrigin?release:null].filter(coordOk);
+  const voltaLine=returnOrigin?[dest,by.lib_destino,returnOrigin,by.saida_origem_ret,release].filter(coordOk):[];
+  const legs=[];
+  if(coordOk(base)&&coordOk(officialOrigin))legs.push(makeLeg('0 Base/Token → Origem oficial',base,officialOrigin,'operacional'));
+  if(coordOk(officialOrigin)&&coordOk(officialDest))legs.push(makeLeg('Origem oficial → Destino oficial',officialOrigin,officialDest,'operacional'));
+  if(returnOrigin&&coordOk(officialDest)&&coordOk(officialOrigin))legs.push(makeLeg('Destino oficial → Origem oficial (volta)',officialDest,officialOrigin,'volta'));
+  if(release){
+    if(returnOrigin&&coordOk(officialOrigin))legs.push(makeLeg('Origem oficial → Liberação/Base',officialOrigin,release,'volta'));
+    else if(coordOk(officialDest))legs.push(makeLeg('Destino oficial → Liberação/Base',officialDest,release,'operacional'));
+  }
+  return {events,by,base,officialOrigin,officialDest,clickedOrigin,clickedDest,origin,dest,returnOrigin,release,aux,official,main,idaLine,voltaLine,legs,hasRoundTrip:!!returnOrigin};
+}
+function renderRoutePanel(a,route){
+  const events=route.events||[];
+  const legs=route.legs||[];
+  const km=a[18]!=null?a[18]:a[9];
+  const parada=a[19]||'—';
+  const rows=legs.map(l=>`<tr>
+    <td>${esc(l.label)}</td>
+    <td>${esc(l.from?.time||'—')}</td>
+    <td>${esc(l.to?.time||'—')}</td>
+    <td class="route-km">${fmtKm(l.km)}</td>
+    <td>${fmtMin(l.min)}</td>
+    <td>${l.source==='rota'?'OSRM':'estimado'}</td>
+  </tr>`).join('');
+  const auxTxt=route.aux.length?route.aux.map(p=>`${p.stageLabel}${p.time?' · '+p.time:''}`).join(' | '):'Sem saídas/liberações auxiliares registradas';
+  const pt=(p,empty='sem clique')=>p?`${p.time?esc(p.time)+' · ':''}${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}`:empty;
+  document.getElementById('routePanel').innerHTML=`
+    <div class="route-legend-panel">
+      <span><span class="route-dot" style="background:#7c3aed"></span>0 Base / Token</span>
+      <span><span class="route-dot" style="background:#059669"></span>O Origem oficial</span>
+      <span><span class="route-dot" style="background:#dc2626"></span>D Destino oficial</span>
+      <span><span class="route-dot" style="background:#2563eb"></span>Rota esperada</span>
+      <span><span class="route-dot" style="background:#ea580c"></span>Fornecedor - ida</span>
+      <span><span class="route-dot" style="background:#ef4444"></span>Fornecedor - volta</span>
+    </div>
+    <div class="route-grid">
+      <div class="route-card"><strong>KM oficial</strong><span>${km!=null?km+' km':'—'}</span></div>
+      <div class="route-card"><strong>Hora parada</strong><span>${esc(parada)}</span></div>
+      <div class="route-card"><strong>Fluxo</strong><span>${route.hasRoundTrip?'Ida e volta':'Ida'}</span></div>
+      <div class="route-card"><strong>Cliques mapeados</strong><span>${events.length} evento(s)</span></div>
+    </div>
+    <table class="route-table">
+      <thead><tr><th>Trecho esperado</th><th>Saída</th><th>Chegada</th><th>KM esperado</th><th>Tempo esperado</th><th>Fonte</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="6">Sem pontos suficientes para calcular trechos.</td></tr>'}</tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      <div class="route-card"><strong>Origem</strong><span>Oficial: ${pt(route.officialOrigin,'sem origem oficial')}<br>Fornecedor: ${pt(route.clickedOrigin)}</span></div>
+      <div class="route-card"><strong>Destino</strong><span>Oficial: ${pt(route.officialDest,'sem destino oficial')}<br>Fornecedor: ${pt(route.clickedDest)}</span></div>
+    </div>
+    <div style="font-size:.66rem;color:#6b7280;margin-top:7px"><strong>Marcações auxiliares:</strong> ${esc(auxTxt)}</div>`;
+}
+function osrmLeg(a,b){
+  if(!coordOk(a)||!coordOk(b))return Promise.resolve(null);
+  const url=`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`;
+  return fetch(url).then(r=>r.ok?r.json():null).then(d=>{
+    const rt=d&&d.routes&&d.routes[0];if(!rt)return null;
+    return{km:Math.round(rt.distance/100)/10,min:Math.round(rt.duration/60),source:'rota',coords:rt.geometry.coordinates.map(c=>[c[1],c[0]])};
+  }).catch(()=>null);
+}
+async function refreshLegsWithOsrm(a,legs){
+  const updated=await Promise.all(legs.map(async l=>{
+    const r=await osrmLeg(l.from,l.to);
+    return r?{...l,...r}:l;
+  }));
+  const route=operationalRoute(a);
+  route.legs=updated;
+  renderRoutePanel(a,route);
+}
+function openMapAtt(num){
+  const a=MAP_ATTS[num];if(!a)return;
+  const route=operationalRoute(a);
   document.getElementById('mapTitle').textContent=`Atendimento #${num}`;
-  document.getElementById('mapStats').style.display='none';
+  document.getElementById('mapStats').style.display='flex';
+  document.getElementById('mapDist').innerHTML=`🛣️ <strong>${a[18]!=null?a[18]:a[9]??'—'} km oficiais</strong>`;
+  document.getElementById('mapTime').innerHTML=`⏸️ <strong>${esc(a[19]||'—')} parada</strong>`;
   document.getElementById('mapAddrs').innerHTML=`
-    <div class="map-addr"><span>🟢</span><span>${endOrig||`${lat1}, ${lon1}`}</span></div>
-    <div class="map-addr"><span>🔴</span><span>${endDest||`${lat2}, ${lon2}`}</span></div>`;
+    <div class="map-addr"><span>🟣</span><span>${route.base?`${esc(route.base.stageLabel)}${route.base.time?' · '+esc(route.base.time):''}`:'Base/token sem ponto'}</span></div>
+    <div class="map-addr"><span>🟢</span><span>Origem oficial · ${esc(a[14]||`${a[10]}, ${a[11]}`)}${route.clickedOrigin?` | Clique fornecedor: ${esc(route.clickedOrigin.time||'sem horário')}`:''}</span></div>
+    <div class="map-addr"><span>🔴</span><span>Destino oficial · ${esc(a[15]||`${a[12]}, ${a[13]}`)}${route.clickedDest?` | Clique fornecedor: ${esc(route.clickedDest.time||'sem horário')}`:''}</span></div>
+    ${route.returnOrigin?`<div class="map-addr"><span>↩️</span><span>${esc(route.returnOrigin.stageLabel)}${route.returnOrigin.time?' · '+esc(route.returnOrigin.time):''}</span></div>`:''}`;
+  renderRoutePanel(a,route);
   document.getElementById('mapov').classList.add('open');
   document.body.style.overflow='hidden';
-  setTimeout(()=>initMap(lat1,lon1,lat2,lon2),80);
+  setTimeout(()=>initMap(a,route),80);
+  refreshLegsWithOsrm(a,route.legs);
 }
 
-function initMap(lat1,lon1,lat2,lon2){
+function initMap(a,route){
   const el=document.getElementById('leafletMap');
   el.innerHTML='';
   function load(cb){
@@ -1013,46 +1220,56 @@ function initMap(lat1,lon1,lat2,lon2){
     document.head.appendChild(ls);
   }
   load(()=>{
-    const map=L.map(el).setView([(lat1+lat2)/2,(lon1+lon2)/2],10);
+    const lat1=a[10],lon1=a[11],lat2=a[12],lon2=a[13];
+    const events=route.events||[];
+    const all=[...route.official,...route.main,...route.aux].filter(coordOk);
+    const center=all.length?all.reduce((s,p)=>[s[0]+(+p.lat),s[1]+(+p.lon)],[0,0]).map(v=>v/all.length):[-15.78,-47.93];
+    const map=L.map(el).setView(center,all.length>1?10:5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(map);
 
-    // Origem marker - green
-    const icoA=L.divIcon({className:'',iconSize:[28,28],iconAnchor:[14,28],html:`
-      <div style="position:relative;width:28px;height:28px">
-        <div style="background:#059669;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>
-        <div style="position:absolute;top:5px;left:0;right:0;text-align:center;color:#fff;font-size:.7rem;font-weight:700;transform:rotate(0deg)">A</div>
-      </div>`});
-    // Destino marker - red
-    const icoB=L.divIcon({className:'',iconSize:[28,28],iconAnchor:[14,28],html:`
-      <div style="position:relative;width:28px;height:28px">
-        <div style="background:#dc2626;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>
-        <div style="position:absolute;top:5px;left:0;right:0;text-align:center;color:#fff;font-size:.7rem;font-weight:700">B</div>
+    const pin=(color,label,size=32)=>L.divIcon({className:'',iconSize:[size,size],iconAnchor:[size/2,size],html:`
+      <div style="position:relative;width:${size}px;height:${size}px">
+        <div style="background:${color};width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>
+        <div style="position:absolute;top:${Math.round(size*.2)}px;left:0;right:0;text-align:center;color:#fff;font-size:${size>28?'.78rem':'.62rem'};font-weight:800">${label}</div>
       </div>`});
 
-    L.marker([lat1,lon1],{icon:icoA}).addTo(map).bindPopup('<strong>Ponto A — Origem</strong>');
-    L.marker([lat2,lon2],{icon:icoB}).addTo(map).bindPopup('<strong>Ponto B — Destino</strong>');
+    route.official.forEach(p=>{
+      const lbl=p.role==='origem-oficial'?'O':'D';
+      L.marker([p.lat,p.lon],{icon:pin(p.color||'#111827',lbl,30)}).addTo(map)
+        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}<br>${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}`);
+    });
+    route.main.forEach(p=>{
+      L.marker([p.lat,p.lon],{icon:pin(p.color||'#374151',String(p.stage),34)}).addTo(map)
+        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>'+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}`);
+    });
+    route.aux.forEach(p=>{
+      const lbl=p.key==='saida_recurso'?'SB':p.key==='saida_origem'?'SO':p.key==='lib_destino'?'LD':p.key==='saida_origem_ret'?'SV':'•';
+      L.marker([p.lat,p.lon],{icon:pin(p.color||'#f59e0b',lbl,24)}).addTo(map)
+        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>'+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}`);
+    });
+    const expectedGroup=L.layerGroup().addTo(map);
+    Promise.all(route.legs.map(async leg=>{
+      const r=await osrmLeg(leg.from,leg.to);
+      const coords=r&&r.coords?r.coords:[[leg.from.lat,leg.from.lon],[leg.to.lat,leg.to.lon]];
+      L.polyline(coords,{color:'#2563eb',weight:4,opacity:.55,dashArray:leg.type==='volta'?'7,6':null}).addTo(expectedGroup)
+        .bindPopup(`<strong>Rota esperada</strong><br>${esc(leg.label)}<br>${fmtKm(r?.km??leg.km)} · ${fmtMin(r?.min??leg.min)}`);
+    }));
+    if(route.idaLine.length>1)L.polyline(route.idaLine.map(e=>[e.lat,e.lon]),{color:'#ea580c',weight:6,opacity:.94}).addTo(map).bindPopup('<strong>Realizado pelo fornecedor - ida</strong>');
+    if(route.voltaLine.length>1)L.polyline(route.voltaLine.map(e=>[e.lat,e.lon]),{color:'#ef4444',weight:6,opacity:.88,dashArray:'8,6'}).addTo(map).bindPopup('<strong>Realizado pelo fornecedor - volta</strong>');
 
-    // Fetch route from OSRM
-    const url=`https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&geometries=geojson`;
-    fetch(url)
-      .then(r=>{if(!r.ok)throw new Error('OSRM '+r.status);return r.json();})
-      .then(data=>{
-        const route=data.routes[0];
-        const coords=route.geometry.coordinates.map(c=>[c[1],c[0]]);
-        L.polyline(coords,{color:'#2563eb',weight:5,opacity:.85}).addTo(map);
-        const km=(route.distance/1000).toFixed(1);
-        const min=Math.round(route.duration/60);
-        const timeStr=min>=60?`${Math.floor(min/60)}h ${min%60}min`:`${min} min`;
-        document.getElementById('mapDist').innerHTML=`🛣️ <strong>${km} km</strong>`;
-        document.getElementById('mapTime').innerHTML=`⏱️ <strong>${timeStr}</strong>`;
-        document.getElementById('mapStats').style.display='flex';
-        map.fitBounds(L.polyline(coords).getBounds().pad(0.15));
-      })
-      .catch(()=>{
-        // Fallback: straight line
-        const line=L.polyline([[lat1,lon1],[lat2,lon2]],{color:'#f59e0b',weight:3,dashArray:'8,5',opacity:.8}).addTo(map);
-        map.fitBounds(line.getBounds().pad(0.2));
-      });
+    const legend=L.control({position:'bottomleft'});
+    legend.onAdd=()=>{
+      const div=L.DomUtil.create('div','route-legend');
+      div.innerHTML=`<div><span class="route-dot" style="background:#7c3aed"></span>0 Base / Token</div>
+        <div><span class="route-dot" style="background:#059669"></span>O Origem oficial</div>
+        <div><span class="route-dot" style="background:#dc2626"></span>D Destino oficial</div>
+        <div><span class="route-dot" style="background:#2563eb"></span>Rota esperada calculada</div>
+        <div><span class="route-dot" style="background:#ea580c"></span>Cliques do fornecedor / ida</div>
+        <div><span class="route-dot" style="background:#ef4444"></span>Realizado pelo fornecedor - volta</div>`;
+      return div;
+    };
+    legend.addTo(map);
+    if(all.length>1)map.fitBounds(L.latLngBounds(all.map(p=>[p.lat,p.lon])).pad(0.18));
 
     el._map=map;
   });
@@ -1061,6 +1278,7 @@ function closeMap(){
   const el=document.getElementById('leafletMap');
   if(el&&el._map){try{el._map.remove();}catch(e){}el._map=null;}
   el.innerHTML='';
+  document.getElementById('routePanel').innerHTML='';
   document.getElementById('mapov').classList.remove('open');
   document.body.style.overflow='';
 }
@@ -1079,3 +1297,8 @@ initHeader();renderIntel();render();
 </script>
 </body>
 </html>
+
+
+
+
+

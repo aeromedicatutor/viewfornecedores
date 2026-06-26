@@ -109,9 +109,9 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
   <div class="card">
     <h2>ℹ️ Como atualizar</h2>
     <ol class="steps-list">
-      <li>Baixe a planilha de atendimentos do sistema interno <strong>(.xlsx)</strong></li>
-      <li>Tenha a planilha de implantação atualizada <strong>(.csv ou .xlsx)</strong></li>
-      <li>Carregue as <strong>duas planilhas obrigatórias</strong> e, se disponível, o detalhamento de transporte</li>
+      <li>Baixe o relatório oficial de transporte <strong>(.xlsx)</strong></li>
+      <li>Carregue o relatório oficial com atendimentos, token, KM, horários e Lat/Long</li>
+      <li>Carregue também a planilha de implantação para status de treinamento</li>
       <li>Clique em <strong>"Processar"</strong> e aguarde</li>
       <li>Clique em <strong>"Baixar data.js"</strong> e substitua no GitHub Pages</li>
     </ol>
@@ -120,15 +120,15 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
   <!-- UPLOAD -->
   <div class="card">
     <h2>📤 Carregar Planilhas</h2>
-    <div class="sub">As duas planilhas são obrigatórias para gerar o <code>data.js</code> completo com status de treinamento.</div>
+    <div class="sub">O relatório oficial alimenta mapa e atendimento; a implantação informa quem está treinado ou pendente.</div>
     <div class="ugrid">
       <div>
-        <div class="dz-lbl">📊 Planilha de Atendimentos (.xlsx)</div>
+        <div class="dz-lbl">📋 Relatório Oficial de Transporte (.xlsx)</div>
         <div class="dz" id="dz1">
           <input type="file" accept=".xlsx,.xls" onchange="setFile(1,this.files[0])">
-          <div class="dz-icon">📊</div>
+          <div class="dz-icon">📋</div>
           <div class="dz-txt">Arrastar ou clicar</div>
-          <div class="dz-sub">Exportada do sistema IRIS</div>
+          <div class="dz-sub">Fonte única: token, trajeto, KM, parada e dispositivo</div>
           <div class="fc ok" id="fc1"></div>
         </div>
       </div>
@@ -138,19 +138,9 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
           <input type="file" accept=".csv,.xlsx,.xls" onchange="setFile(2,this.files[0])">
           <div class="dz-icon">🟣</div>
           <div class="dz-txt">Arrastar ou clicar</div>
-          <div class="dz-sub">Status de treinamento e instalação</div>
+          <div class="dz-sub">Status de treinamento, instalação e uso do APP</div>
           <div class="fc pu" id="fc2"></div>
         </div>
-      </div>
-    </div>
-    <div style="margin-top:12px">
-      <div class="dz-lbl">📋 Detalhamento de Transporte (.xlsx) — opcional</div>
-      <div class="dz" id="dz3">
-        <input type="file" accept=".xlsx,.xls" onchange="setFile(3,this.files[0])">
-        <div class="dz-icon">📋</div>
-        <div class="dz-txt">Arrastar ou clicar</div>
-        <div class="dz-sub">Dispositivo, horário do token, tempo de inserção</div>
-        <div class="fc ok" id="fc3"></div>
       </div>
     </div>
 
@@ -160,9 +150,9 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
 
     <div class="prog" id="prog">
       <div class="prog-hdr">Processando…</div>
-      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Lendo atendimentos…</span></div>
+      <div class="ps"><div class="psi pend" id="s1i">1</div><span id="s1t">Lendo relatório oficial…</span></div>
       <div class="ps"><div class="psi pend" id="s2i">2</div><span id="s2t">Lendo implantação…</span></div>
-      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Lendo detalhamento…</span></div>
+      <div class="ps"><div class="psi pend" id="s3i">3</div><span id="s3t">Montando eventos do mapa…</span></div>
       <div class="ps"><div class="psi pend" id="s4i">4</div><span id="s4t">Classificando atendimentos…</span></div>
       <div class="ps"><div class="psi pend" id="s5i">5</div><span id="s5t">Calculando rankings…</span></div>
       <div class="ps"><div class="psi pend" id="s6i">6</div><span id="s6t">Gerando data.js…</span></div>
@@ -208,6 +198,7 @@ let file1 = null, file2 = null, genJs = null;
 // Drag & drop
 ['dz1','dz2','dz3'].forEach((id,i) => {
   const el = document.getElementById(id);
+  if (!el) return;
   el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('over'); });
   el.addEventListener('dragleave', () => el.classList.remove('over'));
   el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('over'); setFile(i+1, e.dataTransfer.files[0]); });
@@ -257,6 +248,51 @@ function classify(token, horario, rastreios) {
 
 /* ── NORMALISE name for matching ─────────────────────────── */
 function norm(s) { return String(s||'').replace(/\s+/g,' ').trim().toUpperCase(); }
+
+const META_SUPPLIER_KEYS=[
+  ['ACURA SOLUCOES EM SAUDE','ACURA'],
+  ['ALICIA REMOCOES','ALICIA'],
+  ['AMAZON RESGATE'],
+  ['AMO VIDA'],
+  ['ANILMED'],
+  ['ARCANJOS LIFE','ARCANJOS'],
+  ['BEM ESTAR REMOCOES','BEM ME CARE'],
+  ['CARDIOCENTER ESPECIALIDADES MEDICAS'],
+  ['CEMAC CENTRO ESPECIALIDADES','CEMAC'],
+  ['COPACARE SERRA COLONIAL','COPACARE'],
+  ['EMERGENCIA 01','EMERGENCIA 1'],
+  ['F1'],
+  ['GETAP MED'],
+  ['GR REMOCOES'],
+  ['HOSPITAL UNIMED PRONTO ATENDIMENTO POCOS','HOSPITAL UNIMED PRONTO ATENDIMENTO'],
+  ['LE FRANCE'],
+  ['LIFE REMOCENTER'],
+  ['MEDCALL JUIZ DE FORA','MEDCALL'],
+  ['MEDSUL'],
+  ['PULSAR'],
+  ['R R SERVICOS HOSPITALARES','R R EMERGENCIAS','RR EMERGENCIAS'],
+  ['REMOCOES MONLEVADE'],
+  ['REMOCOES RESENDE'],
+  ['SP VIDAS EMERGENCIAS MEDICAS','SP VIDAS'],
+  ['TRANS MEDI'],
+  ['TRANSCORDIS'],
+  ['TRANSVIDA SERVICO EM SAUDE','TRANSVIDA SERVICOS EM SAUDE'],
+  ['UDICOR GESTAO EM SAUDE','UDICOR'],
+  ['UNIMED CENTRO OESTE'],
+  ['UNIMED INCONFIDENTES'],
+  ['UNIMED SAO SEBASTIAO DO PARAISO'],
+  ['UNIMED SUL MINEIRA'],
+  ['VITALLE REMOCOES MEDICAS','VITALLE'],
+  ['ZELAR REMOCOES DE PACIENTE','ZELAR MOV','ZELAR']
+];
+function normMeta(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&AMP;|&NBSP;/g,' ').replace(/[^A-Z0-9]+/gi,' ').replace(/\s+/g,' ').trim().toUpperCase()}
+function isHMedName(name){const n=normMeta(name);return n.includes('H MED')||n.includes('HMED')}
+function metaMatch(name,needle){
+  const n=normMeta(name), k=normMeta(needle);
+  if(!k||isHMedName(name))return false;
+  return n.includes(k)||k.includes(n)||n.startsWith(k.slice(0,Math.min(14,k.length)));
+}
+function isMetaSupplierName(name){return META_SUPPLIER_KEYS.some(keys=>keys.some(k=>metaMatch(name,k)))}
 
 /* ── CARD TYPE ───────────────────────────────────────────── */
 function getCardType(fn, csvMap) {
@@ -393,6 +429,58 @@ function getShift(dt){
   const h=+m[3];
   return h>=6&&h<12?'M':h>=12&&h<18?'T':'N';
 }
+function fold(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();}
+function findCol(hdrs,pred){return hdrs.findIndex(h=>pred(fold(h)));}
+function parseFullDate(raw){
+  if(!raw)return null;
+  if(typeof raw==='number'){const p=XLSX.SSF.parse_date_code(raw);return p?{d:p.d,m:p.m,y:p.y,H:p.H,M:p.M,totalMin:p.H*60+p.M+p.d*1440}:null;}
+  if(raw instanceof Date&&!isNaN(raw))return{d:raw.getDate(),m:raw.getMonth()+1,y:raw.getFullYear(),H:raw.getHours(),M:raw.getMinutes(),totalMin:raw.getHours()*60+raw.getMinutes()+raw.getDate()*1440};
+  const s=String(raw);
+  const m=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+  return m?{d:+m[1],m:+m[2],y:+m[3],H:+m[4],M:+m[5],totalMin:+m[4]*60+(+m[5])+(+m[1])*1440}:null;
+}
+function fmtFullDate(raw){
+  const d=parseFullDate(raw);
+  return d?`${String(d.d).padStart(2,'0')}/${String(d.m).padStart(2,'0')} ${String(d.H).padStart(2,'0')}:${String(d.M).padStart(2,'0')}`:'';
+}
+function fmtDuration(raw){
+  if(raw===null||raw===undefined||raw==='')return '';
+  if(typeof raw==='number'&&!isNaN(raw)){
+    const total=Math.max(0,Math.round(raw*24*60));
+    return `${Math.floor(total/60)}:${String(total%60).padStart(2,'0')}`;
+  }
+  const s=String(raw).trim();
+  if(/^\d+(?:\.\d+)?$/.test(s)){
+    const total=Math.max(0,Math.round(+s*24*60));
+    return `${Math.floor(total/60)}:${String(total%60).padStart(2,'0')}`;
+  }
+  return s;
+}
+function parseLatLong(raw){
+  const s=String(raw||'');
+  const m=s.match(/(-?\d+(?:[.,]\d+)?)\s*,\s*(-?\d+(?:[.,]\d+)?)/);
+  return m?[fixCoord(m[1].replace(',','.')),fixCoord(m[2].replace(',','.'))]:[null,null];
+}
+function eventFrom(r,idx,key,label,timeIdx,coordIdx,userIdx){
+  const [lat,lon]=parseLatLong(coordIdx>=0?r[coordIdx]:'');
+  if(lat===null||lon===null)return null;
+  return {key,label,lat,lon,time:fmtFullDate(timeIdx>=0?r[timeIdx]:''),user:userIdx>=0&&r[userIdx]?String(r[userIdx]):''};
+}
+function buildRouteEvents(r,idx){
+  const defs=[
+    ['token','Token inserido',idx.tokDt,idx.tokLL,-1],
+    ['saida_recurso','Saída do recurso',idx.saidaVtr,idx.llSaidaRecurso,idx.usrSaidaRecurso],
+    ['chegada_origem','Chegada na origem',idx.chegOrigem,idx.llChegOrigem,idx.usrChegOrigem],
+    ['saida_origem','Saída da origem',idx.saidaOrigem,idx.llSaidaOrigem,idx.usrSaidaOrigem],
+    ['chegada_destino','Chegada no destino',idx.chegDestino,idx.llChegDestino,idx.usrChegDestino],
+    ['lib_destino','Liberação do destino',idx.libDestino,idx.llLibDestino,idx.usrLibDestino],
+    ['chegada_origem_ret','Chegada origem retorno',idx.chegOrigemRet,idx.llChegOrigemRet,idx.usrChegOrigemRet],
+    ['saida_origem_ret','Saída origem retorno',idx.saidaOrigemRet,idx.llSaidaOrigemRet,idx.usrSaidaOrigemRet],
+    ['lib_recurso','Liberação do recurso',idx.libRecurso,idx.llLibRecurso,idx.usrLibRecurso],
+    ['finalizacao','Finalização',idx.finalizacao,idx.llFinalizacao,idx.usrFinalizacao]
+  ];
+  return defs.map(d=>eventFrom(r,idx,d[0],d[1],d[2],d[3],d[4])).filter(Boolean);
+}
 function buildShifts(atts){
   const sh={M:[0,0,[]],T:[0,0,[]],N:[0,0,[]]};
   for(const a of atts){const cl=a[5];if(cl===3)continue;const s=a[2];if(!sh[s])continue;sh[s][1]++;if(cl===0||cl===1)sh[s][0]++;sh[s][2].push(a[0]);}
@@ -409,15 +497,15 @@ function buildTokDelay(atts){
    MAIN PROCESS
 ══════════════════════════════════════════════════════════ */
 async function processAll(){
-  if(!file1||!file2){showMsg('rmsg','er','❌ Carregue as planilhas de Atendimentos e Implantação.');return;}
+  if(!file1||!file2){showMsg('rmsg','er','❌ Carregue o relatório oficial e a planilha de implantação.');return;}
   document.getElementById('prog').style.display='block';
   document.getElementById('rmsg').style.display='none';
   document.getElementById('previewCard').style.display='none';
   document.getElementById('processBtn').disabled=true;
 
   try{
-    /* STEP 1: Atendimentos */
-    ss(1,'run','Lendo atendimentos...');
+    /* STEP 1: Relatório oficial */
+    ss(1,'run','Lendo relatório oficial...');
     const buf1=await readFile(file1);
     const wb1=XLSX.read(buf1,{type:'array'});
     const raw1=XLSX.utils.sheet_to_json(wb1.Sheets[wb1.SheetNames[0]],{header:1});
@@ -425,16 +513,6 @@ async function processAll(){
     for(let i=0;i<Math.min(6,raw1.length);i++){if(raw1[i]&&raw1[i].some(c=>String(c||'').toUpperCase()==='TOKEN')){hi=i;break;}}
     const hdrs=raw1[hi].map(h=>String(h||'').trim());
     const rows=raw1.slice(hi+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
-    const ci={rastreios:0,fornecedor:1,atendimento:2,data_reg:3,data_rem:4,token:5,horario:6};
-    hdrs.forEach((h,i)=>{const u=h.toUpperCase();
-      if(u.includes('RASTREIO')&&!u.includes('NOME'))ci.rastreios=i;
-      if(u.includes('FORNECEDOR'))ci.fornecedor=i;
-      if((u.includes('Nº')||u.includes('N°')||u.includes('NUM'))&&u.includes('ATENDIMENTO'))ci.atendimento=i;
-      if(u.includes('REGISTRO')&&u.includes('DATA'))ci.data_reg=i;
-      if(u.includes('REMO')&&u.includes('DATA'))ci.data_rem=i;
-      if(u==='TOKEN')ci.token=i;
-      if((u.includes('HORÁRIO')||u.includes('HORARIO'))&&u.includes('APP'))ci.horario=i;
-    });
     ss(1,'done',`${rows.length} atendimentos`);
 
     /* STEP 2: Implantação */
@@ -465,106 +543,103 @@ async function processAll(){
     }
     ss(2,'done',`${Object.keys(csvMap).length} fornecedores`);
 
-    /* STEP 2b: Detalhamento (opcional) */
-    ss(3,'run','Lendo detalhamento...');
-    const detMap={};
-    if(file3){
-      try{
-        const buf3=await readFile(file3);
-        const wb3=XLSX.read(buf3,{type:'array'});
-        const raw3=XLSX.utils.sheet_to_json(wb3.Sheets[wb3.SheetNames[0]],{header:1});
-        let hi3=0;
-        for(let i=0;i<Math.min(5,raw3.length);i++){if(raw3[i]&&raw3[i].some(h=>String(h||'').includes('Atendimento'))){hi3=i;break;}}
-        const h3=raw3[hi3].map(h=>String(h||'').trim());
-        const r3=raw3.slice(hi3+1).filter(r=>r&&r.some(c=>c!=null&&c!==''));
-        const fi={
-          att: h3.findIndex(h=>{const u=h.toUpperCase();return u.includes('ATENDIMENTO')&&(u.includes('Nº')||u.includes('N°')||u.includes('NUM'));}),
-          disp:h3.findIndex(h=>h.includes('Dispositivo')),
-          tok: h3.findIndex(h=>h.toUpperCase().includes('TOKEN')&&h.toLowerCase().includes('hora')),
-          dat: h3.findIndex(h=>h.toLowerCase().includes('data')&&h.toLowerCase().includes('atendimento')),
-          eqAt:h3.findIndex(h=>h.includes('Equipe de Atendimento')),
-          eqEn:h3.findIndex(h=>h.toLowerCase().includes('enfermagem')),
-          lat1:h3.findIndex(h=>h.includes('Latitude')&&h.includes('Endereço')),
-          lon1:h3.findIndex(h=>h.includes('Longitude')&&h.includes('Endereço')),
-          lat2:h3.findIndex(h=>h.includes('Latitude')&&h.includes('Destino')),
-          lon2:h3.findIndex(h=>h.includes('Longitude')&&h.includes('Destino')),
-          eo:  h3.findIndex(h=>h.includes('Endereço Atendimento')),
-          ed:  h3.findIndex(h=>h.includes('Endereço Destino')),
-        };
-        r3.forEach(r=>{
-          const att=+r[fi.att];if(!att||isNaN(att))return;
-          const lat1=fixCoord(fi.lat1>=0?r[fi.lat1]:null), lon1=fixCoord(fi.lon1>=0?r[fi.lon1]:null);
-          const lat2=fixCoord(fi.lat2>=0?r[fi.lat2]:null), lon2=fixCoord(fi.lon2>=0?r[fi.lon2]:null);
-          const km=haversineKm(lat1,lon1,lat2,lon2);
-          let dtTokFmt='',delay=null;
-          const rawTok=fi.tok>=0?r[fi.tok]:null, rawDat=fi.dat>=0?r[fi.dat]:null;
-          // Helper: parse date to {d,m,y,H,M,totalMin}
-          function parseDT(raw){
-            if(!raw) return null;
-            if(typeof raw==='number'){
-              const p=XLSX.SSF.parse_date_code(raw);
-              if(!p) return null;
-              return {d:p.d,m:p.m,y:p.y,H:p.H,M:p.M,totalMin:p.H*60+p.M+(p.d*1440)};
-            }
-            const s=String(raw);
-            const mt=s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-            if(mt) return {d:+mt[1],m:+mt[2],y:+mt[3],H:+mt[4],M:+mt[5],totalMin:+mt[4]*60+(+mt[5])+(+mt[1])*1440};
-            return null;
-          }
-          if(rawTok){
-            const dtTok=parseDT(rawTok);
-            if(dtTok){
-              dtTokFmt=`${String(dtTok.d).padStart(2,'0')}/${String(dtTok.m).padStart(2,'0')} ${String(dtTok.H).padStart(2,'0')}:${String(dtTok.M).padStart(2,'0')}`;
-              if(rawDat){
-                const dtAt=parseDT(rawDat);
-                if(dtAt) delay=Math.round(dtTok.totalMin - dtAt.totalMin);
-              }
-            }
-          }
-          let eqAt=fi.eqAt>=0&&r[fi.eqAt]?String(r[fi.eqAt]):'';
-          let eqEn=fi.eqEn>=0&&r[fi.eqEn]?String(r[fi.eqEn]):'';
-          const rawDisp=fi.disp>=0&&r[fi.disp]?String(r[fi.disp]):'';
-          let dispFmt='';
-          if(rawDisp&&rawDisp.toLowerCase()!=='nan'){
-            const dm=rawDisp.match(/^(.+?)\s*\(.*?\)\s*-\s*([\d.]+)$/);
-            dispFmt=dm?(dm[1].trim()+'·'+dm[2]):rawDisp;
-          }
-          detMap[att]={disp:dispFmt,dtTok:dtTokFmt,delay,eqAt,eqEn,lat1,lon1,lat2,lon2,km,
-            eo:fi.eo>=0&&r[fi.eo]?String(r[fi.eo]):'',ed:fi.ed>=0&&r[fi.ed]?String(r[fi.ed]):''};
-        });
-        ss(3,'done',`${Object.keys(detMap).length} registros`);
-      }catch(e){ss(3,'err','Det: '+e.message);}
-    } else {ss(3,'done','Não fornecido (opcional)');}
+    /* STEP 3: Colunas e eventos */
+    ss(3,'run','Mapeando colunas e eventos...');
+    const idx={
+      att:findCol(hdrs,h=>h.includes('ATENDIMENTO')&&(h.startsWith('N')||h.includes('NUM')||h.includes('Nº')||h.includes('N°'))),
+      fornecedor:findCol(hdrs,h=>h.includes('FORNECEDOR')),
+      data:findCol(hdrs,h=>h.includes('DATA')&&h.includes('ATENDIMENTO')),
+      eqAt:findCol(hdrs,h=>h.includes('EQUIPE')&&h.includes('ATENDIMENTO')),
+      eqEn:findCol(hdrs,h=>h.includes('ENFERMAGEM')),
+      eo:findCol(hdrs,h=>h.includes('ENDERECO ATENDIMENTO')),
+      ed:findCol(hdrs,h=>h.includes('ENDERECO DESTINO')),
+      lat1:findCol(hdrs,h=>h.includes('LATITUDE')&&h.includes('ENDERECO')),
+      lon1:findCol(hdrs,h=>h.includes('LONGITUDE')&&h.includes('ENDERECO')),
+      lat2:findCol(hdrs,h=>h.includes('LATITUDE')&&h.includes('DESTINO')),
+      lon2:findCol(hdrs,h=>h.includes('LONGITUDE')&&h.includes('DESTINO')),
+      disp:findCol(hdrs,h=>h.includes('DISPOSITIVO')),
+      rastreios:findCol(hdrs,h=>h.includes('RASTREIO')&&!h.includes('NOME')),
+      token:findCol(hdrs,h=>h==='TOKEN'),
+      horario:findCol(hdrs,h=>h.includes('HORARIO')&&h.includes('APP')),
+      kmRod:findCol(hdrs,h=>h.includes('KM')&&h.includes('RODADO')),
+      horaParada:findCol(hdrs,h=>h.includes('HORA')&&h.includes('PARADA')),
+      tokDt:findCol(hdrs,h=>h.includes('INSERCAO')&&h.includes('TOKEN')),
+      tokLL:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('TOKEN')),
+      saidaVtr:findCol(hdrs,h=>h.includes('SAIDA VTR')),
+      usrSaidaRecurso:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('SAIDA')&&h.includes('RECURSO')),
+      llSaidaRecurso:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('SAIDA')&&h.includes('RECURSO')),
+      chegOrigem:findCol(hdrs,h=>h.includes('CHEGADA NA ORIGEM')&&!h.includes('RETORNO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrChegOrigem:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('CHEGADA NA ORIGEM')&&!h.includes('RETORNO')),
+      llChegOrigem:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('CHEGADA NA ORIGEM')&&!h.includes('RETORNO')),
+      saidaOrigem:findCol(hdrs,h=>h.includes('SAIDA DA ORIGEM')&&!h.includes('RETORNO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrSaidaOrigem:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('SAIDA DA ORIGEM')&&!h.includes('RETORNO')),
+      llSaidaOrigem:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('SAIDA DA ORIGEM')&&!h.includes('RETORNO')),
+      chegDestino:findCol(hdrs,h=>h.includes('CHEGADA NO DESTINO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrChegDestino:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('CHEGADA NO DESTINO')),
+      llChegDestino:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('CHEGADA NO DESTINO')),
+      libDestino:findCol(hdrs,h=>h.includes('LIBERACAO DO DESTINO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrLibDestino:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('LIBERACAO DO DESTINO')),
+      llLibDestino:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('LIBERACAO DO DESTINO')),
+      chegOrigemRet:findCol(hdrs,h=>h.includes('CHEGADA NA ORIGEM')&&h.includes('RETORNO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrChegOrigemRet:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('CHEGADA NA ORIGEM')&&h.includes('RETORNO')),
+      llChegOrigemRet:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('CHEGADA NA ORIGEM')&&h.includes('RETORNO')),
+      saidaOrigemRet:findCol(hdrs,h=>h.includes('SAIDA DA ORIGEM')&&h.includes('RETORNO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrSaidaOrigemRet:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('SAIDA DA ORIGEM')&&h.includes('RETORNO')),
+      llSaidaOrigemRet:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('SAIDA DA ORIGEM')&&h.includes('RETORNO')),
+      libRecurso:findCol(hdrs,h=>h.includes('LIBERACAO')&&(h.includes('VTR')||h.includes('RECURSO'))&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrLibRecurso:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('LIBERACAO')&&h.includes('RECURSO')),
+      llLibRecurso:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('LIBERACAO')&&h.includes('RECURSO')),
+      finalizacao:findCol(hdrs,h=>h.includes('DATA FINALIZACAO')),
+      usrFinalizacao:findCol(hdrs,h=>h.includes('USUARIO FINALIZACAO')),
+      llFinalizacao:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('FINALIZACAO'))
+    };
+    if(idx.att<0||idx.fornecedor<0||idx.data<0)throw new Error('Não encontrei as colunas principais: atendimento, fornecedor e data.');
+    let totalEvents=0;
 
     /* STEP 3: Classificar */
     ss(4,'run','Classificando...');
     const supplierMap={};
     for(const r of rows){
-      const fn=String(r[ci.fornecedor]||'').trim();if(!fn)continue;
-      const tkn=String(r[ci.token]||'').toUpperCase().includes('SIM');
-      const hor=String(r[ci.horario]||'').toUpperCase().includes('SIM');
-      const rst=parseFloat(r[ci.rastreios])||0;
-      const att=+r[ci.atendimento]||0;
-      const det=detMap[att]||{};
+      const fn=String(r[idx.fornecedor]||'').trim();if(!fn)continue;
+      const tkn=idx.token>=0&&String(r[idx.token]||'').toUpperCase().includes('SIM');
+      const hor=idx.horario>=0&&String(r[idx.horario]||'').toUpperCase().includes('SIM');
+      const rst=idx.rastreios>=0?(parseFloat(r[idx.rastreios])||0):0;
+      const att=+r[idx.att]||0;
+      const events=buildRouteEvents(r,idx);totalEvents+=events.length;
+      const lat1=fixCoord(idx.lat1>=0?r[idx.lat1]:null), lon1=fixCoord(idx.lon1>=0?r[idx.lon1]:null);
+      const lat2=fixCoord(idx.lat2>=0?r[idx.lat2]:null), lon2=fixCoord(idx.lon2>=0?r[idx.lon2]:null);
+      const kmCalc=haversineKm(lat1,lon1,lat2,lon2);
+      const kmRaw=idx.kmRod>=0?r[idx.kmRod]:null;
+      const kmRodado=kmRaw!==''&&kmRaw!=null&&!isNaN(+kmRaw)?Math.round(+kmRaw*10)/10:null;
+      const rawTok=idx.tokDt>=0?r[idx.tokDt]:null, rawDat=idx.data>=0?r[idx.data]:null;
+      const dtTok=parseFullDate(rawTok), dtAt=parseFullDate(rawDat);
+      const delay=dtTok&&dtAt?Math.round(dtTok.totalMin-dtAt.totalMin):null;
+      const [tokLat,tokLon]=parseLatLong(idx.tokLL>=0?r[idx.tokLL]:'');
       let cond='',enf='';
-      if(det.eqAt){[cond,enf]=parseEquipe(det.eqAt);if(!enf&&det.eqEn)enf=det.eqEn;}
-      const disp=det.disp||'';
+      const eqAt=idx.eqAt>=0&&r[idx.eqAt]?String(r[idx.eqAt]):'';
+      const eqEn=idx.eqEn>=0&&r[idx.eqEn]?String(r[idx.eqEn]):'';
+      if(eqAt){[cond,enf]=parseEquipe(eqAt);if(!enf&&eqEn)enf=eqEn;}
+      const rawDisp=idx.disp>=0&&r[idx.disp]?String(r[idx.disp]):'';
+      const dm=rawDisp.match(/^(.+?)\s*\(.*?\)\s*-\s*([\d.]+)$/);
+      const disp=dm?(dm[1].trim()+'·'+dm[2]):rawDisp;
       // 0=CORRETO,1=MOD_GOP,2=SEM_MOV,3=WEB,4=ERRO
       let cl;
-      if(tkn&&rst>5&&!det.dtTok&&!hor) cl=1;
+      if(tkn&&rst>5&&!dtTok&&!hor) cl=1;
       else if(tkn&&rst>5)        cl=0;
       else if(tkn&&rst<=5)       cl=2;
       else if(!tkn&&hor&&rst<=5) cl=3;
       else                        cl=4;
-      const{mes,ano,dt}=parseDate(r[ci.data_rem]!==undefined?r[ci.data_rem]:r[ci.data_reg]);
+      const{mes,ano,dt}=parseDate(r[idx.data]);
       const shift=getShift(dt);
       if(!supplierMap[fn])supplierMap[fn]=[];
-      // [num,dt_rem,shift,cond,enf,cl,disp,dtTok,delay,km,lat1,lon1,lat2,lon2,eo,ed,mes,ano]
+      // [num,dt_rem,shift,cond,enf,cl,disp,dtTok,delay,km,lat1,lon1,lat2,lon2,eo,ed,tokLat,tokLon,kmRodado,horaParada,events,mes,ano]
       supplierMap[fn].push([att,dt,shift,cond,enf,cl,disp,
-        det.dtTok||'',det.delay!==undefined?det.delay:null,det.km!==undefined?det.km:null,
-        det.lat1||null,det.lon1||null,det.lat2||null,det.lon2||null,
-        det.eo||'',det.ed||'',mes,ano]);
+        dtTok?fmtFullDate(rawTok):'',delay!==null?delay:null,kmRodado??kmCalc,
+        lat1,lon1,lat2,lon2,
+        idx.eo>=0&&r[idx.eo]?String(r[idx.eo]):'',idx.ed>=0&&r[idx.ed]?String(r[idx.ed]):'',
+        tokLat,tokLon,kmRodado,idx.horaParada>=0?fmtDuration(r[idx.horaParada]):'',events,mes,ano]);
     }
+    ss(3,'done',`${totalEvents} eventos com Lat/Long`);
     ss(4,'done',`${Object.keys(supplierMap).length} fornecedores`);
 
     /* STEP 4: Agregar */
@@ -579,14 +654,14 @@ async function processAll(){
       rows_.forEach(r=>{if(r[5]===0)correto++;else if(r[5]===1)cormod++;else if(r[5]===2)sem_mov++;else if(r[5]===3)web++;else erro++;});
       const base=total-web;
       const uso=base>0?Math.round((correto+cormod)/base*1000)/10:0;
-      if(ct===0){globalCorreto+=correto+cormod;globalBase+=base;}
-      const cmpct=r=>r.slice(0,16);
+      if(isMetaSupplierName(fn)){globalCorreto+=correto+cormod;globalBase+=base;}
+      const cmpct=r=>r.slice(0,21);
       const allC=rows_.map(cmpct);
       const[rc,re_]=buildRanking(allC);
       const shAll=buildShifts(allC);
       const tdAll=buildTokDelay(allC);
       const monthMap={};
-      for(const r of rows_){const mn=r[16];if(!mn)continue;if(!monthMap[mn])monthMap[mn]={label:MESES[mn]+'/'+r[17],rows:[]};monthMap[mn].rows.push(r);}
+      for(const r of rows_){const mn=r[21];if(!mn)continue;if(!monthMap[mn])monthMap[mn]={label:MESES[mn]+'/'+r[22],rows:[]};monthMap[mn].rows.push(r);}
       const meses={};
       for(const[mn,md] of Object.entries(monthMap)){
         const mc_=md.rows.map(cmpct).sort((a,b)=>a[0]-b[0]);
@@ -608,7 +683,7 @@ async function processAll(){
     const globalAvg=globalBase>0?Math.round(globalCorreto/globalBase*1000)/10:0;
     const now=new Date(),pad=n=>String(n).padStart(2,'0');
     const updated=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    genJs=`const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify({avg:globalAvg,meta:77,updated})};`;
+    genJs=`const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify({avg:globalAvg,meta:77,updated,baseTarget:META_SUPPLIER_KEYS.length})};`;
     ss(6,'done',`${(genJs.length/1024).toFixed(0)}KB`);
     showMsg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores · Média ${globalAvg}%`);
     showPreview(result,globalAvg);
