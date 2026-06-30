@@ -249,6 +249,7 @@ function classify(token, horario, rastreios) {
 /* ── NORMALISE name for matching ─────────────────────────── */
 function norm(s) { return String(s||'').replace(/\s+/g,' ').trim().toUpperCase(); }
 
+const META_SUPPLIER_TOTAL=33;
 const META_SUPPLIER_KEYS=[
   ['ACURA SOLUCOES EM SAUDE','ACURA'],
   ['ALICIA REMOCOES','ALICIA'],
@@ -256,7 +257,7 @@ const META_SUPPLIER_KEYS=[
   ['AMO VIDA'],
   ['ANILMED'],
   ['ARCANJOS LIFE','ARCANJOS'],
-  ['BEM ESTAR REMOCOES','BEM ME CARE'],
+  ['BEM ESTAR REMOCOES'],
   ['CARDIOCENTER ESPECIALIDADES MEDICAS'],
   ['CEMAC CENTRO ESPECIALIDADES','CEMAC'],
   ['COPACARE SERRA COLONIAL','COPACARE'],
@@ -270,7 +271,7 @@ const META_SUPPLIER_KEYS=[
   ['MEDCALL JUIZ DE FORA','MEDCALL'],
   ['MEDSUL'],
   ['PULSAR'],
-  ['R R SERVICOS HOSPITALARES','R R EMERGENCIAS','RR EMERGENCIAS'],
+  ['R R SERVICOS HOSPITALARES'],
   ['REMOCOES MONLEVADE'],
   ['REMOCOES RESENDE'],
   ['SP VIDAS EMERGENCIAS MEDICAS','SP VIDAS'],
@@ -683,7 +684,7 @@ async function processAll(){
     const globalAvg=globalBase>0?Math.round(globalCorreto/globalBase*1000)/10:0;
     const now=new Date(),pad=n=>String(n).padStart(2,'0');
     const updated=`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    genJs=`const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify({avg:globalAvg,meta:77,updated,baseTarget:META_SUPPLIER_KEYS.length})};`;
+    genJs=`const SD=${JSON.stringify(result)};\nconst GS=${JSON.stringify({avg:globalAvg,meta:77,updated,baseTarget:META_SUPPLIER_TOTAL})};`;
     ss(6,'done',`${(genJs.length/1024).toFixed(0)}KB`);
     showMsg('rmsg','ok',`✅ ${Object.keys(result).length} fornecedores · Média ${globalAvg}%`);
     showPreview(result,globalAvg);
