@@ -371,6 +371,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 
 <div class="toolbar">
   <input type="text" id="srch" placeholder="Buscar fornecedor..." oninput="render()">
+  <select id="monthFilter" onchange="setMonthFilter(this.value)" title="Filtrar por mês"></select>
   <select id="sortBy" onchange="render()" title="Ordenar fornecedores">
     <option value="best">Melhores primeiro</option>
     <option value="worst">Piores primeiro</option>
@@ -480,7 +481,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
   </div>
 </div>
 
-<script src="data.js?v=20260702-base3"></script>
+<script src="data.js?v=20260702-month1"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -517,6 +518,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 const D=typeof SD!=='undefined'?SD:{};
 const GS2=typeof GS!=='undefined'?GS:{avg:0,meta:77,updated:''};
 let activeF='all';
+let activeMonth='all';
 const MAP_ATTS={};
 const META_SUPPLIER_TOTAL=33;
 
@@ -581,21 +583,56 @@ function metaMatch(name,needle){
   return n.includes(k)||k.includes(n)||n.startsWith(k.slice(0,Math.min(14,k.length)));
 }
 function isMetaSupplierName(name){return META_SUPPLIER_KEYS.some(keys=>keys.some(k=>metaMatch(name,k)))}
-function metaStats(){
-  const entries=Object.entries(D).filter(([n])=>isMetaSupplierName(n));
+function monthList(){
+  const months=new Map();
+  Object.values(D).forEach(v=>{
+    Object.entries(v[11]||{}).forEach(([key,m])=>{
+      const label=m[0]||`Mês ${key}`;
+      if(!months.has(key))months.set(key,{key,label,order:parseMonthOrder(label,key)});
+    });
+  });
+  return [...months.values()].sort((a,b)=>b.order-a.order);
+}
+function initMonthFilter(){
+  const sel=document.getElementById('monthFilter'); if(!sel)return;
+  const options=monthList();
+  sel.innerHTML=`<option value="all">Todos os meses</option>${options.map(m=>`<option value="${esc(m.key)}">${esc(m.label)}</option>`).join('')}`;
+  sel.value=options.some(m=>m.key===activeMonth)?activeMonth:'all';
+}
+function setMonthFilter(month){
+  activeMonth=month||'all';
+  const sel=document.getElementById('monthFilter');
+  if(sel&&sel.value!==activeMonth)sel.value=activeMonth;
+  initHeader();
+  renderGoalTracking();
+  render();
+}
+function supplierView(v,month=activeMonth){
+  if(month==='all'){
+    return {status:v[0],total:v[1]||0,correto:v[2]||0,gop:v[3]||0,sem:v[4]||0,web:v[5]||0,erro:v[6]||0,base:v[7]||0,pct:v[8]||0,rankC:v[9]||[],rankE:v[10]||[],months:v[11]||{},training:v[12],shifts:v[13],tok:v[14],label:'Acumulado',month:null};
+  }
+  const m=(v[11]||{})[month];
+  if(!m)return {status:v[0],total:0,correto:0,gop:0,sem:0,web:0,erro:0,base:0,pct:0,rankC:[],rankE:[],months:v[11]||{},training:v[12],shifts:null,tok:null,label:'Sem dados',month:null};
+  return {status:v[0],total:m[1]||0,correto:m[2]||0,gop:m[3]||0,sem:m[4]||0,web:m[5]||0,erro:m[6]||0,base:m[7]||0,pct:m[8]||0,rankC:m[9]||[],rankE:m[10]||[],months:v[11]||{},training:v[12],shifts:m[12],tok:m[13],label:m[0]||`Mês ${month}`,month:m};
+}
+function hasMonthData(v,month=activeMonth){return month==='all'||!!(v[11]||{})[month]}
+function metaStats(month=activeMonth){
+  const allEntries=Object.entries(D).filter(([n])=>isMetaSupplierName(n));
+  const entries=allEntries.filter(([,v])=>hasMonthData(v,month));
   const cats={A:0,B:0,C:0,D:0,F:0};
   let att=0,base=0,ok=0,err=0;
   entries.forEach(([,v])=>{
-    att+=v[1]||0;
-    base+=v[7]||0;
-    ok+=(v[2]||0)+(v[3]||0);
-    err+=supplierErrors(v);
-    cats[cat(v[8]||0)]++;
+    const sv=supplierView(v,month);
+    att+=sv.total;
+    base+=sv.base;
+    ok+=sv.correto+sv.gop;
+    err+=supplierErrors(v,sv);
+    cats[cat(sv.pct)]++;
   });
   const avg=base>0?Math.round(ok/base*1000)/10:0;
   return {entries,targetTotal:META_SUPPLIER_TOTAL,matched:entries.length,missing:Math.max(0,META_SUPPLIER_TOTAL-entries.length),att,base,ok,err,avg,cats};
 }
-function allAtts(v){return Object.values(v[11]||{}).flatMap(m=>m[11]||[])}
+function allAtts(v,month=activeMonth){return month==='all'?Object.values(v[11]||{}).flatMap(m=>m[11]||[]):(((v[11]||{})[month]||[])[11]||[])}
 function devParts(disp){
   if(!disp)return null;
   const parts=String(disp).split(/[·Â?]/);
@@ -669,9 +706,10 @@ function parseDayMonth(dt){
   return m?{day:+m[1],month:+m[2]}:null;
 }
 function buildGoalTracking(){
-  const meta=metaStats();
+  const meta=metaStats(activeMonth);
+  const allMeta=metaStats('all');
   const months=new Map();
-  meta.entries.forEach(([,v])=>{
+  allMeta.entries.forEach(([,v])=>{
     Object.entries(v[11]||{}).forEach(([mn,m])=>{
       const label=m[0]||`Mês ${mn}`;
       if(!months.has(mn))months.set(mn,emptyMetric(label,parseMonthOrder(label,mn)));
@@ -679,11 +717,11 @@ function buildGoalTracking(){
     });
   });
   const monthList=[...months.entries()].map(([key,m])=>({key,...m,pct:metricPct(m)})).sort((a,b)=>b.order-a.order);
-  const latest=monthList[0]||emptyMetric('Sem dados');
+  const latest=(activeMonth==='all'?monthList[0]:monthList.find(m=>m.key===activeMonth))||emptyMetric('Sem dados');
   latest.pct=metricPct(latest);
   const weeks=[1,2,3,4,5].map(i=>emptyMetric(`Semana ${i}`,i));
   if(latest.key){
-    meta.entries.forEach(([,v])=>{
+    allMeta.entries.forEach(([,v])=>{
       const m=(v[11]||{})[latest.key];
       (m?.[11]||[]).forEach(a=>{
         const d=parseDayMonth(a[1]);
@@ -708,7 +746,7 @@ function renderGoalTracking(){
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
-        <div><div class="goal-title">Acompanhamento da Meta</div><div class="goal-sub">Base foco · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados · ${esc(GS2.updated||'')}</div></div>
+        <div><div class="goal-title">Acompanhamento da Meta</div><div class="goal-sub">Base foco · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados${activeMonth!=='all'?' em '+esc(m.label||'mês selecionado'):''} · ${esc(GS2.updated||'')}</div></div>
         <div class="goal-target">Meta ${GS2.meta||77}%</div>
       </div>
       <div class="goal-body">
@@ -733,7 +771,7 @@ function renderGoalTracking(){
             </div>`;
           }).join('')}
         </div>
-        ${data.months.length>1?`<div class="month-row">${data.months.map((mm,i)=>`<span class="month-chip ${i===0?'on':''}">${esc(mm.label)} · ${mm.pct}%</span>`).join('')}</div>`:''}
+        ${data.months.length>1?`<div class="month-row">${data.months.map(mm=>`<span class="month-chip ${mm.key===m.key?'on':''}">${esc(mm.label)} · ${mm.pct}%</span>`).join('')}</div>`:''}
       </div>
     </div>`;
 }
@@ -752,51 +790,56 @@ function initHeader(){
   document.getElementById('avgBox').innerHTML=`
     <div class="avg-top"><span class="avg-lbl">Uso base foco</span><span class="avg-val" style="color:${col}">${a}%</span></div>
     <div class="avg-bar"><div class="avg-bar-fill" style="width:${a}%;background:${col}"></div></div>
-    <div class="avg-upd">${meta.matched}/${meta.targetTotal} fornecedores da meta com dados · ${meta.base.toLocaleString('pt-BR')} atend. válidos${GS2.updated?` · ${GS2.updated}`:''}</div>`;
+    <div class="avg-upd">${meta.matched}/${meta.targetTotal} fornecedores da meta com dados${activeMonth!=='all'?` · ${esc(document.getElementById('monthFilter')?.selectedOptions?.[0]?.textContent||'mês')}`:''} · ${meta.base.toLocaleString('pt-BR')} atend. válidos${GS2.updated?` · ${GS2.updated}`:''}</div>`;
 }
 
 // ── FILTER & RENDER ──────────────────────────────────────────
 function setF(c,btn){activeF=c;document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}
 
-function supplierErrors(v){return (v[4]||0)+(v[6]||0)}
+function supplierErrors(v,sv=supplierView(v)){return (sv.sem||0)+(sv.erro||0)}
 function compareSuppliers(a,b,mode){
   const [an,av]=a,[bn,bv]=b;
+  const as=supplierView(av),bs=supplierView(bv);
   const ap=isPu(av)?1:0,bp=isPu(bv)?1:0;
   if(ap!==bp&&mode!=='name')return ap-bp;
   const byName=an.localeCompare(bn,'pt-BR');
-  if(mode==='worst') return av[8]-bv[8] || supplierErrors(bv)-supplierErrors(av) || byName;
-  if(mode==='volume')return bv[1]-av[1] || av[8]-bv[8] || byName;
-  if(mode==='errors')return supplierErrors(bv)-supplierErrors(av) || av[8]-bv[8] || byName;
+  if(mode==='worst') return as.pct-bs.pct || supplierErrors(bv,bs)-supplierErrors(av,as) || byName;
+  if(mode==='volume')return bs.total-as.total || as.pct-bs.pct || byName;
+  if(mode==='errors')return supplierErrors(bv,bs)-supplierErrors(av,as) || as.pct-bs.pct || byName;
   if(mode==='name')  return byName;
-  return bv[8]-av[8] || supplierErrors(av)-supplierErrors(bv) || byName;
+  return bs.pct-as.pct || supplierErrors(av,as)-supplierErrors(bv,bs) || byName;
 }
 function filteredEntries(){
   const q=document.getElementById('srch').value.trim().toLowerCase();
   const mode=document.getElementById('sortBy')?.value||'best';
   return Object.entries(D).filter(([n,v])=>{
     const mq=!q||n.toLowerCase().includes(q);
+    const sv=supplierView(v);
+    if(!mq||!hasMonthData(v))return false;
     if(activeF==='pu')  return mq&&isPu(v);
     if(activeF==='all') return mq;
-    return mq&&!isPu(v)&&cat(v[8])===activeF;
+    return mq&&!isPu(v)&&cat(sv.pct)===activeF;
   }).sort((a,b)=>compareSuppliers(a,b,mode));
 }
 function render(){
   const entries=filteredEntries();
-  const sum=entries.reduce((acc,[,v])=>{acc.att+=v[1]||0;acc.err+=supplierErrors(v);return acc;},{att:0,err:0});
+  const sum=entries.reduce((acc,[,v])=>{const sv=supplierView(v);acc.att+=sv.total;acc.err+=supplierErrors(v,sv);return acc;},{att:0,err:0});
   const meta=metaStats();
-  document.getElementById('ri').textContent=`${entries.length} de ${Object.keys(D).length} fornecedores exibidos · meta ${meta.matched}/${meta.targetTotal} · ${sum.att.toLocaleString('pt-BR')} atend. · ${sum.err.toLocaleString('pt-BR')} erros/sem mov.`;
+  const monthTxt=activeMonth==='all'?'todos os meses':(document.getElementById('monthFilter')?.selectedOptions?.[0]?.textContent||'mês selecionado');
+  document.getElementById('ri').textContent=`${entries.length} de ${Object.keys(D).length} fornecedores exibidos · ${monthTxt} · meta ${meta.matched}/${meta.targetTotal} · ${sum.att.toLocaleString('pt-BR')} atend. · ${sum.err.toLocaleString('pt-BR')} erros/sem mov.`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
 
   document.getElementById('grid').innerHTML=entries.map(([n,v])=>{
-    const pu=isPu(v),cl=pu?'cpu':catcls(cat(v[8]));
+    const sv=supplierView(v);
+    const pu=isPu(v),cl=pu?'cpu':catcls(cat(sv.pct));
     const sn=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const bnr=pu?`<div class="cbnr ${CTBNR[v[0]]}">${CTLBL[v[0]]}</div>`:'';
     const pills=[
-      v[3]>0?`<span class="pill mod">⚠️ GOP ${v[3]}</span>`:'',
-      v[5]>0?`<span class="pill web">🌐 ${v[5]}</span>`:'',
-      v[4]>0?`<span class="pill sm">📍 ${v[4]}</span>`:'',
-      v[6]>0?`<span class="pill err">❌ ${v[6]}</span>`:'',
+      sv.gop>0?`<span class="pill mod">⚠️ GOP ${sv.gop}</span>`:'',
+      sv.web>0?`<span class="pill web">🌐 ${sv.web}</span>`:'',
+      sv.sem>0?`<span class="pill sm">📍 ${sv.sem}</span>`:'',
+      sv.erro>0?`<span class="pill err">❌ ${sv.erro}</span>`:'',
     ].filter(Boolean).join('');
     // Training chip
     const tr=v[12];
@@ -809,15 +852,15 @@ function render(){
     }
     return`<div class="card ${cl}" data-name="${sn}" onclick="openM(this.dataset.name)">
       ${bnr}
-      <div class="ch"><div class="cn">${n}</div><span class="cbdg ${cl}">${pu?CTLBL[v[0]]:'CAT '+cat(v[8])}</span></div>
-      <div class="cpct">${v[8]}%</div>
-      <div class="cpl">usabilidade · base ${v[7]} atend.</div>
-      <div class="pb"><div class="pbf" style="width:${v[8]}%"></div></div>
+      <div class="ch"><div class="cn">${n}</div><span class="cbdg ${cl}">${pu?CTLBL[v[0]]:'CAT '+cat(sv.pct)}</span></div>
+      <div class="cpct">${sv.pct}%</div>
+      <div class="cpl">usabilidade · base ${sv.base} atend. · ${esc(sv.label)}</div>
+      <div class="pb"><div class="pbf" style="width:${sv.pct}%"></div></div>
       <div class="cs4">
-        <div class="cs"><div class="cs-n">${v[1]}</div><div class="cs-l">Total</div></div>
-        <div class="cs"><div class="cs-n" style="color:#059669">${v[2]+v[3]}</div><div class="cs-l">Correto</div></div>
-        <div class="cs"><div class="cs-n" style="color:#7c3aed">${v[5]}</div><div class="cs-l">WEB</div></div>
-        <div class="cs"><div class="cs-n" style="color:#dc2626">${v[6]+v[4]}</div><div class="cs-l">Erros</div></div>
+        <div class="cs"><div class="cs-n">${sv.total}</div><div class="cs-l">Total</div></div>
+        <div class="cs"><div class="cs-n" style="color:#059669">${sv.correto+sv.gop}</div><div class="cs-l">Correto</div></div>
+        <div class="cs"><div class="cs-n" style="color:#7c3aed">${sv.web}</div><div class="cs-l">WEB</div></div>
+        <div class="cs"><div class="cs-n" style="color:#dc2626">${sv.erro+sv.sem}</div><div class="cs-l">Erros</div></div>
       </div>
       ${pills?`<div class="cpills">${pills}</div>`:''}
       ${trChip}
@@ -830,7 +873,8 @@ function csvCell(v){return `"${String(v??'').replace(/"/g,'""')}"`}
 function downloadFilteredCsv(){
   const rows=[['Fornecedor','Categoria/Status','Usabilidade','Total','Base','Correto','Mod. GOP','Sem movimentação','WEB','Erro']];
   filteredEntries().forEach(([n,v])=>{
-    rows.push([n,isPu(v)?CTLBL[v[0]]:'CAT '+cat(v[8]),v[8],v[1],v[7],v[2],v[3],v[4],v[5],v[6]]);
+    const sv=supplierView(v);
+    rows.push([n,isPu(v)?CTLBL[v[0]]:'CAT '+cat(sv.pct),sv.pct,sv.total,sv.base,sv.correto,sv.gop,sv.sem,sv.web,sv.erro]);
   });
   const csv='\ufeff'+rows.map(r=>r.map(csvCell).join(';')).join('\n');
   const a=document.createElement('a');
@@ -995,25 +1039,28 @@ function monthBlock(mn,m,pu,nid){
 // ── OPEN MODAL ───────────────────────────────────────────────
 function openM(name){
   const v=D[name];if(!v)return;
-  const pu=isPu(v),c=cat(v[8]),clr=pu?'#7c3aed':CCLR[c];
+  const sv=supplierView(v);
+  const pu=isPu(v),c=cat(sv.pct),clr=pu?'#7c3aed':CCLR[c];
   const nid=name.replace(/[^a-zA-Z0-9]/g,'_').slice(0,20);
 
   document.getElementById('mhdr').className='mhdr '+(pu?'pu':'ng');
   document.getElementById('mtitle').textContent=name;
   document.getElementById('mcrw').innerHTML=pu
     ?`<span class="mcbdg" style="background:rgba(255,255,255,.18);color:#fff">${CTLBL[v[0]]}</span>
-      <span class="mci">Usabilidade: <strong>${v[8]}%</strong></span><span class="mci">Total: <strong>${v[1]}</strong></span>`
+      <span class="mci">Usabilidade: <strong>${sv.pct}%</strong></span><span class="mci">Total: <strong>${sv.total}</strong></span><span class="mci">${esc(sv.label)}</span>`
     :`<span class="mcbdg" style="background:${clr}22;color:${clr}">CATEGORIA ${c}</span>
-      <span class="mci">Usabilidade: <strong>${v[8]}%</strong></span>
-      <span class="mci">Total: <strong>${v[1]}</strong></span>
-      <span class="mci">Base: <strong>${v[7]}</strong></span>`;
+      <span class="mci">Usabilidade: <strong>${sv.pct}%</strong></span>
+      <span class="mci">Total: <strong>${sv.total}</strong></span>
+      <span class="mci">Base: <strong>${sv.base}</strong></span>
+      <span class="mci">${esc(sv.label)}</span>`;
 
-  const sortedM=Object.entries(v[11]).sort((a,b)=>+a[0]-+b[0]);
+  const sortedM=Object.entries(v[11]).sort((a,b)=>parseMonthOrder(b[1][0],b[0])-parseMonthOrder(a[1][0],a[0]));
+  const activeM=(activeMonth!=='all'&&(v[11]||{})[activeMonth])?activeMonth:(sortedM[0]?.[0]||'');
 
   document.getElementById('mbody').innerHTML=`
     <div class="um ${pu?'pum':''}">
-      <div class="utop"><span class="ulbl">Índice de Usabilidade</span><span class="upct" style="color:${clr}">${v[8]}%</span></div>
-      <div class="ubar"><div class="ubf" style="width:${v[8]}%;background:${clr}"></div></div>
+      <div class="utop"><span class="ulbl">Índice de Usabilidade</span><span class="upct" style="color:${clr}">${sv.pct}%</span></div>
+      <div class="ubar"><div class="ubf" style="width:${sv.pct}%;background:${clr}"></div></div>
       <div class="uleg">
         <div class="uli"><div class="uld" style="background:#059669"></div>A 100–92%</div>
         <div class="uli"><div class="uld" style="background:#2563eb"></div>B 91–82%</div>
@@ -1025,11 +1072,11 @@ function openM(name){
 
     <div class="stitle">Resultado dos Atendimentos</div>
     <div class="bkgrid">
-      <div class="bk c0"><div class="bk-n">${v[2]}</div><div class="bk-lbl">✅ CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5</div></div>
-      <div class="bk c1"><div class="bk-n">${v[3]}</div><div class="bk-lbl">⚠️ MOD. GOP</div><div class="bk-sub">Sem horário token + Horário APP NÃO</div></div>
-      <div class="bk c2"><div class="bk-n">${v[4]}</div><div class="bk-lbl">📍 SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
-      <div class="bk c3"><div class="bk-n">${v[5]}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
-      <div class="bk c4"><div class="bk-n">${v[6]}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
+      <div class="bk c0"><div class="bk-n">${sv.correto}</div><div class="bk-lbl">✅ CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5</div></div>
+      <div class="bk c1"><div class="bk-n">${sv.gop}</div><div class="bk-lbl">⚠️ MOD. GOP</div><div class="bk-sub">Sem horário token + Horário APP NÃO</div></div>
+      <div class="bk c2"><div class="bk-n">${sv.sem}</div><div class="bk-lbl">📍 SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
+      <div class="bk c3"><div class="bk-n">${sv.web}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
+      <div class="bk c4"><div class="bk-n">${sv.erro}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
     </div>
 
     <div class="stitle">Versão do APP</div>
@@ -1038,14 +1085,14 @@ function openM(name){
     <div class="stitle">Treinamento</div>
     ${trAlertHtml(v)}
 
-    <div class="stitle">Turnos — Geral</div>
-    ${shiftHtml(v[13],'all',nid)||'<div style="font-size:.72rem;color:#9ca3af">Sem dados de turno</div>'}
-    ${tokBadge(v[14])}
+    <div class="stitle">Turnos — ${esc(sv.label)}</div>
+    ${shiftHtml(sv.shifts,'all',nid)||'<div style="font-size:.72rem;color:#9ca3af">Sem dados de turno</div>'}
+    ${tokBadge(sv.tok)}
 
-    <div class="stitle">Ranking da Equipe — Acumulado</div>
+    <div class="stitle">Ranking da Equipe — ${esc(sv.label)}</div>
     <div class="rkgrid">
-      <div class="rkcard"><div class="rkcard-hdr"><span>🚗</span><h3>Condutores</h3></div><div class="rklist">${rkRows(v[9])}</div></div>
-      <div class="rkcard"><div class="rkcard-hdr"><span>🩺</span><h3>Enfermeiros</h3></div><div class="rklist">${rkRows(v[10])}</div></div>
+      <div class="rkcard"><div class="rkcard-hdr"><span>🚗</span><h3>Condutores</h3></div><div class="rklist">${rkRows(sv.rankC)}</div></div>
+      <div class="rkcard"><div class="rkcard-hdr"><span>🩺</span><h3>Enfermeiros</h3></div><div class="rklist">${rkRows(sv.rankE)}</div></div>
     </div>
 
     <div class="stitle">Detalhe por Mês</div>
@@ -1055,12 +1102,15 @@ function openM(name){
       </div>
     </div>
     <div id="mview_${nid}" class="mlist">
-      ${sortedM.map(([mn,m],i)=>`<div data-month="${mn}" style="display:${i===0?'block':'none'}">${monthBlock(mn,m,pu,nid)}</div>`).join('')}
+      ${sortedM.map(([mn,m])=>`<div data-month="${mn}" style="display:${mn===activeM?'block':'none'}">${monthBlock(mn,m,pu,nid)}</div>`).join('')}
     </div>`;
 
   // Activate first tab
   const tabs=document.getElementById('mtabs_'+nid);
-  if(tabs&&tabs.children[0])tabs.children[0].classList.add('active');
+  if(tabs){
+    [...tabs.children].forEach((t,i)=>{if(sortedM[i]?.[0]===activeM)t.classList.add('active')});
+    if(!tabs.querySelector('.active')&&tabs.children[0])tabs.children[0].classList.add('active');
+  }
 
   document.getElementById('ov').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1310,7 +1360,7 @@ function doLogout(){
   sessionStorage.removeItem('amb_session');
   window.location.replace('login.html');
 }
-initHeader();renderGoalTracking();render();
+initMonthFilter();initHeader();renderGoalTracking();render();
 </script>
 </body>
 </html>
