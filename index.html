@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Utilização do APP — Ambulâncias</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M16 18h8l8 28 8-28h8L36 50h-8L16 18z' fill='%23fff'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -231,8 +232,9 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .rkpos{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;flex-shrink:0}
 .p1{background:#fbbf24;color:#78350f}.p2{background:#94a3b8;color:#fff}.p3{background:#c2410c;color:#fff}.pn{background:#e5e7eb;color:#9ca3af}
 .rkname{flex:1;font-size:.7rem;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rkok{font-size:.63rem;font-weight:700;color:#059669}
-.rkerr{font-size:.63rem;font-weight:700;color:#dc2626}
+.rkok,.rkerr{font-size:.63rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:999px}
+.rkok{color:#027a48;background:#ecfdf3;border:1px solid #abefc6}
+.rkerr{color:#b42318;background:#fef3f2;border:1px solid #fecdca}
 .rkpct{font-size:.62rem;font-weight:700;padding:1px 5px;border-radius:5px;min-width:36px;text-align:center}
 
 /* ── MONTH TABS ─────────────────────── */
@@ -247,7 +249,7 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .mi{border:1px solid #e5e7eb;border-radius:var(--radius-sm);overflow:hidden;background:#fff}
 .mih{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;cursor:pointer;transition:background .12s}
 .mih:hover{background:#f9fafb}
-.mi-nm{font-size:.76rem;font-weight:600;color:#374151}
+.mi-nm{font-size:.76rem;font-weight:600;color:#374151;display:flex;align-items:center;gap:6px}
 .mi-r{display:flex;align-items:center;gap:8px}
 .mi-tot{font-size:.68rem;color:#9ca3af}
 .mi-pct{font-size:.72rem;font-weight:700}
@@ -262,7 +264,7 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .msc.c2{background:#fffbeb;border-color:#fde68a}.msc.c3{background:#f5f3ff;border-color:#ddd6fe}.msc.c4{background:#fff1f2;border-color:#fecdd3}
 .msc-n{font-size:.9rem;font-weight:700}
 .c0 .msc-n{color:#059669}.c1 .msc-n{color:#d97706}.c2 .msc-n{color:#92400e}.c3 .msc-n{color:#7c3aed}.c4 .msc-n{color:#e11d48}
-.msc-l{font-size:.58rem;font-weight:600}
+.msc-l{font-size:.58rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px}
 .c0 .msc-l{color:#064e3b}.c1 .msc-l{color:#78350f}.c2 .msc-l{color:#78350f}.c3 .msc-l{color:#4c1d95}.c4 .msc-l{color:#881337}
 .mrk{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 12px;background:#fafafa;border-bottom:1px solid #f3f4f6}
 .mrk-col h4{font-size:.62rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
@@ -270,8 +272,9 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .mrk-row:last-child{border-bottom:none}
 .mrk-pos{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.57rem;font-weight:700;flex-shrink:0}
 .mrk-nm{flex:1;font-size:.64rem;font-weight:600;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mrk-ok{font-size:.6rem;font-weight:700;color:#059669}
-.mrk-err{font-size:.6rem;font-weight:700;color:#dc2626}
+.mrk-ok,.mrk-err{font-size:.6rem;font-weight:700;display:inline-flex;align-items:center;gap:3px;padding:1px 5px;border-radius:999px}
+.mrk-ok{color:#027a48;background:#ecfdf3;border:1px solid #abefc6}
+.mrk-err{color:#b42318;background:#fef3f2;border:1px solid #fecdca}
 .mrk-pct{font-size:.59rem;font-weight:700;padding:1px 4px;border-radius:4px}
 
 /* ── ATT TABLE ──────────────────────── */
@@ -300,34 +303,67 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .sd-chip{font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:5px;background:#f3f4f6;color:#374151}
 
 /* ── MAP MODAL ──────────────────────── */
-.map-modal{background:#fff;border-radius:var(--radius-lg);width:98vw;max-width:1400px;height:96vh;max-height:96vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
-.map-hdr{background:var(--green);padding:8px 14px;display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0}
-.map-hdr-info{flex:1}
-.map-hdr h3{color:#fff;font-size:.85rem;font-weight:700}
-.map-addrs{margin-top:5px;display:grid;grid-template-columns:1fr 1fr;gap:3px 10px}
-.map-addr{font-size:.67rem;color:rgba(255,255,255,.8);display:flex;align-items:flex-start;gap:5px}
-.map-addr span{flex-shrink:0}
-.map-stats-bar{padding:5px 14px;background:#f0fdf4;border-bottom:1px solid #bbf7d0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0}
-.map-stat{font-size:.72rem;font-weight:700;color:#065f46;display:flex;align-items:center;gap:4px}
-.map-note{font-size:.63rem;color:#9ca3af;margin-left:auto}
-#leafletMap{height:47vh;min-height:285px;max-height:420px;flex:0 0 auto}
-.route-panel{background:#fff;border-top:1px solid #e5e7eb;flex:1 1 auto;min-height:270px;overflow:auto;padding:8px 14px 12px}
-.route-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:6px}
-.route-card{border:1px solid #e5e7eb;border-radius:6px;padding:6px 8px;background:#f9fafb}
-.route-card strong{display:block;font-size:.68rem;color:#111827;margin-bottom:2px}
-.route-card span{font-size:.66rem;color:#6b7280}
+.map-modal{background:#f8fafc;border-radius:18px;width:98vw;max-width:1500px;height:96vh;max-height:96vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);border:1px solid rgba(255,255,255,.8)}
+.map-hdr{background:#fff;padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.map-hdr-info{flex:1;min-width:0}
+.map-hdr h3{color:var(--text);font-size:1rem;font-weight:750;display:flex;align-items:center;gap:10px}
+.map-addrs{margin-top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.map-addr{font-size:.7rem;color:#475467;display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:9px 10px;box-shadow:var(--shadow)}
+.map-addr b{display:block;font-size:.58rem;line-height:1;text-transform:uppercase;letter-spacing:.06em;color:#98a2b3;margin-bottom:4px}
+.map-addr span{min-width:0;line-height:1.35}.map-addr span:last-child{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.map-stats-bar{padding:10px 18px;background:#fff;border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;align-items:center;gap:10px;flex-shrink:0}
+.map-stat{font-size:.72rem;font-weight:750;color:#344054;display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:9px 10px;min-height:42px}
+.map-stat strong{font-size:.78rem;color:var(--text)}
+.map-note{font-size:.63rem;color:var(--muted);justify-self:end;white-space:nowrap}
+#leafletMap{height:46vh;min-height:285px;max-height:480px;flex:0 0 auto;border-bottom:1px solid var(--border)}
+.route-panel{background:#f8fafc;flex:1 1 auto;min-height:180px;overflow:auto;padding:14px 18px 18px}
+.route-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.route-card{border:1px solid var(--border);border-radius:12px;padding:11px 12px;background:#fff;box-shadow:var(--shadow)}
+.route-card strong{display:block;font-size:.68rem;color:#344054;margin-bottom:4px}
+.route-card span{font-size:.72rem;color:#667085;line-height:1.4}
 .route-table{width:100%;border-collapse:collapse;font-size:.68rem}
 .route-table th{font-size:.58rem;text-transform:uppercase;letter-spacing:.04em;color:#9ca3af;text-align:left;padding:4px 6px;border-bottom:1px solid #e5e7eb;background:#f9fafb;position:sticky;top:0}
 .route-table td{padding:4px 6px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:top}
 .route-table .route-km{font-weight:700;color:#ea580c;white-space:nowrap}
 .route-legend{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:7px 9px;box-shadow:0 4px 10px rgba(0,0,0,.12);font-size:.68rem;color:#374151;line-height:1.7}
-.route-legend-panel{display:flex;flex-wrap:wrap;gap:6px 12px;border:1px solid #e5e7eb;background:#fff;border-radius:6px;padding:6px 8px;margin-bottom:6px;font-size:.66rem;color:#374151}
-.route-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.route-legend-panel{display:flex;flex-wrap:wrap;gap:8px;border:1px solid var(--border);background:#fff;border-radius:12px;padding:8px 10px;margin-bottom:10px;font-size:.67rem;color:#475467;box-shadow:var(--shadow)}
+.route-legend-panel span{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;background:#f8fafc;border:1px solid #eef2f6}
+.route-dot{display:inline-block;width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.85)}
+.route-section-title{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:750;color:#344054;text-transform:uppercase;letter-spacing:.06em;margin:12px 0 8px}
+.route-section-title:after{content:'';height:1px;background:#e4e7ec;flex:1}
+.route-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.route-step{background:#fff;border:1px solid var(--border);border-radius:12px;padding:11px 12px;box-shadow:var(--shadow)}
+.route-step-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.route-step-title{display:flex;align-items:center;gap:8px;font-size:.74rem;font-weight:750;color:var(--text);line-height:1.3}
+.route-source{font-size:.58rem;font-weight:750;padding:3px 7px;border-radius:999px;background:#ecfdf3;border:1px solid #a7f3d0;color:#047857;white-space:nowrap}
+.route-step-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.route-mini{background:#f8fafc;border:1px solid #eef2f6;border-radius:9px;padding:6px 7px}
+.route-mini b{display:block;font-size:.55rem;text-transform:uppercase;letter-spacing:.05em;color:#98a2b3;margin-bottom:2px}
+.route-mini span{font-size:.68rem;font-weight:700;color:#344054}
+.route-points{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.route-aux{font-size:.68rem;color:#667085;margin-top:10px;display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+.route-timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:10px}
+.stage-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:7px 8px;display:flex;gap:7px;align-items:flex-start;box-shadow:var(--shadow);min-height:68px}
+.stage-card.missing{background:#f8fafc;color:#98a2b3}
+.stage-num{width:22px;height:22px;border-radius:999px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.64rem;font-weight:800;flex-shrink:0}
+.stage-card.return .stage-num{background:#ef4444}.stage-card.missing .stage-num{background:#d0d5dd;color:#667085}
+.stage-body{min-width:0}.stage-name{font-size:.66rem;font-weight:800;color:#344054;line-height:1.15}.stage-card.missing .stage-name{color:#98a2b3}
+.stage-meta{font-size:.58rem;color:#667085;margin-top:3px;line-height:1.28}.stage-meta span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stage-card.missing .stage-meta{color:#98a2b3}
+.map-pin-label{position:relative;width:34px;height:34px}
+.map-pin-drop{position:absolute;inset:0;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 5px 12px rgba(16,24,40,.28)}
+.map-pin-text{position:absolute;top:7px;left:0;right:0;text-align:center;color:#fff;font-size:.72rem;font-weight:900;text-shadow:0 1px 2px rgba(0,0,0,.3)}
 @media(max-width:720px){
   .map-modal{width:98vw;height:96vh;max-height:96vh}
-  .map-addrs{grid-template-columns:1fr}
-  #leafletMap{height:42vh;min-height:260px}
+  .map-hdr{padding:8px 10px}.map-hdr h3{font-size:.9rem}.map-addrs{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+  .map-addr{padding:6px 7px;font-size:.62rem;max-height:58px;overflow:hidden}.map-addr b{font-size:.52rem}.map-addr span:last-child{-webkit-line-clamp:2}
+  .map-stats-bar{grid-template-columns:repeat(4,minmax(0,1fr));padding:7px 10px;gap:6px}.map-stat{padding:6px 7px;min-height:34px;font-size:.62rem;gap:5px}.map-stat strong{font-size:.66rem}.map-note{display:none}
+  .route-timeline{grid-template-columns:1fr 1fr}.route-steps,.route-points{grid-template-columns:1fr}
+  #leafletMap{height:28vh;min-height:170px;max-height:220px}
+  .route-panel{min-height:165px;padding:10px 12px 12px}
   .route-grid{grid-template-columns:1fr 1fr}
+  .map-note{justify-self:start}
+  .route-step-meta{grid-template-columns:1fr 1fr}
 }
 
 /* ── RULES MODAL ────────────────────── */
@@ -349,23 +385,153 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:2px}
 ::-webkit-scrollbar-track{background:transparent}
+
+/* HOMOLOGACAO PREMIUM -------------------------------------------------- */
+:root{
+  --brand:#0f5132;--brand-2:#0b3f27;--primary:#f97316;--primary-soft:#fff7ed;
+  --surface:#fff;--surface-2:#f8fafc;--surface-3:#f2f4f7;--border:#e4e7ec;
+  --text:#101828;--muted:#667085;--muted-2:#98a2b3;
+  --ok:#027a48;--ok-bg:#ecfdf3;--ok-bd:#abefc6;
+  --warn:#b54708;--warn-bg:#fffaeb;--warn-bd:#fedf89;
+  --bad:#c2410c;--bad-bg:#fff7ed;--bad-bd:#fed7aa;
+  --info:#047857;--info-bg:#ecfdf3;--info-bd:#a7f3d0;
+  --neutral:#344054;--neutral-bg:#f2f4f7;--neutral-bd:#d0d5dd;
+  --shadow:0 1px 2px rgba(16,24,40,.05);
+  --shadow-md:0 8px 24px rgba(16,24,40,.08);
+  --shadow-lg:0 24px 64px rgba(16,24,40,.16);
+  --radius:12px;--radius-sm:10px;--radius-lg:16px;
+}
+body{background:linear-gradient(180deg,#fff 0,#f8fafc 260px);color:var(--text);font-size:14px;letter-spacing:0}
+header{background:var(--brand);min-height:88px;padding:18px 32px;border-bottom:1px solid rgba(255,255,255,.08);box-shadow:none}
+.logo{gap:14px;padding:0}
+.logo-icon{width:42px;height:42px;background:#fff;color:var(--brand);border:1px solid rgba(255,255,255,.18);border-radius:12px;font-size:.8rem;font-weight:800;letter-spacing:.08em}
+.ico{width:15px;height:15px;display:inline-block;vertical-align:-2px;stroke:currentColor;stroke-width:2.25;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ico-logo{width:21px;height:21px;color:var(--brand)}
+.ibtn .ico,.tb-action .ico,.map-btn .ico{margin-right:6px}
+.icon-box{width:32px;height:32px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#fff7ed,#ffedd5);color:#c2410c;border:1px solid #fed7aa;box-shadow:0 1px 2px rgba(16,24,40,.06),inset 0 1px 0 rgba(255,255,255,.86)}
+.icon-box.green{background:linear-gradient(145deg,#ecfdf3,#d1fae5);color:var(--brand);border-color:#a7f3d0}
+.icon-box.neutral{background:linear-gradient(145deg,#fff,#f2f4f7);color:#475467;border-color:#e4e7ec}
+.icon-box .ico{width:16px;height:16px;stroke-width:2.45}
+.icon-box.small{width:24px;height:24px;border-radius:8px}.icon-box.small .ico{width:13px;height:13px}
+.title-with-icon{display:flex;align-items:center;gap:9px}
+.stitle{align-items:center}.stitle .icon-box{margin-right:2px}
+.card-mark{margin-bottom:12px}
+.bk-lbl,.bk-top,.dv-top,.route-card strong,.rkcard-hdr h3,.map-stat-ico{display:flex;align-items:center;gap:7px}
+.bk-ico,.dv-ico,.mi-ico,.msc-ico,.route-ico{width:15px;height:15px;color:var(--primary);flex-shrink:0;stroke-width:2.45}
+.msc-ico{width:12px;height:12px}.mi-ico{color:var(--brand)}
+.route-ico{color:var(--brand)}
+.status-ico{width:20px;height:20px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid transparent;box-shadow:0 1px 2px rgba(16,24,40,.06),inset 0 1px 0 rgba(255,255,255,.8)}
+.status-ico .ico{width:12px;height:12px;stroke-width:2.8}
+.mrk-ok .status-ico,.mrk-err .status-ico{width:16px;height:16px}.mrk-ok .status-ico .ico,.mrk-err .status-ico .ico{width:10px;height:10px}
+.status-ico.ok{background:#ecfdf3;border-color:#abefc6;color:#027a48}
+.status-ico.warn{background:#fffaeb;border-color:#fedf89;color:#b54708}
+.status-ico.bad{background:#fef3f2;border-color:#fecdca;color:#b42318}
+.status-ico.web{background:#ecfdf3;border-color:#a7f3d0;color:#047857}
+.status-ico.neutral{background:#f2f4f7;border-color:#d0d5dd;color:#475467}
+.metric-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
+.metric-head .hs-l{margin-top:0}
+.logo h1{font-size:1.08rem;font-weight:700;letter-spacing:0;color:#fff}
+.logo p{font-size:.76rem;color:#cbd5e1;margin-top:3px}
+.hright{gap:10px;padding:0}
+.hs{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:10px;padding:7px 11px;min-width:84px}
+.hs-n{font-size:1.05rem;color:#fff}
+.hs-l{font-size:.58rem;color:#cbd5e1}
+.avg-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;min-width:220px;padding:9px 12px}
+.avg-lbl,.avg-upd{color:#cbd5e1}.avg-val{font-size:1rem}.avg-bar{background:rgba(255,255,255,.16)}
+.ibtn{width:auto;height:34px;border-radius:10px;padding:0 12px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);font-size:.72rem}
+.ibtn:hover{background:rgba(255,255,255,.14)}
+.toolbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);padding:14px 32px;border-bottom:1px solid var(--border);box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.toolbar input{height:40px;min-width:260px;border:1px solid var(--border);border-radius:10px;background-color:#fff;font-size:.82rem;color:var(--text)}
+.toolbar input:focus,.toolbar select:focus{border-color:#84adff;box-shadow:0 0 0 3px rgba(21,94,239,.12)}
+.toolbar select,.tb-action{height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;color:#344054;font-size:.78rem;font-weight:600}
+.tb-action{padding:0 14px;color:#fff;background:var(--primary);border-color:var(--primary)}
+.tb-action:hover{background:#ea580c;border-color:#ea580c;color:#fff}
+.fbtns{gap:6px}.fb{height:34px;padding:0 12px;border:1px solid var(--border);border-radius:999px;color:#475467;background:#fff;font-size:.72rem;font-weight:600}.fb:hover{border-color:#a7f3d0;color:var(--brand)}
+.fb.on,.fb.on.fall,.fb.on.fa,.fb.on.fb2,.fb.on.fc,.fb.on.fd,.fb.on.ff,.fb.on.fpu{background:var(--brand);border-color:var(--brand);color:#fff}
+main{max-width:1500px;padding:24px 32px 34px}
+.legend{box-shadow:none;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff;margin-bottom:16px}
+.li{font-size:.7rem;color:#475467}.ld{border-radius:999px}
+.ri{font-size:.76rem;color:#667085;margin:12px 2px}
+.grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.goal-panel,.card,.mi,.rkcard,.dvcard,.route-card,.rmodal,.modal,.sdmodal{border-color:var(--border);box-shadow:var(--shadow);border-radius:var(--radius)}
+.goal-head{padding:16px 18px;border-bottom:1px solid var(--border)}
+.goal-title{font-size:.78rem;color:var(--text);letter-spacing:.06em}.goal-sub{font-size:.68rem;color:var(--muted)}
+.goal-target{background:var(--primary-soft);border-color:#fed7aa;color:#9a3412}
+.goal-body{padding:16px 18px}.goal-summary{gap:12px}.goal-main,.goal-kpi,.week-card{border-color:var(--border);background:#fff;border-radius:12px}
+.goal-main .goal-pct{font-size:2rem}.goal-main .goal-label,.goal-kpi span,.week-name{color:#475467}
+.month-chip{background:#fff;border-color:var(--border);color:#475467}.month-chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.card{padding:16px;background:#fff;border-color:var(--border);box-shadow:var(--shadow);transform:none}
+.card::before{left:0;right:auto;bottom:0;height:auto;width:4px}
+.card:hover{transform:translateY(-1px);border-color:#b2ccff;box-shadow:var(--shadow-md)}
+.card.cpu{background:#fff;border-color:var(--border)}
+.cn{font-size:.82rem;font-weight:650;color:var(--text)}
+.cbdg,.pill,.tr-chip,.atag,.rtag,.tr-tag,.dvchip,.month-chip{border-radius:999px;border:1px solid transparent;font-weight:650}
+.cbdg.ca,.pill.mod,.atag.t1,.rtag.mod,.tr-tag.orange{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn)}
+.cbdg.cb,.pill.web,.atag.t3,.rtag.wb,.tr-tag.blue{background:var(--info-bg);border-color:var(--info-bd);color:var(--info)}
+.cbdg.cc,.cbdg.cd,.pill.sm,.atag.t2,.rtag.sm{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn)}
+.cbdg.cf,.pill.err,.atag.t4,.rtag.er,.tr-tag.red{background:var(--bad-bg);border-color:var(--bad-bd);color:var(--bad)}
+.cbdg.cpu,.bp,.bi,.bn,.bint{background:var(--neutral-bg);border:1px solid var(--neutral-bd);color:var(--neutral)}
+.cpct{font-size:1.85rem;color:var(--text)!important}.cpl{font-size:.68rem;color:var(--muted)}
+.pb{height:6px;background:#eef2f6;border-radius:999px}.pbf{background:var(--primary)!important}
+.cs{background:var(--surface-2);border-color:#eef2f6;border-radius:10px;padding:7px 4px}.cs-l{font-size:.58rem;color:var(--muted)}
+.mhdr,.mhdr.ng,.mhdr.pu,.rhdr,.map-hdr{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.mtitle,.rhdr h2,.map-hdr h3{color:var(--text);font-size:1rem}.mci{color:var(--muted)}.mcbdg{background:var(--primary-soft)!important;color:#9a3412!important;border:1px solid #fed7aa}
+.mcls{background:#fff;border-color:var(--border);color:#475467}.mcls:hover{background:var(--surface-3)}
+.mbody,.rbody{padding:20px 22px 26px}.stitle{font-size:.68rem;color:#475467;margin:22px 0 10px}
+.um,.um.pum,.bk,.dvcard,.tr-alert,.shift-bdg,.tok-box,.rkcard,.mi,.msc,.route-card{background:#fff;border-color:var(--border);border-radius:12px}
+.bkgrid,.dvgrid{gap:10px}.bk{padding:13px 14px}.bk-n{font-size:1.4rem;color:var(--text)!important}.bk-lbl{color:#344054!important}.bk-sub{font-size:.64rem;color:var(--muted)}
+.tr-icon{width:8px;height:8px;border-radius:999px;background:var(--primary);margin-top:6px;font-size:0}
+.rkcard-hdr,.ms5,.mrk,.att th,.route-table th,.rt th{background:var(--surface-2);border-color:var(--border)}
+.rkrow,.mrk-row,.att td,.route-table td,.rt td{border-color:#eef2f6}
+.att{font-size:.72rem}.att th{padding:9px 10px;color:#667085;border-bottom:1px solid var(--border)}.att td{padding:9px 10px}
+.att tr.r0 td,.att tr.r1 td,.att tr.r2 td,.att tr.r3 td,.att tr.r4 td{background:#fff}.att tbody tr:nth-child(even) td{background:#fcfcfd}.att tr:hover td{filter:none;background:#f8fafc}
+.map-btn{height:28px;border-radius:8px;background:#fff;border-color:#a7f3d0;color:var(--brand);padding:0 10px;display:inline-flex;align-items:center}
+.map-addr{color:#475467}.map-stats-bar{background:#fff;border-color:var(--border)}
+.map-stat{color:#344054}.map-note{color:var(--muted)}
+.route-panel{border-color:var(--border)}.route-table .route-km{color:var(--primary)}
+.nodata{background:#fff;border:1px solid var(--border);border-radius:12px;color:var(--muted)}
+@media(max-width:760px){header,.toolbar,main{padding-left:16px;padding-right:16px}.toolbar input{min-width:100%;flex-basis:100%}.hstats{display:none}.avg-box{min-width:100%}.goal-summary{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.modal{max-height:96vh}.rkgrid,.mrk{grid-template-columns:1fr}.ms5{grid-template-columns:1fr 1fr}.map-modal{width:100vw;height:100vh;border-radius:0}}
 </style>
 </head>
 <body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="icon-route" viewBox="0 0 24 24"><path d="M6 19c2.5 0 3.5-2 3.5-4.5S10.5 10 13 10s4-2 4-5"/><path d="M6 19a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/><path d="M17 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6"/><path d="M12 7h.01"/></symbol>
+  <symbol id="icon-log-out" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-6"/></symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></symbol>
+  <symbol id="icon-map" viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15"/><path d="M15 6v15"/></symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="icon-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 8-6-16-3 8H2"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="icon-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="icon-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
+  <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="icon-smartphone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+  <symbol id="icon-graduation" viewBox="0 0 24 24"><path d="m22 10-10-5-10 5 10 5 10-5Z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="icon-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5"/></symbol>
+  <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M3 11h18"/></symbol>
+  <symbol id="icon-truck" viewBox="0 0 24 24"><path d="M10 17H6a2 2 0 0 1-2-2V6h10v11"/><path d="M14 9h4l3 4v4h-3"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M8 10h4"/><path d="M10 8v4"/></symbol>
+  <symbol id="icon-user-check" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></symbol>
+  <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12A7 7 0 0 0 5 9c0 6.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+</svg>
 
 <header>
   <div class="logo">
-    <div class="logo-icon">📡</div>
+    <div class="logo-icon"><svg class="ico ico-logo"><use href="#icon-route"></use></svg></div>
     <div>
-      <h1>Monitoramento de Utilização do APP</h1>
-      <p>Fornecedores de Ambulância</p>
+      <h1>View Fornecedores</h1>
+      <p>Monitoramento operacional de uso do app</p>
     </div>
   </div>
   <div class="hright">
     <div class="hstats" id="hstats"></div>
     <div class="avg-box" id="avgBox"></div>
-    <button class="ibtn" onclick="openRules()" title="Regras de classificação">ⓘ</button>
-    <button class="ibtn" onclick="doLogout()" title="Sair" style="background:rgba(220,38,38,.25);border-color:rgba(220,38,38,.4)">⏻</button>
+    <button class="ibtn" onclick="openRules()" title="Regras de classificação"><svg class="ico"><use href="#icon-info"></use></svg>Regras</button>
+    <button class="ibtn" onclick="doLogout()" title="Sair"><svg class="ico"><use href="#icon-log-out"></use></svg>Sair</button>
   </div>
 </header>
 
@@ -379,7 +545,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
     <option value="errors">Mais erros</option>
     <option value="name">Nome A-Z</option>
   </select>
-  <button class="tb-action" onclick="downloadFilteredCsv()" title="Exportar lista filtrada">⬇️ CSV</button>
+  <button class="tb-action" onclick="downloadFilteredCsv()" title="Exportar lista filtrada"><svg class="ico"><use href="#icon-download"></use></svg>Exportar CSV</button>
   <div class="fbtns">
     <button class="fb fall on" onclick="setF('all',this)">Todos</button>
     <button class="fb fa" onclick="setF('A',this)">A</button>
@@ -387,7 +553,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
     <button class="fb fc" onclick="setF('C',this)">C</button>
     <button class="fb fd" onclick="setF('D',this)">D</button>
     <button class="fb ff" onclick="setF('F',this)">F</button>
-    <button class="fb fpu" onclick="setF('pu',this)">🟣 Especiais</button>
+    <button class="fb fpu" onclick="setF('pu',this)">Especiais</button>
   </div>
 </div>
 
@@ -404,7 +570,6 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
   <div class="ri" id="ri"></div>
   <div class="grid" id="grid"></div>
   <div class="nodata" id="nodata" style="display:none">
-    <div style="font-size:2.5rem">🔍</div>
     <p style="margin-top:8px">Nenhum fornecedor encontrado.</p>
   </div>
 </main>
@@ -413,7 +578,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 <div class="ov" id="ov" onclick="if(event.target===this)closeM()">
   <div class="modal">
     <div class="mhdr" id="mhdr">
-      <div class="mhdr-top"><div class="mtitle" id="mtitle"></div><button class="mcls" onclick="closeM()">✕</button></div>
+      <div class="mhdr-top"><div class="mtitle" id="mtitle"></div><button class="mcls" onclick="closeM()">×</button></div>
       <div class="mcrw" id="mcrw"></div>
     </div>
     <div class="mbody" id="mbody"></div>
@@ -423,7 +588,7 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 <!-- SHIFT DETAIL -->
 <div class="sdov" id="sdov" onclick="if(event.target===this)closeSd()">
   <div class="sdmodal">
-    <div class="sd-hdr" id="sdHdr"><h3 id="sdLbl"></h3><button class="mcls" onclick="closeSd()">✕</button></div>
+    <div class="sd-hdr" id="sdHdr"><h3 id="sdLbl"></h3><button class="mcls" onclick="closeSd()">×</button></div>
     <div class="sd-body">
       <p style="font-size:.7rem;color:#9ca3af;margin-bottom:9px" id="sdCount"></p>
       <div class="sd-chips" id="sdChips"></div>
@@ -436,14 +601,16 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
   <div class="map-modal">
     <div class="map-hdr">
       <div class="map-hdr-info">
-        <h3 id="mapTitle">🗺️ Mapa do Atendimento</h3>
+        <h3 id="mapTitle">Mapa do Atendimento</h3>
         <div class="map-addrs" id="mapAddrs"></div>
       </div>
-      <button class="mcls" onclick="closeMap()" style="margin-left:10px;flex-shrink:0">✕</button>
+      <button class="mcls" onclick="closeMap()" style="margin-left:10px;flex-shrink:0">×</button>
     </div>
     <div class="map-stats-bar" id="mapStats" style="display:none">
       <div class="map-stat" id="mapDist"></div>
       <div class="map-stat" id="mapTime"></div>
+      <div class="map-stat" id="mapFlow"></div>
+      <div class="map-stat" id="mapClicks"></div>
       <span class="map-note">Rota calculada via OpenStreetMap</span>
     </div>
     <div id="leafletMap"></div>
@@ -454,29 +621,29 @@ hr.rd{border:none;border-top:1px solid #f3f4f6;margin:12px 0}
 <!-- RULES MODAL -->
 <div class="rov" id="rov" onclick="if(event.target===this)closeRules()">
   <div class="rmodal">
-    <div class="rhdr"><h2>ⓘ Regras de Classificação</h2><button class="mcls" onclick="closeRules()">✕</button></div>
+    <div class="rhdr"><h2>Regras de Classificação</h2><button class="mcls" onclick="closeRules()">×</button></div>
     <div class="rbody">
       <p style="font-size:.77rem;color:#6b7280;margin-bottom:10px">Como cada atendimento é classificado e como a % de usabilidade é calculada.</p>
       <table class="rt">
         <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Dispositivo</th><th>Resultado</th></tr></thead>
         <tbody>
-          <tr><td>SIM</td><td>&gt;5 pts</td><td>SIM ou com horário do token</td><td>Qualquer</td><td><span class="rtag ok">✅ CORRETO</span></td></tr>
-          <tr><td>SIM</td><td>&gt;5 pts</td><td>NÃO + sem horário do token</td><td>Qualquer</td><td><span class="rtag mod">⚠️ MOD. GOP</span></td></tr>
-          <tr><td>SIM</td><td>≤5 pts</td><td>—</td><td>—</td><td><span class="rtag sm">📍 SEM MOVIMENTAÇÃO</span></td></tr>
-          <tr><td>NÃO</td><td>≤5 pts</td><td>SIM</td><td>—</td><td><span class="rtag wb">🌐 VIA WEB</span></td></tr>
-          <tr><td>NÃO</td><td>qualquer</td><td>NÃO</td><td>—</td><td><span class="rtag er">❌ ERRO</span></td></tr>
+          <tr><td>SIM</td><td>&gt;5 pts</td><td>SIM ou com horário do token</td><td>Qualquer</td><td><span class="rtag ok">CORRETO</span></td></tr>
+          <tr><td>SIM</td><td>&gt;5 pts</td><td>NÃO + sem horário do token</td><td>Qualquer</td><td><span class="rtag mod">MOD. GOP</span></td></tr>
+          <tr><td>SIM</td><td>≤5 pts</td><td>—</td><td>—</td><td><span class="rtag sm">SEM MOVIMENTAÇÃO</span></td></tr>
+          <tr><td>NÃO</td><td>≤5 pts</td><td>SIM</td><td>—</td><td><span class="rtag wb">VIA WEB</span></td></tr>
+          <tr><td>NÃO</td><td>qualquer</td><td>NÃO</td><td>—</td><td><span class="rtag er">ERRO</span></td></tr>
         </tbody>
       </table>
       <hr class="rd">
-      <div class="rsec"><strong>📐 Fórmula:</strong> % = (Corretos + Mod. GOP) ÷ (Total − WEB) × 100</div>
+      <div class="rsec"><strong>Fórmula:</strong> % = (Corretos + Mod. GOP) ÷ (Total − WEB) × 100</div>
       <hr class="rd">
-      <div class="rsec"><strong>🏆 Ranking:</strong> Ranqueado por % de acertos. Conta CORRETO e MOD. GOP vs total (excl. WEB). Token inserido = confirma uso real do APP pelo colaborador.</div>
+      <div class="rsec"><strong>Ranking:</strong> Ranqueado por % de acertos. Conta CORRETO e MOD. GOP vs total (excl. WEB). Token inserido = confirma uso real do APP pelo colaborador.</div>
       <hr class="rd">
-      <div class="rsec"><strong>🌅 Turnos (data da remoção):</strong> Manhã 06h–12h · Tarde 12h–18h · Noite 18h–06h</div>
+      <div class="rsec"><strong>Turnos (data da remoção):</strong> Manhã 06h–12h · Tarde 12h–18h · Noite 18h–06h</div>
       <hr class="rd">
-      <div class="rsec"><strong>⏱️ Δ tempo token:</strong> Inserção do token − hora de início do transporte. Negativo = inseriu antes. Verde ≤15 min, Amarelo ≤30 min, Vermelho &gt;30 min.</div>
+      <div class="rsec"><strong>Tempo do token:</strong> diferença positiva entre a inserção do token e o horário da remoção na origem. Mostra “antes” quando foi inserido antes do transporte e “após” quando foi inserido depois. Verde ≤15 min, Amarelo ≤30 min, Vermelho &gt;30 min.</div>
       <hr class="rd">
-      <div class="rsec"><strong>🎯 Categorias:</strong> A ≥92% · B 82–91% · C 72–81% · D 62–71% · F &lt;62%</div>
+      <div class="rsec"><strong>Categorias:</strong> A ≥92% · B 82–91% · C 72–81% · D 62–71% · F &lt;62%</div>
     </div>
   </div>
 </div>
@@ -560,12 +727,12 @@ const META_SUPPLIER_KEYS=[
 ];
 
 const CCLR={A:'#059669',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
-const CTLBL={1:'⏳ Pendente',2:'🔧 Em Instalação',3:'📵 Não Usa APP',4:'🔗 Integrada IRIS'};
+const CTLBL={1:'Pendente',2:'Em instalação',3:'Não usa APP',4:'Integrada IRIS'};
 const CTBNR={1:'bp',2:'bi',3:'bn',4:'bint'};
-const CLBL=['✅ Correto','⚠️ Mod. GOP','📍 Sem Movimentação','🌐 WEB','❌ Erro'];
+const CLBL=['Correto','Mod. GOP','Sem movimentação','WEB','Erro'];
 const TCLS=['t0','t1','t2','t3','t4'];
 const RCLS=['r0','r1','r2','r3','r4'];
-const SHIFT_ICO={M:'🌅',T:'☀️',N:'🌙'};
+const SHIFT_ICO={M:'M',T:'T',N:'N'};
 const SHIFT_TTL={M:'Manhã 6–12h',T:'Tarde 12–18h',N:'Noite 18–6h'};
 
 function cat(p){return p>=92?'A':p>=82?'B':p>=72?'C':p>=62?'D':'F'}
@@ -575,6 +742,10 @@ function pc(i){return i===0?'p1':i===1?'p2':i===2?'p3':'pn'}
 function pctBg(p){return p>=80?'#dcfce7':p>=60?'#fef3c7':'#fee2e2'}
 function pctCl(p){return p>=80?'#14532d':p>=60?'#92400e':'#991b1b'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function icon(id,cls='ico'){return `<svg class="${cls}"><use href="#${id}"></use></svg>`}
+function iconBox(id,tone='green'){return `<span class="icon-box ${tone}">${icon(id)}</span>`}
+function sectionTitle(label,id,tone='green'){return `<div class="stitle">${iconBox(id,tone)}${label}</div>`}
+function statusIcon(id,tone='neutral'){return `<span class="status-ico ${tone}">${icon(id)}</span>`}
 function normMeta(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&AMP;|&NBSP;/g,' ').replace(/[^A-Z0-9]+/gi,' ').replace(/\s+/g,' ').trim().toUpperCase()}
 function isHMedName(name){const n=normMeta(name);return n.includes('H MED')||n.includes('HMED')}
 function metaMatch(name,needle){
@@ -672,10 +843,10 @@ function supplierDeviceHtml(v){
   const sinceText=since.total?`${since.version}`:'—';
   const chips=[...all.versions.entries()].sort((a,b)=>b[1]-a[1]).map(([ver,n])=>`<span class="dvchip">${esc(ver)} · ${n}</span>`).join('');
   return`<div class="dvgrid">
-    <div class="dvcard ${sinceCls}"><div class="dv-k">Desde 23/06</div><div class="dv-v">${esc(sinceText)}</div><div class="dv-s">${since.count||0} de ${since.total} atend. com essa versão</div></div>
-    <div class="dvcard"><div class="dv-k">Antes de 23/06</div><div class="dv-v">${esc(beforeText)}</div><div class="dv-s">${before.count||0} de ${before.total} atend. com essa versão</div></div>
-    <div class="dvcard ${all.missing?'warn':'good'}"><div class="dv-k">Sem dispositivo</div><div class="dv-v">${all.missing}</div><div class="dv-s">${all.total} atendimentos no fornecedor</div></div>
-    <div class="dvcard"><div class="dv-k">Modelo mais usado</div><div class="dv-v">${esc(topModel)}</div><div class="dv-s">${topModelCount} registros com dispositivo</div></div>
+    <div class="dvcard ${sinceCls}"><div class="dv-top"><span class="dv-k">${icon('icon-smartphone','dv-ico')} Desde 23/06</span></div><div class="dv-v">${esc(sinceText)}</div><div class="dv-s">${since.count||0} de ${since.total} atend. com essa versão</div></div>
+    <div class="dvcard"><div class="dv-top"><span class="dv-k">${icon('icon-calendar','dv-ico')} Antes de 23/06</span></div><div class="dv-v">${esc(beforeText)}</div><div class="dv-s">${before.count||0} de ${before.total} atend. com essa versão</div></div>
+    <div class="dvcard ${all.missing?'warn':'good'}"><div class="dv-top"><span class="dv-k">${icon('icon-alert','dv-ico')} Sem dispositivo</span></div><div class="dv-v">${all.missing}</div><div class="dv-s">${all.total} atendimentos no fornecedor</div></div>
+    <div class="dvcard"><div class="dv-top"><span class="dv-k">${icon('icon-activity','dv-ico')} Modelo mais usado</span></div><div class="dv-v">${esc(topModel)}</div><div class="dv-s">${topModelCount} registros com dispositivo</div></div>
   </div>${chips?`<div class="dvchips">${chips}</div>`:''}`;
 }
 
@@ -746,7 +917,7 @@ function renderGoalTracking(){
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
-        <div><div class="goal-title">Acompanhamento da Meta</div><div class="goal-sub">Base foco · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados${activeMonth!=='all'?' em '+esc(m.label||'mês selecionado'):''} · ${esc(GS2.updated||'')}</div></div>
+        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento da Meta</div><div class="goal-sub">Base foco · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados${activeMonth!=='all'?' em '+esc(m.label||'mês selecionado'):''} · ${esc(GS2.updated||'')}</div></div></div>
         <div class="goal-target">Meta ${GS2.meta||77}%</div>
       </div>
       <div class="goal-body">
@@ -781,14 +952,14 @@ function initHeader(){
   const meta=metaStats();
   const cats=meta.cats;
   document.getElementById('hstats').innerHTML=`
-    <div class="hs"><div class="hs-n">${meta.targetTotal}</div><div class="hs-l">Base meta</div></div>
-    <div class="hs"><div class="hs-n">${meta.att.toLocaleString('pt-BR')}</div><div class="hs-l">Atend. foco</div></div>
-    <div class="hs"><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div><div class="hs-l">A+B foco</div></div>
-    <div class="hs"><div class="hs-n" style="color:#fca5a5">${cats.F}</div><div class="hs-l">Cat F foco</div></div>`;
+    <div class="hs"><div class="metric-head"><div class="hs-l">Base meta</div>${icon('icon-target')}</div><div class="hs-n">${meta.targetTotal}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">Atend. foco</div>${icon('icon-truck')}</div><div class="hs-n">${meta.att.toLocaleString('pt-BR')}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">A+B foco</div>${icon('icon-check-circle')}</div><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">Cat F foco</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${cats.F}</div></div>`;
   const a=meta.avg||GS2.avg;
   const col=a>=77?'#4ade80':a>=60?'#fbbf24':'#f87171';
   document.getElementById('avgBox').innerHTML=`
-    <div class="avg-top"><span class="avg-lbl">Uso base foco</span><span class="avg-val" style="color:${col}">${a}%</span></div>
+    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Uso base foco</span><span class="avg-val" style="color:${col}">${a}%</span></div>
     <div class="avg-bar"><div class="avg-bar-fill" style="width:${a}%;background:${col}"></div></div>
     <div class="avg-upd">${meta.matched}/${meta.targetTotal} fornecedores da meta com dados${activeMonth!=='all'?` · ${esc(document.getElementById('monthFilter')?.selectedOptions?.[0]?.textContent||'mês')}`:''} · ${meta.base.toLocaleString('pt-BR')} atend. válidos${GS2.updated?` · ${GS2.updated}`:''}</div>`;
 }
@@ -836,22 +1007,23 @@ function render(){
     const sn=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const bnr=pu?`<div class="cbnr ${CTBNR[v[0]]}">${CTLBL[v[0]]}</div>`:'';
     const pills=[
-      sv.gop>0?`<span class="pill mod">⚠️ GOP ${sv.gop}</span>`:'',
-      sv.web>0?`<span class="pill web">🌐 ${sv.web}</span>`:'',
-      sv.sem>0?`<span class="pill sm">📍 ${sv.sem}</span>`:'',
-      sv.erro>0?`<span class="pill err">❌ ${sv.erro}</span>`:'',
+      sv.gop>0?`<span class="pill mod">GOP ${sv.gop}</span>`:'',
+      sv.web>0?`<span class="pill web">WEB ${sv.web}</span>`:'',
+      sv.sem>0?`<span class="pill sm">Sem mov. ${sv.sem}</span>`:'',
+      sv.erro>0?`<span class="pill err">Erro ${sv.erro}</span>`:'',
     ].filter(Boolean).join('');
     // Training chip
     const tr=v[12];
     let trChip='';
     if(tr){
-      const st={1:'⏳ Pendente',2:'📅 Agendado',3:'✅ Treinado'}[tr[0]]||'❓';
+      const st={1:'Pendente',2:'Agendado',3:'Treinado'}[tr[0]]||'Sem status';
       const bg=tr[0]===3?'#dcfce7':tr[0]===2?'#dbeafe':'#ffedd5';
       const cl2=tr[0]===3?'#14532d':tr[0]===2?'#1e40af':'#9a3412';
       trChip=`<div class="tr-chip" style="background:${bg};color:${cl2}">${st}</div>`;
     }
     return`<div class="card ${cl}" data-name="${sn}" onclick="openM(this.dataset.name)">
       ${bnr}
+      <div class="card-mark">${iconBox(pu?'icon-route':'icon-truck',pu?'neutral':'green')}</div>
       <div class="ch"><div class="cn">${n}</div><span class="cbdg ${cl}">${pu?CTLBL[v[0]]:'CAT '+cat(sv.pct)}</span></div>
       <div class="cpct">${sv.pct}%</div>
       <div class="cpl">usabilidade · base ${sv.base} atend. · ${esc(sv.label)}</div>
@@ -891,8 +1063,8 @@ function rkRows(list){
     return`<div class="rkrow">
       <div class="rkpos ${pc(i)}">${i+1}</div>
       <div class="rkname" title="${r[0]}">${r[0]}</div>
-      <span class="rkok">✓${r[1]}</span>
-      <span class="rkerr"> ✗${r[2]}</span>
+      <span class="rkok">${statusIcon('icon-check','ok')}${r[1]}</span>
+      <span class="rkerr">${statusIcon('icon-x','bad')}${r[2]}</span>
       <span class="rkpct" style="background:${pctBg(pct)};color:${pctCl(pct)}">${pct}%</span>
     </div>`;
   }).join('');
@@ -904,7 +1076,7 @@ function miniRk(list){
     return`<div class="mrk-row">
       <div class="mrk-pos ${pc(i)}">${i+1}</div>
       <div class="mrk-nm" title="${r[0]}">${r[0]}</div>
-      <span class="mrk-ok">✓${r[1]}</span><span class="mrk-err"> ✗${r[2]}</span>
+      <span class="mrk-ok">${statusIcon('icon-check','ok')}${r[1]}</span><span class="mrk-err">${statusIcon('icon-x','bad')}${r[2]}</span>
       <span class="mrk-pct" style="background:${pctBg(pct)};color:${pctCl(pct)}">${pct}%</span>
     </div>`;
   }).join('');
@@ -913,14 +1085,14 @@ function miniRk(list){
 // ── SHIFT & DELAY HELPERS ────────────────────────────────────
 function shiftHtml(sh,mn,nid){
   if(!sh)return'';
-  const defs=[{k:'M',lbl:'🌅 Manhã',cls:'manha',sub:'06h–12h'},{k:'T',lbl:'☀️ Tarde',cls:'tarde',sub:'12h–18h'},{k:'N',lbl:'🌙 Noite',cls:'noite',sub:'18h–06h'}];
+  const defs=[{k:'M',lbl:'Manhã',cls:'manha',sub:'06h–12h'},{k:'T',lbl:'Tarde',cls:'tarde',sub:'12h–18h'},{k:'N',lbl:'Noite',cls:'noite',sub:'18h–06h'}];
   const badges=defs.map(s=>{
     const d=sh[s.k]||[0,0,0,[]];
     if(!d[1])return'';
     return`<div class="shift-bdg ${s.cls}" onclick="openSd('${nid}_${mn}_${s.k}','${s.lbl}',${JSON.stringify(d[3])})">
       <div class="shift-title">${s.lbl}</div>
       <div class="shift-pct">${d[2]}%</div>
-      <div class="shift-sub">✓${d[0]} de ${d[1]} · ${s.sub}</div>
+      <div class="shift-sub">${d[0]} de ${d[1]} · ${s.sub}</div>
     </div>`;
   }).filter(Boolean).join('');
   return badges?`<div class="shift-row">${badges}</div>`:'';
@@ -929,15 +1101,16 @@ function tokBadge(td){
   if(!td) return '';
   const avg=td[0], n=td[1], mn=td[2], mx=td[3];
   const absAvg=Math.abs(avg);
+  const minAbs=Math.min(Math.abs(mn||0),Math.abs(mx||0));
+  const maxAbs=Math.max(Math.abs(mn||0),Math.abs(mx||0));
   const clr=absAvg<=15?'#059669':absAvg<=30?'#d97706':'#dc2626';
   const bg=absAvg<=15?'#dcfce7':absAvg<=30?'#fef3c7':'#fee2e2';
-  const lbl=avg<0?`${absAvg} min antes`:`${avg} min após`;
+  const lbl=avg<0?`${absAvg} min antes da remoção`:avg>0?`${absAvg} min após o horário da remoção`:'no horário da remoção';
   return`<div style="display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:20px;background:${bg};border:1px solid ${clr}30;margin:6px 0">
-    <span style="font-size:.85rem">⏱️</span>
     <div>
       <span style="font-size:.68rem;color:${clr};font-weight:700">Inserção do Token</span>
       <span style="font-size:.68rem;color:${clr};margin-left:6px;font-weight:600">Média ${lbl}</span>
-      <span style="font-size:.63rem;color:#9ca3af;margin-left:6px">· Mín ${mn}min · Máx ${mx}min · ${n} atend.</span>
+      <span style="font-size:.63rem;color:#9ca3af;margin-left:6px">· Faixa ${minAbs} a ${maxAbs} min · ${n} atend.</span>
     </div>
   </div>`;
 }
@@ -945,23 +1118,23 @@ function tokBadge(td){
 // ── TRAINING ALERT ───────────────────────────────────────────
 function trAlertHtml(v){
   const tr=v[12];
-  if(!tr)return`<div class="tr-alert no-info"><div class="tr-icon">❓</div><div><div class="tr-title">Sem informação de treinamento</div><div style="font-size:.7rem;color:#9ca3af">Não encontrado na planilha de implantação.</div></div></div>`;
-  const st={1:'⏳ Pendente',2:'📅 Agendado',3:'✅ Treinado'}[tr[0]]||'❓';
+  if(!tr)return`<div class="tr-alert no-info">${iconBox('icon-info','neutral')}<div><div class="tr-title">Sem informação de treinamento</div><div style="font-size:.7rem;color:#9ca3af">Não encontrado na planilha de implantação.</div></div></div>`;
+  const st={1:'Pendente',2:'Agendado',3:'Treinado'}[tr[0]]||'Sem status';
   const cls={1:'pending',2:'scheduled',3:'trained',0:'no-info'}[tr[0]]||'no-info';
   const MOTIVO_CLS={'Em Instalação':'purple','Sem Dispositivo':'red','Usa Outro Sistema':'orange','iOS Incompatível':'red','Recusa/Objeção':'red','Inativo':'gray','Não Quis':'gray'};
   const tags=[];
   if(tr[0]===3){
-    if(tr[3])tags.push(`<span class="tr-tag green">📅 ${tr[3]}</span>`);
-    if(tr[4]&&tr[4]!=='nan')tags.push(`<span class="tr-tag gray">🕐 ${Math.round(+tr[4])} dias</span>`);
-    if(tr[1]==='Sim')tags.push(`<span class="tr-tag green">✅ Usando APP</span>`);
-    if(tr[1]==='Não')tags.push(`<span class="tr-tag orange">❌ Não usa APP</span>`);
-    if(tr[1]==='WEB')tags.push(`<span class="tr-tag blue">🌐 Via WEB</span>`);
-    if(tr[2]&&tr[2]!=='nan')tags.push(`<span class="tr-tag ${MOTIVO_CLS[tr[2]]||'gray'}">⚠️ ${tr[2]}</span>`);
-  } else if(tr[0]===2){tags.push(`<span class="tr-tag blue">📅 Agendado</span>`);}
-  else{tags.push(`<span class="tr-tag red">⚠️ Sem treinamento</span>`);}
+    if(tr[3])tags.push(`<span class="tr-tag green">${tr[3]}</span>`);
+    if(tr[4]&&tr[4]!=='nan')tags.push(`<span class="tr-tag gray">${Math.round(+tr[4])} dias</span>`);
+    if(tr[1]==='Sim')tags.push(`<span class="tr-tag green">Usando APP</span>`);
+    if(tr[1]==='Não')tags.push(`<span class="tr-tag orange">Não usa APP</span>`);
+    if(tr[1]==='WEB')tags.push(`<span class="tr-tag blue">Via WEB</span>`);
+    if(tr[2]&&tr[2]!=='nan')tags.push(`<span class="tr-tag ${MOTIVO_CLS[tr[2]]||'gray'}">${tr[2]}</span>`);
+  } else if(tr[0]===2){tags.push(`<span class="tr-tag blue">Agendado</span>`);}
+  else{tags.push(`<span class="tr-tag red">Sem treinamento</span>`);}
   const msg={trained:tr[1]==='Sim'?'Treinado e usando APP.':tr[1]==='WEB'?'Treinado, usando via WEB.':'Treinado mas não usa APP.',pending:'Treinamento pendente.',scheduled:'Treinamento agendado.','no-info':''}[cls]||'';
   return`<div class="tr-alert ${cls}">
-    <div class="tr-icon">${{1:'⏳',2:'📅',3:'✅',0:'❓'}[tr[0]]||'❓'}</div>
+    ${iconBox(tr[0]===3?'icon-user-check':tr[0]===2?'icon-calendar':'icon-alert',tr[0]===3?'green':'neutral')}
     <div><div class="tr-title">${st}${msg?' — '+msg:''}</div><div class="tr-details">${tags.join('')}</div></div>
   </div>`;
 }
@@ -971,7 +1144,9 @@ function attRow(a){
   MAP_ATTS[a[0]]=a;
   const cl=a[5]??3;
   const dv=a[8];
-  const dcl=dv===null||dv===undefined?'#9ca3af':Math.abs(dv)<=15?'#059669':Math.abs(dv)<=30?'#d97706':'#dc2626';
+  const absDv=dv===null||dv===undefined?null:Math.abs(dv);
+  const dcl=absDv===null?'#9ca3af':absDv<=15?'#059669':absDv<=30?'#d97706':'#dc2626';
+  const dvl=absDv===null?'—':dv<0?`${absDv}min antes`:dv>0?`${absDv}min após`:'0min';
   const events=Array.isArray(a[20])?a[20]:[];
   const hasMap=(a[10]!=null&&a[11]!=null&&a[12]!=null&&a[13]!=null)||events.length>0;
   const kmTxt=a[18]!=null?a[18]+' km':(a[9]!=null?a[9]+' km':'—');
@@ -987,11 +1162,11 @@ function attRow(a){
     <td><span class="atag ${TCLS[cl]}">${CLBL[cl]}</span></td>
     <td style="font-size:.62rem;color:#6b7280;white-space:nowrap">${a[6]||'—'}</td>
     <td style="white-space:nowrap;font-size:.65rem;color:#7c3aed;font-weight:600">${a[7]||'—'}</td>
-    <td style="text-align:center;font-size:.65rem;font-weight:700;color:${dcl}">${(dv===null||dv===undefined)?'—':dv+'min'}</td>
+    <td style="text-align:center;font-size:.65rem;font-weight:700;color:${dcl}">${dvl}</td>
     <td style="text-align:center;font-size:.65rem;font-weight:600;color:#0369a1">${kmTxt}</td>
     <td style="text-align:center;font-size:.65rem;color:#6b7280">${parada}</td>
     <td style="text-align:center;font-size:.65rem;font-weight:700;color:#ea580c">${events.length||'—'}</td>
-    <td>${hasMap?`<button class="map-btn" onclick="openMapAtt(${a[0]})">🗺️ Ver</button>`:'—'}</td>
+    <td>${hasMap?`<button class="map-btn" onclick="openMapAtt(${a[0]})"><svg class="ico"><use href="#icon-map"></use></svg>Mapa</button>`:'—'}</td>
   </tr>`;
 }
 
@@ -1003,7 +1178,7 @@ function monthBlock(mn,m,pu,nid){
   const rows=(m[11]||[]).map(attRow).join('');
   return`<div class="mi" id="mi_${nid}_${mn}">
     <div class="mih" onclick="tg('mi_${nid}_${mn}')">
-      <span class="mi-nm">📅 ${m[0]}</span>
+      <span class="mi-nm">${icon('icon-calendar','mi-ico')}${m[0]}</span>
       <div class="mi-r">
         <span class="mi-tot">${m[1]} atend.</span>
         <span class="mi-pct" style="color:${mclr}">${m[8]}%</span>
@@ -1012,19 +1187,19 @@ function monthBlock(mn,m,pu,nid){
     </div>
     <div class="mib">
       <div class="ms5">
-        <div class="msc c0"><div class="msc-n">${m[2]}</div><div class="msc-l">✅ Correto</div></div>
-        <div class="msc c1"><div class="msc-n">${m[3]}</div><div class="msc-l">⚠️ GOP</div></div>
-        <div class="msc c2"><div class="msc-n">${m[4]}</div><div class="msc-l">📍 Sem Mov.</div></div>
-        <div class="msc c3"><div class="msc-n">${m[5]}</div><div class="msc-l">🌐 WEB</div></div>
-        <div class="msc c4"><div class="msc-n">${m[6]}</div><div class="msc-l">❌ Erro</div></div>
+        <div class="msc c0"><div class="msc-n">${m[2]}</div><div class="msc-l">${statusIcon('icon-check','ok')}Correto</div></div>
+        <div class="msc c1"><div class="msc-n">${m[3]}</div><div class="msc-l">${statusIcon('icon-alert','warn')}GOP</div></div>
+        <div class="msc c2"><div class="msc-n">${m[4]}</div><div class="msc-l">${statusIcon('icon-pin','warn')}Sem mov.</div></div>
+        <div class="msc c3"><div class="msc-n">${m[5]}</div><div class="msc-l">${statusIcon('icon-globe','web')}WEB</div></div>
+        <div class="msc c4"><div class="msc-n">${m[6]}</div><div class="msc-l">${statusIcon('icon-x','bad')}Erro</div></div>
       </div>
       <div style="padding:0 12px">
         ${shiftHtml(m[12],mn,nid)}
         ${tokBadge(m[13])}
       </div>
       <div class="mrk">
-        <div class="mrk-col"><h4>🚗 Condutores</h4>${miniRk(m[9])}</div>
-        <div class="mrk-col"><h4>🩺 Enfermeiros</h4>${miniRk(m[10])}</div>
+        <div class="mrk-col"><h4>Condutores</h4>${miniRk(m[9])}</div>
+        <div class="mrk-col"><h4>Enfermeiros</h4>${miniRk(m[10])}</div>
       </div>
       <div class="atw">
         <table class="att">
@@ -1070,32 +1245,32 @@ function openM(name){
       </div>
     </div>
 
-    <div class="stitle">Resultado dos Atendimentos</div>
+    ${sectionTitle('Resultado dos Atendimentos','icon-activity','green')}
     <div class="bkgrid">
-      <div class="bk c0"><div class="bk-n">${sv.correto}</div><div class="bk-lbl">✅ CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5</div></div>
-      <div class="bk c1"><div class="bk-n">${sv.gop}</div><div class="bk-lbl">⚠️ MOD. GOP</div><div class="bk-sub">Sem horário token + Horário APP NÃO</div></div>
-      <div class="bk c2"><div class="bk-n">${sv.sem}</div><div class="bk-lbl">📍 SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
-      <div class="bk c3"><div class="bk-n">${sv.web}</div><div class="bk-lbl">🌐 VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
-      <div class="bk c4"><div class="bk-n">${sv.erro}</div><div class="bk-lbl">❌ ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
+      <div class="bk c0"><div class="bk-n">${sv.correto}</div><div class="bk-lbl">${statusIcon('icon-check','ok')}CORRETO</div><div class="bk-sub">Token SIM + Rastreio &gt;5</div></div>
+      <div class="bk c1"><div class="bk-n">${sv.gop}</div><div class="bk-lbl">${statusIcon('icon-alert','warn')}MOD. GOP</div><div class="bk-sub">Sem horário token + Horário APP NÃO</div></div>
+      <div class="bk c2"><div class="bk-n">${sv.sem}</div><div class="bk-lbl">${statusIcon('icon-pin','warn')}SEM MOVIMENTAÇÃO</div><div class="bk-sub">Token SIM · rastreio ≤5</div></div>
+      <div class="bk c3"><div class="bk-n">${sv.web}</div><div class="bk-lbl">${statusIcon('icon-globe','web')}VIA WEB</div><div class="bk-sub">Não usou APP · excluído da %</div></div>
+      <div class="bk c4"><div class="bk-n">${sv.erro}</div><div class="bk-lbl">${statusIcon('icon-x','bad')}ERRO</div><div class="bk-sub">Token NÃO ou rastreio insuficiente</div></div>
     </div>
 
-    <div class="stitle">Versão do APP</div>
+    ${sectionTitle('Versão do APP','icon-smartphone','green')}
     ${supplierDeviceHtml(v)}
 
-    <div class="stitle">Treinamento</div>
+    ${sectionTitle('Treinamento','icon-graduation','green')}
     ${trAlertHtml(v)}
 
-    <div class="stitle">Turnos — ${esc(sv.label)}</div>
+    ${sectionTitle(`Turnos — ${esc(sv.label)}`,'icon-clock','green')}
     ${shiftHtml(sv.shifts,'all',nid)||'<div style="font-size:.72rem;color:#9ca3af">Sem dados de turno</div>'}
     ${tokBadge(sv.tok)}
 
-    <div class="stitle">Ranking da Equipe — ${esc(sv.label)}</div>
+    ${sectionTitle(`Ranking da Equipe — ${esc(sv.label)}`,'icon-award','green')}
     <div class="rkgrid">
-      <div class="rkcard"><div class="rkcard-hdr"><span>🚗</span><h3>Condutores</h3></div><div class="rklist">${rkRows(sv.rankC)}</div></div>
-      <div class="rkcard"><div class="rkcard-hdr"><span>🩺</span><h3>Enfermeiros</h3></div><div class="rklist">${rkRows(sv.rankE)}</div></div>
+      <div class="rkcard"><div class="rkcard-hdr"><h3>${icon('icon-truck','dv-ico')}Condutores</h3></div><div class="rklist">${rkRows(sv.rankC)}</div></div>
+      <div class="rkcard"><div class="rkcard-hdr"><h3>${icon('icon-users','dv-ico')}Enfermeiros</h3></div><div class="rklist">${rkRows(sv.rankE)}</div></div>
     </div>
 
-    <div class="stitle">Detalhe por Mês</div>
+    ${sectionTitle('Detalhe por Mês','icon-calendar','green')}
     <div class="mtabs-wrap">
       <div class="mtabs" id="mtabs_${nid}">
         ${sortedM.map(([mn,m])=>`<div class="mtab" onclick="filterM(this,'${mn}','${nid}')">${m[0]}</div>`).join('')}
@@ -1155,38 +1330,69 @@ function makeLeg(label,a,b,type='evento'){
   return{label,from:a,to:b,type,km:e.km,min:e.min,source:e.source,coords:null};
 }
 function pointLabel(p){return p?.stageLabel||p?.label||'Ponto'}
-function evMap(events){return Object.fromEntries(events.filter(coordOk).map(e=>[e.key,e]))}
+function evMap(events){
+  const by={};
+  events.forEach(e=>{if(e&&e.key&&!by[e.key])by[e.key]=e});
+  return by;
+}
+function firstEvent(by,keys){return keys.map(k=>by[k]).find(Boolean)||null}
 function asPoint(p,stage,stageLabel,role,color){
-  if(!coordOk(p))return null;
-  return {...p,stage,stageLabel,role,color};
+  if(!p)return null;
+  return {...p,stage,stageLabel,role,color,hasCoord:coordOk(p)};
+}
+function stageDefs(hasRoundTrip){
+  return hasRoundTrip?[
+    {n:1,key:['token'],label:'Inserção do Token',role:'token',color:'#7c3aed'},
+    {n:2,key:['saida_recurso'],label:'Saída da Base',role:'saida-base',color:'#f59e0b'},
+    {n:3,key:['chegada_origem'],label:'Chegada na Origem',role:'origem-click',color:'#059669'},
+    {n:4,key:['saida_origem'],label:'Saída da Origem',role:'saida-origem',color:'#ea580c'},
+    {n:5,key:['chegada_destino'],label:'Chegada no Destino',role:'destino-click',color:'#dc2626'},
+    {n:6,key:['saida_destino','lib_destino'],label:'Saída do Destino',role:'saida-destino',color:'#ef4444'},
+    {n:7,key:['chegada_origem_ret'],label:'Chegada na Origem Volta',role:'retorno',color:'#ef4444',ret:true},
+    {n:8,key:['saida_origem_ret'],label:'Saída da Origem Volta',role:'saida-retorno',color:'#ef4444',ret:true},
+    {n:9,key:['lib_recurso','finalizacao'],label:'Liberação do Recurso',role:'liberacao',color:'#374151',ret:true}
+  ]:[
+    {n:1,key:['token'],label:'Inserção do Token',role:'token',color:'#7c3aed'},
+    {n:2,key:['saida_recurso'],label:'Saída da Base',role:'saida-base',color:'#f59e0b'},
+    {n:3,key:['chegada_origem'],label:'Chegada na Origem',role:'origem-click',color:'#059669'},
+    {n:4,key:['saida_origem'],label:'Saída da Origem',role:'saida-origem',color:'#ea580c'},
+    {n:5,key:['chegada_destino'],label:'Chegada no Destino',role:'destino-click',color:'#dc2626'},
+    {n:6,key:['lib_destino'],label:'Liberação do Destino',role:'lib-destino',color:'#ef4444'},
+    {n:7,key:['lib_recurso','finalizacao'],label:'Liberação do Recurso',role:'liberacao',color:'#374151'}
+  ];
+}
+function buildTimeline(a,by,hasRoundTrip){
+  return stageDefs(hasRoundTrip).map(def=>{
+    let ev=firstEvent(by,def.key);
+    if(!ev&&def.key.includes('token')&&a[7])ev={key:'token',label:'Token inserido',lat:a[16],lon:a[17],time:a[7],user:''};
+    return {def,event:ev||null,point:asPoint(ev,def.n,`${def.n} ${def.label}`,def.role,def.color)};
+  });
 }
 function operationalRoute(a){
-  const events=Array.isArray(a[20])?a[20].filter(coordOk):[];
-  const by=evMap(events);
-  const base=asPoint(by.token||by.saida_recurso||(a[16]!=null&&a[17]!=null?{key:'token',label:'Token inserido',lat:a[16],lon:a[17],time:a[7]}:null),0,'0 Base / Token','base','#7c3aed');
+  const rawEvents=Array.isArray(a[20])?a[20]:[];
+  const geoEvents=rawEvents.filter(coordOk);
+  const by=evMap(rawEvents);
+  const hasRoundTrip=!!(by.chegada_origem_ret||by.saida_origem_ret);
+  const timeline=buildTimeline(a,by,hasRoundTrip);
+  const stagePoints=timeline.map(s=>s.point).filter(Boolean);
   const officialOrigin=asPoint({key:'origem_ref',label:'Origem oficial',lat:a[10],lon:a[11]},null,'Origem oficial','origem-oficial','#059669');
   const officialDest=asPoint({key:'destino_ref',label:'Destino oficial',lat:a[12],lon:a[13]},null,'Destino oficial','destino-oficial','#dc2626');
-  const clickedOrigin=asPoint(by.chegada_origem,1,'1 Clique na origem','origem-click','#ea580c');
-  const clickedDest=asPoint(by.chegada_destino,2,'2 Clique no destino','destino-click','#ea580c');
-  const origin=clickedOrigin||asPoint(officialOrigin,1,'1 Origem oficial','origem','#059669');
-  const dest=clickedDest||asPoint(officialDest,2,'2 Destino oficial','destino','#dc2626');
-  const returnOrigin=asPoint(by.chegada_origem_ret,3,'3 Volta à origem','retorno','#ef4444');
-  const release=asPoint(by.lib_recurso||by.finalizacao,null,'Liberação do recurso','liberacao','#374151');
-  if(release){
-    release.stage=returnOrigin?4:3;
-    release.stageLabel=returnOrigin?'4 Liberação/Base':'3 Liberação/Base';
-  }
-  const aux=[
-    asPoint(by.saida_recurso,null,'Saída da base','aux','#f59e0b'),
-    asPoint(by.saida_origem,null,'Saída da origem','aux','#f59e0b'),
-    asPoint(by.lib_destino,null,'Liberação do destino','aux','#f59e0b'),
-    asPoint(by.saida_origem_ret,null,'Saída origem volta','aux-ret','#ef4444')
-  ].filter(Boolean);
+  const base=stagePoints.find(p=>p.role==='token')||stagePoints.find(p=>p.role==='saida-base')||null;
+  const clickedOrigin=stagePoints.find(p=>p.role==='origem-click')||null;
+  const clickedDest=stagePoints.find(p=>p.role==='destino-click')||null;
+  const origin=clickedOrigin||asPoint(officialOrigin,3,'3 Origem oficial','origem','#059669');
+  const dest=clickedDest||asPoint(officialDest,5,'5 Destino oficial','destino','#dc2626');
+  const returnOrigin=stagePoints.find(p=>p.role==='retorno')||null;
+  const release=stagePoints.find(p=>p.role==='liberacao')||null;
+  const aux=stagePoints.filter(p=>!['token','origem-click','destino-click','retorno','liberacao'].includes(p.role));
+  const usedKeys=new Set(timeline.flatMap(s=>s.def.key));
+  const extraEvents=rawEvents.filter(e=>e&&e.key&&!usedKeys.has(e.key));
 
-  const main=[base,clickedOrigin,clickedDest,returnOrigin,release].filter(Boolean);
-  const official=[officialOrigin,officialDest].filter(Boolean);
-  const idaLine=[base,by.saida_recurso,origin,by.saida_origem,dest,by.lib_destino,!returnOrigin?release:null].filter(coordOk);
-  const voltaLine=returnOrigin?[dest,by.lib_destino,returnOrigin,by.saida_origem_ret,release].filter(coordOk):[];
+  const main=stagePoints.filter(coordOk);
+  const official=[officialOrigin,officialDest].filter(coordOk);
+  const linePoints=stagePoints.filter(coordOk);
+  const idaLine=linePoints.filter(p=>!hasRoundTrip||p.stage<=6);
+  const voltaLine=hasRoundTrip?linePoints.filter(p=>p.stage>=6):[];
   const legs=[];
   if(coordOk(base)&&coordOk(officialOrigin))legs.push(makeLeg('0 Base/Token → Origem oficial',base,officialOrigin,'operacional'));
   if(coordOk(officialOrigin)&&coordOk(officialDest))legs.push(makeLeg('Origem oficial → Destino oficial',officialOrigin,officialDest,'operacional'));
@@ -1195,47 +1401,70 @@ function operationalRoute(a){
     if(returnOrigin&&coordOk(officialOrigin))legs.push(makeLeg('Origem oficial → Liberação/Base',officialOrigin,release,'volta'));
     else if(coordOk(officialDest))legs.push(makeLeg('Destino oficial → Liberação/Base',officialDest,release,'operacional'));
   }
-  return {events,by,base,officialOrigin,officialDest,clickedOrigin,clickedDest,origin,dest,returnOrigin,release,aux,official,main,idaLine,voltaLine,legs,hasRoundTrip:!!returnOrigin};
+  return {events:geoEvents,rawEvents,geoEvents,by,timeline,extraEvents,base,officialOrigin,officialDest,clickedOrigin,clickedDest,origin,dest,returnOrigin,release,aux,official,main,idaLine,voltaLine,legs,hasRoundTrip};
 }
 function renderRoutePanel(a,route){
-  const events=route.events||[];
+  const events=route.geoEvents||route.events||[];
+  const rawEvents=route.rawEvents||events;
   const legs=route.legs||[];
   const km=a[18]!=null?a[18]:a[9];
   const parada=a[19]||'—';
-  const rows=legs.map(l=>`<tr>
-    <td>${esc(l.label)}</td>
-    <td>${esc(l.from?.time||'—')}</td>
-    <td>${esc(l.to?.time||'—')}</td>
-    <td class="route-km">${fmtKm(l.km)}</td>
-    <td>${fmtMin(l.min)}</td>
-    <td>${l.source==='rota'?'OSRM':'estimado'}</td>
-  </tr>`).join('');
-  const auxTxt=route.aux.length?route.aux.map(p=>`${p.stageLabel}${p.time?' · '+p.time:''}`).join(' | '):'Sem saídas/liberações auxiliares registradas';
-  const pt=(p,empty='sem clique')=>p?`${p.time?esc(p.time)+' · ':''}${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}`:empty;
+  const coordTxt=p=>coordOk(p)?`${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}`:'Sem lat/long';
+  const stageRows=(route.timeline||[]).map(s=>{
+    const ev=s.event, ok=coordOk(ev), missing=!ev;
+    const tone=missing?'missing':(s.def.ret?'return':'');
+    return `<div class="stage-card ${tone}">
+      <div class="stage-num">${s.def.n}</div>
+      <div class="stage-body">
+        <div class="stage-name">${esc(s.def.label)}</div>
+        <div class="stage-meta">
+          <span>${ev?.time?esc(ev.time):missing?'Sem horário registrado':'Horário não informado'}</span>
+          <span>${ok?coordTxt(ev):'Sem ponto de geolocalização'}</span>
+          ${ev?.user?`<span>${esc(ev.user)}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const stepRows=legs.map((l,i)=>`<div class="route-step">
+    <div class="route-step-head">
+      <div class="route-step-title">${statusIcon(l.type==='volta'?'icon-route':'icon-map',l.type==='volta'?'bad':'web')}<span>${esc(l.label)}</span></div>
+      <span class="route-source">${l.source==='rota'?'OSRM':'Estimado'}</span>
+    </div>
+    <div class="route-step-meta">
+      <div class="route-mini"><b>Saída</b><span>${esc(l.from?.time||'—')}</span></div>
+      <div class="route-mini"><b>Chegada</b><span>${esc(l.to?.time||'—')}</span></div>
+      <div class="route-mini"><b>KM esperado</b><span>${fmtKm(l.km)}</span></div>
+      <div class="route-mini"><b>Tempo esperado</b><span>${fmtMin(l.min)}</span></div>
+    </div>
+  </div>`).join('');
+  const extraTxt=route.extraEvents?.length?route.extraEvents.map(p=>`${p.label||p.key}${p.time?' · '+p.time:''}${coordOk(p)?' · '+coordTxt(p):''}`).join(' | '):'Sem registros adicionais fora das etapas principais';
+  const pt=(p,empty='sem clique')=>p?`${p.time?esc(p.time)+' · ':''}${coordOk(p)?coordTxt(p):'sem lat/long'}`:empty;
   document.getElementById('routePanel').innerHTML=`
     <div class="route-legend-panel">
-      <span><span class="route-dot" style="background:#7c3aed"></span>0 Base / Token</span>
-      <span><span class="route-dot" style="background:#059669"></span>O Origem oficial</span>
-      <span><span class="route-dot" style="background:#dc2626"></span>D Destino oficial</span>
+      <span><span class="route-dot" style="background:#7c3aed"></span>1 Token</span>
+      <span><span class="route-dot" style="background:#f59e0b"></span>Saídas</span>
+      <span><span class="route-dot" style="background:#059669"></span>OR Origem oficial</span>
+      <span><span class="route-dot" style="background:#dc2626"></span>DE Destino oficial</span>
       <span><span class="route-dot" style="background:#2563eb"></span>Rota esperada</span>
       <span><span class="route-dot" style="background:#ea580c"></span>Fornecedor - ida</span>
       <span><span class="route-dot" style="background:#ef4444"></span>Fornecedor - volta</span>
     </div>
     <div class="route-grid">
-      <div class="route-card"><strong>KM oficial</strong><span>${km!=null?km+' km':'—'}</span></div>
-      <div class="route-card"><strong>Hora parada</strong><span>${esc(parada)}</span></div>
-      <div class="route-card"><strong>Fluxo</strong><span>${route.hasRoundTrip?'Ida e volta':'Ida'}</span></div>
-      <div class="route-card"><strong>Cliques mapeados</strong><span>${events.length} evento(s)</span></div>
+      <div class="route-card"><strong>${icon('icon-route','route-ico')}KM oficial</strong><span>${km!=null?km+' km':'—'}</span></div>
+      <div class="route-card"><strong>${icon('icon-clock','route-ico')}Hora parada</strong><span>${esc(parada)}</span></div>
+      <div class="route-card"><strong>${icon('icon-activity','route-ico')}Fluxo</strong><span>${route.hasRoundTrip?'Ida e volta':'Ida'}</span></div>
+      <div class="route-card"><strong>${icon('icon-map','route-ico')}Pontos rastreio</strong><span>${events.length}/${rawEvents.length} com geolocalização</span></div>
     </div>
-    <table class="route-table">
-      <thead><tr><th>Trecho esperado</th><th>Saída</th><th>Chegada</th><th>KM esperado</th><th>Tempo esperado</th><th>Fonte</th></tr></thead>
-      <tbody>${rows||'<tr><td colspan="6">Sem pontos suficientes para calcular trechos.</td></tr>'}</tbody>
-    </table>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-      <div class="route-card"><strong>Origem</strong><span>Oficial: ${pt(route.officialOrigin,'sem origem oficial')}<br>Fornecedor: ${pt(route.clickedOrigin)}</span></div>
-      <div class="route-card"><strong>Destino</strong><span>Oficial: ${pt(route.officialDest,'sem destino oficial')}<br>Fornecedor: ${pt(route.clickedDest)}</span></div>
+    <div class="route-section-title">${icon('icon-clock','route-ico')}Etapas realizadas no APP</div>
+    <div class="route-timeline">${stageRows}</div>
+    <div class="route-section-title">${icon('icon-route','route-ico')}Trechos esperados calculados</div>
+    <div class="route-steps">${stepRows||'<div class="route-step"><div class="route-step-title">Sem pontos suficientes para calcular trechos.</div></div>'}</div>
+    <div class="route-section-title">${icon('icon-pin','route-ico')}Pontos oficiais x fornecedor</div>
+    <div class="route-points">
+      <div class="route-card"><strong>${icon('icon-pin','route-ico')}Origem</strong><span>Oficial: ${pt(route.officialOrigin,'sem origem oficial')}<br>Fornecedor: ${pt(route.clickedOrigin)}</span></div>
+      <div class="route-card"><strong>${icon('icon-target','route-ico')}Destino</strong><span>Oficial: ${pt(route.officialDest,'sem destino oficial')}<br>Fornecedor: ${pt(route.clickedDest)}</span></div>
     </div>
-    <div style="font-size:.66rem;color:#6b7280;margin-top:7px"><strong>Marcações auxiliares:</strong> ${esc(auxTxt)}</div>`;
+    <div class="route-aux">${icon('icon-info','route-ico')}<div><strong>Outros registros:</strong> ${esc(extraTxt)}</div></div>`;
 }
 function osrmLeg(a,b){
   if(!coordOk(a)||!coordOk(b))return Promise.resolve(null);
@@ -1257,15 +1486,17 @@ async function refreshLegsWithOsrm(a,legs){
 function openMapAtt(num){
   const a=MAP_ATTS[num];if(!a)return;
   const route=operationalRoute(a);
-  document.getElementById('mapTitle').textContent=`Atendimento #${num}`;
-  document.getElementById('mapStats').style.display='flex';
-  document.getElementById('mapDist').innerHTML=`🛣️ <strong>${a[18]!=null?a[18]:a[9]??'—'} km oficiais</strong>`;
-  document.getElementById('mapTime').innerHTML=`⏸️ <strong>${esc(a[19]||'—')} parada</strong>`;
+  document.getElementById('mapTitle').innerHTML=`${iconBox('icon-map','green')}<span>Atendimento #${num}</span>`;
+  document.getElementById('mapStats').style.display='grid';
+  document.getElementById('mapDist').innerHTML=`${icon('icon-route','route-ico')}<strong>${a[18]!=null?a[18]:a[9]??'—'} km oficiais</strong>`;
+  document.getElementById('mapTime').innerHTML=`${icon('icon-clock','route-ico')}<strong>${esc(a[19]||'—')} parada</strong>`;
+  document.getElementById('mapFlow').innerHTML=`${icon('icon-activity','route-ico')}<strong>${route.hasRoundTrip?'Ida e volta':'Ida'}</strong>`;
+  document.getElementById('mapClicks').innerHTML=`${icon('icon-pin','route-ico')}<strong>${(route.geoEvents||[]).length}/${(route.rawEvents||[]).length} pontos</strong>`;
   document.getElementById('mapAddrs').innerHTML=`
-    <div class="map-addr"><span>🟣</span><span>${route.base?`${esc(route.base.stageLabel)}${route.base.time?' · '+esc(route.base.time):''}`:'Base/token sem ponto'}</span></div>
-    <div class="map-addr"><span>🟢</span><span>Origem oficial · ${esc(a[14]||`${a[10]}, ${a[11]}`)}${route.clickedOrigin?` | Clique fornecedor: ${esc(route.clickedOrigin.time||'sem horário')}`:''}</span></div>
-    <div class="map-addr"><span>🔴</span><span>Destino oficial · ${esc(a[15]||`${a[12]}, ${a[13]}`)}${route.clickedDest?` | Clique fornecedor: ${esc(route.clickedDest.time||'sem horário')}`:''}</span></div>
-    ${route.returnOrigin?`<div class="map-addr"><span>↩️</span><span>${esc(route.returnOrigin.stageLabel)}${route.returnOrigin.time?' · '+esc(route.returnOrigin.time):''}</span></div>`:''}`;
+    <div class="map-addr">${statusIcon('icon-pin','neutral')}<span><b>Base / Token</b>${route.base?`${esc(route.base.stageLabel)}${route.base.time?' · '+esc(route.base.time):''}`:'Base/token sem ponto'}</span></div>
+    <div class="map-addr">${statusIcon('icon-pin','ok')}<span><b>Origem</b>Oficial · ${esc(a[14]||`${a[10]}, ${a[11]}`)}${route.clickedOrigin?`<br>Fornecedor · ${esc(route.clickedOrigin.time||'sem horário')}`:''}</span></div>
+    <div class="map-addr">${statusIcon('icon-target','bad')}<span><b>Destino</b>Oficial · ${esc(a[15]||`${a[12]}, ${a[13]}`)}${route.clickedDest?`<br>Fornecedor · ${esc(route.clickedDest.time||'sem horário')}`:''}</span></div>
+    ${route.returnOrigin?`<div class="map-addr">${statusIcon('icon-route','bad')}<span><b>Retorno</b>${esc(route.returnOrigin.stageLabel)}${route.returnOrigin.time?' · '+esc(route.returnOrigin.time):''}</span></div>`:''}`;
   renderRoutePanel(a,route);
   document.getElementById('mapov').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1288,8 +1519,9 @@ function initMap(a,route){
   }
   load(()=>{
     const lat1=a[10],lon1=a[11],lat2=a[12],lon2=a[13];
-    const events=route.events||[];
-    const all=[...route.official,...route.main,...route.aux].filter(coordOk);
+    const events=route.geoEvents||route.events||[];
+    const stageMarkerPoints=(route.timeline||[]).map(s=>s.point).filter(coordOk);
+    const all=[...route.official,...stageMarkerPoints].filter(coordOk);
     const center=all.length?all.reduce((s,p)=>[s[0]+(+p.lat),s[1]+(+p.lon)],[0,0]).map(v=>v/all.length):[-15.78,-47.93];
     const map=L.map(el).setView(center,all.length>1?10:5);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(map);
@@ -1297,22 +1529,34 @@ function initMap(a,route){
     const pin=(color,label,size=32)=>L.divIcon({className:'',iconSize:[size,size],iconAnchor:[size/2,size],html:`
       <div style="position:relative;width:${size}px;height:${size}px">
         <div style="background:${color};width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>
-        <div style="position:absolute;top:${Math.round(size*.2)}px;left:0;right:0;text-align:center;color:#fff;font-size:${size>28?'.78rem':'.62rem'};font-weight:800">${label}</div>
+        <div style="position:absolute;top:${Math.round(size*.2)}px;left:0;right:0;text-align:center;color:#fff;font-size:${String(label).length>1?'.58rem':(size>28?'.78rem':'.62rem')};font-weight:800">${label}</div>
       </div>`});
 
-    route.official.forEach(p=>{
-      const lbl=p.role==='origem-oficial'?'O':'D';
-      L.marker([p.lat,p.lon],{icon:pin(p.color||'#111827',lbl,30)}).addTo(map)
-        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}<br>${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}`);
-    });
-    route.main.forEach(p=>{
-      L.marker([p.lat,p.lon],{icon:pin(p.color||'#374151',String(p.stage),34)}).addTo(map)
-        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>'+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}`);
-    });
-    route.aux.forEach(p=>{
-      const lbl=p.key==='saida_recurso'?'SB':p.key==='saida_origem'?'SO':p.key==='lib_destino'?'LD':p.key==='saida_origem_ret'?'SV':'•';
-      L.marker([p.lat,p.lon],{icon:pin(p.color||'#f59e0b',lbl,24)}).addTo(map)
-        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>'+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}`);
+    const spreadMarkers=pts=>{
+      const groups=new Map();
+      pts.forEach(p=>{
+        const key=`${(+p.lat).toFixed(5)},${(+p.lon).toFixed(5)}`;
+        if(!groups.has(key))groups.set(key,[]);
+        groups.get(key).push(p);
+      });
+      return pts.map(p=>{
+        const key=`${(+p.lat).toFixed(5)},${(+p.lon).toFixed(5)}`;
+        const g=groups.get(key),idx=g.indexOf(p),n=g.length;
+        if(n<2)return {...p,displayLat:+p.lat,displayLon:+p.lon,overlap:n};
+        const angle=(Math.PI*2*idx/n)-Math.PI/2,rad=0.00018+(n>5?0.00004:0);
+        return {...p,displayLat:+p.lat+Math.sin(angle)*rad,displayLon:+p.lon+Math.cos(angle)*rad,overlap:n};
+      });
+    };
+    const markerItems=spreadMarkers([
+      ...route.official.map(p=>({...p,markerKind:'official'})),
+      ...stageMarkerPoints.map(p=>({...p,markerKind:'stage'}))
+    ]);
+    markerItems.forEach(p=>{
+      const lbl=p.markerKind==='official'?(p.role==='origem-oficial'?'OR':'DE'):String(p.stage);
+      const size=p.markerKind==='official'?30:34;
+      L.marker([p.displayLat,p.displayLon],{icon:pin(p.color||'#374151',lbl,size)}).addTo(map)
+        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>Horário: '+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}<br>Geo: ${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}${p.overlap>1?'<br><em>Ponto deslocado no mapa para não sobrepor.</em>':''}`);
+      if(p.overlap>1)L.polyline([[p.lat,p.lon],[p.displayLat,p.displayLon]],{color:p.color||'#667085',weight:1,opacity:.45,dashArray:'2,4'}).addTo(map);
     });
     const expectedGroup=L.layerGroup().addTo(map);
     Promise.all(route.legs.map(async leg=>{
@@ -1328,15 +1572,16 @@ function initMap(a,route){
     legend.onAdd=()=>{
       const div=L.DomUtil.create('div','route-legend');
       div.innerHTML=`<div><span class="route-dot" style="background:#7c3aed"></span>0 Base / Token</div>
-        <div><span class="route-dot" style="background:#059669"></span>O Origem oficial</div>
-        <div><span class="route-dot" style="background:#dc2626"></span>D Destino oficial</div>
+        <div><span class="route-dot" style="background:#059669"></span>OR Origem oficial</div>
+        <div><span class="route-dot" style="background:#dc2626"></span>DE Destino oficial</div>
         <div><span class="route-dot" style="background:#2563eb"></span>Rota esperada calculada</div>
         <div><span class="route-dot" style="background:#ea580c"></span>Cliques do fornecedor / ida</div>
         <div><span class="route-dot" style="background:#ef4444"></span>Realizado pelo fornecedor - volta</div>`;
       return div;
     };
     legend.addTo(map);
-    if(all.length>1)map.fitBounds(L.latLngBounds(all.map(p=>[p.lat,p.lon])).pad(0.18));
+    const fitPts=markerItems.length?markerItems.map(p=>[p.displayLat,p.displayLon]):all.map(p=>[p.lat,p.lon]);
+    if(fitPts.length>1)map.fitBounds(L.latLngBounds(fitPts).pad(0.22));
 
     el._map=map;
   });
