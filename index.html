@@ -315,8 +315,11 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .map-stat{font-size:.72rem;font-weight:750;color:#344054;display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:9px 10px;min-height:42px}
 .map-stat strong{font-size:.78rem;color:var(--text)}
 .map-note{font-size:.63rem;color:var(--muted);justify-self:end;white-space:nowrap}
-#leafletMap{height:46vh;min-height:285px;max-height:480px;flex:0 0 auto;border-bottom:1px solid var(--border)}
-.route-panel{background:#f8fafc;flex:1 1 auto;min-height:180px;overflow:auto;padding:14px 18px 18px}
+.map-workspace{display:grid;grid-template-columns:minmax(420px,42%) minmax(0,1fr);gap:10px;flex:1 1 auto;min-height:0;padding:10px;background:#f8fafc}
+.map-canvas-panel,.map-info-panel{min-height:0;border:1px solid var(--border);border-radius:14px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
+.map-canvas-panel{position:relative}
+#leafletMap{height:100%;min-height:0;max-height:none;flex:1 1 auto;border-bottom:0}
+.route-panel{background:#f8fafc;height:100%;min-height:0;overflow:auto;padding:14px 18px 18px}
 .route-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px}
 .route-card{border:1px solid var(--border);border-radius:12px;padding:11px 12px;background:#fff;box-shadow:var(--shadow)}
 .route-card strong{display:block;font-size:.68rem;color:#344054;margin-bottom:4px}
@@ -344,9 +347,9 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .route-aux{font-size:.68rem;color:#667085;margin-top:10px;display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px}
 .route-timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:10px}
 .stage-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:7px 8px;display:flex;gap:7px;align-items:flex-start;box-shadow:var(--shadow);min-height:68px}
-.stage-card.missing{background:#f8fafc;color:#98a2b3}
+.stage-card.missing{background:#f8fafc;color:#98a2b3}.stage-card.external-user{border-color:#fedf89;background:#fffaeb}
 .stage-num{width:22px;height:22px;border-radius:999px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.64rem;font-weight:800;flex-shrink:0}
-.stage-card.return .stage-num{background:#ef4444}.stage-card.missing .stage-num{background:#d0d5dd;color:#667085}
+.stage-card.return .stage-num{background:#ef4444}.stage-card.external-user .stage-num{background:#f59e0b;color:#111827}.stage-card.missing .stage-num{background:#d0d5dd;color:#667085}
 .stage-body{min-width:0}.stage-name{font-size:.66rem;font-weight:800;color:#344054;line-height:1.15}.stage-card.missing .stage-name{color:#98a2b3}
 .stage-meta{font-size:.58rem;color:#667085;margin-top:3px;line-height:1.28}.stage-meta span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stage-card.missing .stage-meta{color:#98a2b3}
@@ -359,7 +362,9 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
   .map-addr{padding:6px 7px;font-size:.62rem;max-height:58px;overflow:hidden}.map-addr b{font-size:.52rem}.map-addr span:last-child{-webkit-line-clamp:2}
   .map-stats-bar{grid-template-columns:repeat(4,minmax(0,1fr));padding:7px 10px;gap:6px}.map-stat{padding:6px 7px;min-height:34px;font-size:.62rem;gap:5px}.map-stat strong{font-size:.66rem}.map-note{display:none}
   .route-timeline{grid-template-columns:1fr 1fr}.route-steps,.route-points{grid-template-columns:1fr}
-  #leafletMap{height:28vh;min-height:170px;max-height:220px}
+  .map-workspace{grid-template-columns:1fr;padding:8px;gap:8px}
+  .map-canvas-panel{height:32vh;min-height:190px}
+  #leafletMap{height:100%;min-height:0;max-height:none}
   .route-panel{min-height:165px;padding:10px 12px 12px}
   .route-grid{grid-template-columns:1fr 1fr}
   .map-note{justify-self:start}
@@ -613,8 +618,14 @@ main{max-width:1500px;padding:24px 32px 34px}
       <div class="map-stat" id="mapClicks"></div>
       <span class="map-note">Rota calculada via OpenStreetMap</span>
     </div>
-    <div id="leafletMap"></div>
-    <div class="route-panel" id="routePanel"></div>
+    <div class="map-workspace">
+      <section class="map-canvas-panel">
+        <div id="leafletMap"></div>
+      </section>
+      <aside class="map-info-panel">
+        <div class="route-panel" id="routePanel"></div>
+      </aside>
+    </div>
   </div>
 </div>
 
@@ -648,7 +659,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260702-month1"></script>
+<script src="data.js?v=20260706-prod1"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -1330,6 +1341,9 @@ function makeLeg(label,a,b,type='evento'){
   return{label,from:a,to:b,type,km:e.km,min:e.min,source:e.source,coords:null};
 }
 function pointLabel(p){return p?.stageLabel||p?.label||'Ponto'}
+function normUser(u){return String(u||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase()}
+function isIrisContingency(u){return normUser(u)==='USUARIO IRIS CONTINGENCIA'}
+function isExternalPointUser(u){return !!String(u||'').trim()&&!isIrisContingency(u)}
 function evMap(events){
   const by={};
   events.forEach(e=>{if(e&&e.key&&!by[e.key])by[e.key]=e});
@@ -1412,7 +1426,7 @@ function renderRoutePanel(a,route){
   const coordTxt=p=>coordOk(p)?`${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}`:'Sem lat/long';
   const stageRows=(route.timeline||[]).map(s=>{
     const ev=s.event, ok=coordOk(ev), missing=!ev;
-    const tone=missing?'missing':(s.def.ret?'return':'');
+    const tone=missing?'missing':`${s.def.ret?'return ':''}${isExternalPointUser(ev?.user)?'external-user':''}`.trim();
     return `<div class="stage-card ${tone}">
       <div class="stage-num">${s.def.n}</div>
       <div class="stage-body">
@@ -1448,6 +1462,7 @@ function renderRoutePanel(a,route){
       <span><span class="route-dot" style="background:#2563eb"></span>Rota esperada</span>
       <span><span class="route-dot" style="background:#ea580c"></span>Fornecedor - ida</span>
       <span><span class="route-dot" style="background:#ef4444"></span>Fornecedor - volta</span>
+      <span><span class="route-dot" style="background:#facc15"></span>Usuário operacional</span>
     </div>
     <div class="route-grid">
       <div class="route-card"><strong>${icon('icon-route','route-ico')}KM oficial</strong><span>${km!=null?km+' km':'—'}</span></div>
@@ -1554,9 +1569,10 @@ function initMap(a,route){
     markerItems.forEach(p=>{
       const lbl=p.markerKind==='official'?(p.role==='origem-oficial'?'OR':'DE'):String(p.stage);
       const size=p.markerKind==='official'?30:34;
-      L.marker([p.displayLat,p.displayLon],{icon:pin(p.color||'#374151',lbl,size)}).addTo(map)
+      const pointColor=p.markerKind==='stage'&&isExternalPointUser(p.user)?'#facc15':(p.color||'#374151');
+      L.marker([p.displayLat,p.displayLon],{icon:pin(pointColor,lbl,size)}).addTo(map)
         .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>Horário: '+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}<br>Geo: ${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}${p.overlap>1?'<br><em>Ponto deslocado no mapa para não sobrepor.</em>':''}`);
-      if(p.overlap>1)L.polyline([[p.lat,p.lon],[p.displayLat,p.displayLon]],{color:p.color||'#667085',weight:1,opacity:.45,dashArray:'2,4'}).addTo(map);
+      if(p.overlap>1)L.polyline([[p.lat,p.lon],[p.displayLat,p.displayLon]],{color:pointColor,weight:1,opacity:.45,dashArray:'2,4'}).addTo(map);
     });
     const expectedGroup=L.layerGroup().addTo(map);
     Promise.all(route.legs.map(async leg=>{
@@ -1576,7 +1592,8 @@ function initMap(a,route){
         <div><span class="route-dot" style="background:#dc2626"></span>DE Destino oficial</div>
         <div><span class="route-dot" style="background:#2563eb"></span>Rota esperada calculada</div>
         <div><span class="route-dot" style="background:#ea580c"></span>Cliques do fornecedor / ida</div>
-        <div><span class="route-dot" style="background:#ef4444"></span>Realizado pelo fornecedor - volta</div>`;
+        <div><span class="route-dot" style="background:#ef4444"></span>Realizado pelo fornecedor - volta</div>
+        <div><span class="route-dot" style="background:#facc15"></span>Usuário diferente de contingência</div>`;
       return div;
     };
     legend.addTo(map);

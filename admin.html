@@ -464,8 +464,13 @@ function parseLatLong(raw){
 }
 function eventFrom(r,idx,key,label,timeIdx,coordIdx,userIdx){
   const [lat,lon]=parseLatLong(coordIdx>=0?r[coordIdx]:'');
-  if(lat===null||lon===null)return null;
-  return {key,label,lat,lon,time:fmtFullDate(timeIdx>=0?r[timeIdx]:''),user:userIdx>=0&&r[userIdx]?String(r[userIdx]):''};
+  const time=fmtFullDate(timeIdx>=0?r[timeIdx]:'');
+  const user=userIdx>=0&&r[userIdx]?String(r[userIdx]):'';
+  if(lat===null||lon===null){
+    if(!time&&!user)return null;
+    return {key,label,lat:null,lon:null,time,user};
+  }
+  return {key,label,lat,lon,time,user};
 }
 function buildRouteEvents(r,idx){
   const defs=[
@@ -474,6 +479,7 @@ function buildRouteEvents(r,idx){
     ['chegada_origem','Chegada na origem',idx.chegOrigem,idx.llChegOrigem,idx.usrChegOrigem],
     ['saida_origem','Saída da origem',idx.saidaOrigem,idx.llSaidaOrigem,idx.usrSaidaOrigem],
     ['chegada_destino','Chegada no destino',idx.chegDestino,idx.llChegDestino,idx.usrChegDestino],
+    ['saida_destino','Saida do destino',idx.saidaDestino,idx.llSaidaDestino,idx.usrSaidaDestino],
     ['lib_destino','Liberação do destino',idx.libDestino,idx.llLibDestino,idx.usrLibDestino],
     ['chegada_origem_ret','Chegada origem retorno',idx.chegOrigemRet,idx.llChegOrigemRet,idx.usrChegOrigemRet],
     ['saida_origem_ret','Saída origem retorno',idx.saidaOrigemRet,idx.llSaidaOrigemRet,idx.usrSaidaOrigemRet],
@@ -578,6 +584,9 @@ async function processAll(){
       chegDestino:findCol(hdrs,h=>h.includes('CHEGADA NO DESTINO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
       usrChegDestino:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('CHEGADA NO DESTINO')),
       llChegDestino:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('CHEGADA NO DESTINO')),
+      saidaDestino:findCol(hdrs,h=>h.includes('SAIDA DO DESTINO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
+      usrSaidaDestino:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('SAIDA DO DESTINO')),
+      llSaidaDestino:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('SAIDA DO DESTINO')),
       libDestino:findCol(hdrs,h=>h.includes('LIBERACAO DO DESTINO')&&!h.includes('USUARIO')&&!h.includes('LAT')),
       usrLibDestino:findCol(hdrs,h=>h.includes('USUARIO')&&h.includes('LIBERACAO DO DESTINO')),
       llLibDestino:findCol(hdrs,h=>h.includes('LAT')&&h.includes('LONG')&&h.includes('LIBERACAO DO DESTINO')),
