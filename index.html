@@ -690,7 +690,7 @@ main{max-width:1500px;padding:24px 32px 34px}
       <table class="rt">
         <thead><tr><th>Critério</th><th>Exigência</th><th>Resultado</th></tr></thead>
         <tbody id="rulesRows">
-          <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida, 3 ou mais pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+          <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida e mais de 3 pontos de rastreio. Se a Saída do Recurso estiver diferente de Usuario IRIS Contingencia, mas os demais sinais estiverem completos, também é CORRETO.</td><td><span class="rtag ok">CORRETO</span></td></tr>
           <tr><td>Tentativa sem sucesso</td><td>Quando as validações principais passam, mas o transporte tem 0 pontos de rastreio. Entra como sem movimentação e reduz a meta.</td><td><span class="rtag sm">SEM MOV.</span></td></tr>
           <tr><td>Rastreio insuficiente</td><td>Com 1 ou 2 pontos de rastreio, o atendimento não fecha a regra de usabilidade correta e o motivo aparece no tooltip.</td><td><span class="rtag er">ERRO</span></td></tr>
           <tr><td>Erro</td><td>Qualquer atendimento diferente das regras acima.</td><td><span class="rtag er">ERRO</span></td></tr>
@@ -716,7 +716,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260713-horarios-indicador-v1"></script>
+<script src="data.js?v=20260713-gop-rastreio-v1"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -1013,12 +1013,12 @@ function tokenYesFromAtt(a){
 }
 function classifyTokenRule(a){
   const tokenOk=tokenYesFromAtt(a);
-  const trackOk=Number(a?.[21]||0)>=3;
+  const trackOk=Number(a?.[21]||0)>3;
   const userOk=normMeta(resourceDepartureUserFromAtt(a))==='USUARIO IRIS CONTINGENCIA';
   if(tokenOk&&trackOk&&userOk)return [0,''];
   const reasons=[];
   if(!tokenOk)reasons.push('TOKEN diferente de SIM');
-  if(!trackOk)reasons.push(`Pontos de rastreio insuficientes: ${Number(a?.[21]||0)} (mínimo 3)`);
+  if(!trackOk)reasons.push(`Pontos de rastreio insuficientes: ${Number(a?.[21]||0)} (necessário maior que 3)`);
   if(!userOk){
     const actual=resourceDepartureUserFromAtt(a)||'vazio';
     reasons.push(`Usuário Saída do Recurso diferente de Usuario IRIS Contingencia (${actual})`);
@@ -1654,7 +1654,7 @@ function openM(name){
 
     ${sectionTitle('Resultado dos Atendimentos','icon-activity','green')}
     <div class="bkgrid">
-      <div class="bk c0"><div class="bk-n">${sv.correto}</div><div class="bk-lbl">${statusIcon('icon-check','ok')}CORRETO</div><div class="bk-sub">Token, dispositivo, Lat/Long, 3+ rastreios e saída contingência</div></div>
+      <div class="bk c0"><div class="bk-n">${sv.correto}</div><div class="bk-lbl">${statusIcon('icon-check','ok')}CORRETO</div><div class="bk-sub">Token, dispositivo, Lat/Long e rastreio &gt;3</div></div>
       <div class="bk c1"><div class="bk-n">${sv.tokenOk}</div><div class="bk-lbl">${statusIcon('icon-pin','warn')}UTILIZAÇÃO DO TOKEN</div><div class="bk-sub">Atendimentos que fecharam a regra de uso correto</div></div>
       <div class="bk c2"><div class="bk-n">${sv.sem}</div><div class="bk-lbl">${statusIcon('icon-pin','warn')}SEM MOVIMENTAÇÃO</div><div class="bk-sub">Tentativa sem sucesso: rastreio zerado com validações principais</div></div>
       <div class="bk c2 clickable" onclick='openSd("${nid}_zero","Rastreios zerados",${JSON.stringify(zeroRastAtts)})'><div class="bk-n">${zeroRastAtts.length}</div><div class="bk-lbl">${statusIcon('icon-alert','warn')}RASTREIO ZERO</div><div class="bk-sub">Clique para ver os chamados sem pontos de rastreio</div></div>
@@ -2028,16 +2028,16 @@ function renderRulesContent(){
   const rows=document.getElementById('rulesRows');
   if(!desc||!rows)return;
   if(RULE_MODE==='token'){
-    desc.textContent='Visão alternativa: classifica a utilização somente por TOKEN SIM, 3 ou mais pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.';
+    desc.textContent='Visão alternativa: classifica a utilização somente por TOKEN SIM, mais de 3 pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.';
     rows.innerHTML=`
-      <tr><td>Usabilidade correta</td><td>Token SIM, 3 ou mais pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Usabilidade correta</td><td>Token SIM, mais de 3 pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
       <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
-      <tr><td>Erro</td><td>Qualquer atendimento sem TOKEN SIM, com menos de 3 pontos de rastreio ou com usuário da Saída do Recurso diferente de Usuario IRIS Contingencia.</td><td><span class="rtag er">ERRO</span></td></tr>
+      <tr><td>Erro</td><td>Qualquer atendimento sem TOKEN SIM, com 3 ou menos pontos de rastreio ou com usuário da Saída do Recurso diferente de Usuario IRIS Contingencia.</td><td><span class="rtag er">ERRO</span></td></tr>
     `;
   }else{
     desc.textContent='Como cada atendimento é classificado pela regra atual de usabilidade e como a meta é calculada.';
     rows.innerHTML=`
-      <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida, 3 ou mais pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida e mais de 3 pontos de rastreio. Se a Saída do Recurso estiver diferente de Usuario IRIS Contingencia, mas os demais sinais estiverem completos, também é CORRETO.</td><td><span class="rtag ok">CORRETO</span></td></tr>
       <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
       <tr><td>Tentativa sem sucesso</td><td>Quando as validações principais passam, mas o transporte tem 0 pontos de rastreio. Entra como sem movimentação e reduz a meta.</td><td><span class="rtag sm">SEM MOV.</span></td></tr>
       <tr><td>Rastreio insuficiente</td><td>Com 1 ou 2 pontos de rastreio, o atendimento não fecha a regra de usabilidade correta e o motivo aparece no tooltip.</td><td><span class="rtag er">ERRO</span></td></tr>

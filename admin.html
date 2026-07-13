@@ -96,7 +96,7 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
     <table class="ct">
       <thead><tr><th>Fornecedor</th><th>Critério</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
       <tbody>
-        <tr><td>Rede</td><td>TOKEN SIM + dispositivo + data/hora do token + Lat/Long token + 3+ rastreios + Usuário Saída do Recurso contingência</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
+        <tr><td>Rede</td><td>TOKEN SIM + dispositivo + data/hora do token + Lat/Long token + rastreios &gt; 3. Se a Saída do Recurso estiver diferente de contingência, mas os demais sinais estiverem completos, também é correto.</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
         <tr><td>HMED</td><td>Etapas operacionais, exceto token/solicitação/finalização, preenchidas por HMED - INTEGRAÇÃO ou HMED ROOT</td><td><span class="tag tok">✅ CUSTOM</span></td><td>✔ Sim</td></tr>
         <tr><td>Qualquer</td><td>Fora das regras acima</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
       </tbody>
@@ -496,8 +496,9 @@ function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,ras
   const geoOk=tokLat!=null&&tokLon!=null;
   const userOk=isIrisContingencyUser(resourceUser);
   const trackPoints=Number(rastreios||0);
+  const usageOk=tokenYes&&deviceOk&&dateOk&&geoOk&&trackPoints>3;
   const baseOk=tokenYes&&deviceOk&&dateOk&&geoOk&&userOk;
-  if(baseOk&&trackPoints>=3)return[0,''];
+  if(usageOk)return[0,''];
   if(baseOk&&trackPoints===0)return[2,'Tentativa sem sucesso: pontos de rastreio zerados.'];
   const reasons=[];
   if(!tokenYes)reasons.push('TOKEN diferente de SIM');
@@ -506,7 +507,7 @@ function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,ras
   if(!geoOk)reasons.push('Lat/Long da inserção do token ausente');
   if(!userOk)reasons.push(`Usuário Saída do Recurso diferente de Usuario IRIS Contingencia (${String(resourceUser||'vazio').trim()})`);
   if(trackPoints===0)reasons.push('Pontos de rastreio zerados');
-  else if(trackPoints<3)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (mínimo 3)`);
+  else if(trackPoints<=3)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (necessário maior que 3)`);
   return[4,reasons.join('; ')||'Fora da regra de usabilidade correta'];
 }
 function classifyHmedTransport(events){
