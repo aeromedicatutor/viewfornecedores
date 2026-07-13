@@ -39,8 +39,10 @@ header{background:var(--green);padding:0 28px;display:flex;align-items:center;ju
 .avg-lbl{color:rgba(255,255,255,.65);font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
 .avg-val{font-size:.95rem;font-weight:700;color:#fff}
 .avg-bar{height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
-.avg-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.avg-bar-fill{height:100%;border-radius:3px;transition:width .5s;transform-origin:left center}
 .avg-upd{font-size:.57rem;color:rgba(255,255,255,.4);margin-top:3px}
+.avg-box.live{animation:badgeAlive 2.2s ease-in-out infinite}
+.avg-box.live .avg-bar-fill,.goal-main.live .goal-fill{animation:barAlive 1.6s ease-in-out infinite}
 .ibtn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .ibtn:hover{background:rgba(255,255,255,.22)}
 
@@ -85,7 +87,8 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .goal-main .goal-pct{font-size:1.75rem;font-weight:800;line-height:1;color:#111827}
 .goal-main .goal-label{font-size:.64rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
 .goal-main .goal-bar{height:6px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-top:10px}
-.goal-main .goal-fill{height:100%;border-radius:4px}
+.goal-main .goal-fill{height:100%;border-radius:4px;transform-origin:left center}
+.goal-main.live{animation:goalAlive 2.4s ease-in-out infinite}
 .goal-kpi{border:1px solid #f1f5f9;background:#fff;border-radius:8px;padding:9px 10px}
 .goal-kpi strong{display:block;font-size:1rem;color:#111827;line-height:1.1}
 .goal-kpi span{display:block;font-size:.6rem;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
@@ -113,6 +116,10 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .month-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .month-chip{font-size:.61rem;font-weight:750;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;border-radius:20px;padding:4px 8px}
 .month-chip.on{background:#111827;color:#fff;border-color:#111827}
+@keyframes badgeAlive{0%,100%{box-shadow:0 0 0 rgba(255,255,255,0);transform:translateY(0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.08);transform:translateY(-1px)}}
+@keyframes goalAlive{0%,100%{box-shadow:0 0 0 rgba(16,185,129,0);transform:translateY(0)}50%{box-shadow:0 8px 22px rgba(16,185,129,.10);transform:translateY(-1px)}}
+@keyframes barAlive{0%,100%{filter:saturate(1)}50%{filter:saturate(1.35) brightness(1.08)}}
+@media (prefers-reduced-motion:reduce){.avg-box.live,.goal-main.live,.avg-box.live .avg-bar-fill,.goal-main.live .goal-fill{animation:none}}
 @media(max-width:980px){.goal-summary{grid-template-columns:1fr 1fr}.goal-main{grid-column:1/-1}.before-after,.scope-row{grid-template-columns:1fr}.ba-arrow{display:none}}
 
 /* ── CARDS ──────────────────────────── */
@@ -719,7 +726,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260713-regra-filtros-hmed-v4"></script>
+<script src="data.js?v=20260713-badge-acumulado-v5"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -1190,7 +1197,9 @@ function buildGoalTracking(){
     });
   });
   const monthList=[...months.entries()].map(([key,m])=>({key,...m,pct:metricPct(m)})).sort((a,b)=>b.order-a.order);
-  const latest=(activeMonth==='all'?monthList[0]:monthList.find(m=>m.key===activeMonth))||emptyMetric('Sem dados');
+  const latest=activeMonth==='all'
+    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,pct:meta.avg}
+    : (monthList.find(m=>m.key===activeMonth)||emptyMetric('Sem dados'));
   latest.pct=metricPct(latest);
   const chronological=[...monthList].sort((a,b)=>a.order-b.order);
   const before=chronological[0]||emptyMetric('Antes');
@@ -1206,9 +1215,10 @@ function buildGoalTracking(){
     deltaOk:(after.ok||0)-(before.ok||0)
   }:null;
   const weeks=[1,2,3,4,5].map(i=>emptyMetric(`Semana ${i}`,i));
-  if(latest.key){
+  const weekSourceKey=activeMonth==='all'?(monthList[0]?.key||''):latest.key;
+  if(weekSourceKey){
     allMeta.entries.forEach(([,v])=>{
-      const m=(v[11]||{})[latest.key];
+      const m=(v[11]||{})[weekSourceKey];
       (m?.[11]||[]).forEach(a=>{
         const d=parseDayMonth(a[1]);
         if(!d)return;
@@ -1239,9 +1249,9 @@ function renderGoalTracking(){
       <div class="goal-body">
         <div class="goal-summary">
           <div class="goal-main">
-            <div class="goal-pct" style="color:${color}">${p}%</div>
+            <div class="goal-pct" data-target="${p}" style="color:${color}">0%</div>
             <div class="goal-label">${esc(m.label||'Último mês')}</div>
-            <div class="goal-bar"><div class="goal-fill" style="width:${Math.min(100,p)}%;background:${color}"></div></div>
+            <div class="goal-bar"><div class="goal-fill" data-target="${Math.min(100,p)}" style="width:0%;background:${color}"></div></div>
           </div>
           <div class="goal-kpi"><strong>${(m.base||0).toLocaleString('pt-BR')}</strong><span>Atend. válidos</span></div>
           <div class="goal-kpi"><strong>${(m.ok||0).toLocaleString('pt-BR')}</strong><span>Corretos</span></div>
@@ -1277,9 +1287,41 @@ function renderGoalTracking(){
             </div>`;
           }).join('')}
         </div>
-        ${data.months.length>1?`<div class="month-row">${data.months.map(mm=>`<span class="month-chip ${mm.key===m.key?'on':''}">${esc(mm.label)} · ${mm.pct}%</span>`).join('')}</div>`:''}
+        ${data.months.length>1?`<div class="month-row">${data.months.map(mm=>`<span class="month-chip ${activeMonth!=='all'&&mm.key===m.key?'on':''}">${esc(mm.label)} · ${mm.pct}%</span>`).join('')}</div>`:''}
       </div>
     </div>`;
+  animateLiveMeter(el.querySelector('.goal-main'),'.goal-pct','.goal-fill');
+}
+
+function animateLiveMeter(box,valueSelector,fillSelector){
+  if(!box)return;
+  const valueEl=box.querySelector(valueSelector);
+  const fillEl=box.querySelector(fillSelector);
+  const target=Number(valueEl?.dataset.target||0);
+  const fillTarget=Number(fillEl?.dataset.target||target);
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){
+    if(valueEl)valueEl.textContent=`${target}%`;
+    if(fillEl)fillEl.style.width=`${fillTarget}%`;
+    box.classList.add('live');
+    return;
+  }
+  box.classList.remove('live');
+  const duration=900;
+  const start=performance.now();
+  const ease=t=>1-Math.pow(1-t,3);
+  function frame(now){
+    const t=Math.min(1,(now-start)/duration);
+    const pct=ease(t);
+    if(valueEl)valueEl.textContent=`${Math.round(target*pct*10)/10}%`;
+    if(fillEl)fillEl.style.width=`${Math.min(100,fillTarget*pct)}%`;
+    if(t<1)requestAnimationFrame(frame);
+    else{
+      if(valueEl)valueEl.textContent=`${target}%`;
+      if(fillEl)fillEl.style.width=`${fillTarget}%`;
+      box.classList.add('live');
+    }
+  }
+  requestAnimationFrame(frame);
 }
 
 // ── HEADER ──────────────────────────────────────────────────
@@ -1293,15 +1335,17 @@ function initHeader(){
     <div class="hs"><div class="metric-head"><div class="hs-l">Cat F filtro</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${cats.F}</div></div>`;
   const a=meta.avg||GS2.avg;
   const col=a>=80?'#4ade80':a>=60?'#fbbf24':'#f87171';
-  document.getElementById('avgBox').innerHTML=`
-    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Uso filtro atual</span><span class="avg-val" style="color:${col}">${a}%</span></div>
-    <div class="avg-bar"><div class="avg-bar-fill" style="width:${a}%;background:${col}"></div></div>
+  const avgBox=document.getElementById('avgBox');
+  avgBox.innerHTML=`
+    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Uso filtro atual</span><span class="avg-val" data-target="${a}" style="color:${col}">0%</span></div>
+    <div class="avg-bar"><div class="avg-bar-fill" data-target="${Math.min(100,a)}" style="width:0%;background:${col}"></div></div>
     <div class="avg-upd">${meta.matched}/${meta.targetTotal} fornecedores da meta com dados${activeMonth!=='all'?` · ${esc(document.getElementById('monthFilter')?.selectedOptions?.[0]?.textContent||'mês')}`:''} · ${meta.base.toLocaleString('pt-BR')} atend. válidos${GS2.updated?` · ${GS2.updated}`:''}</div>`;
+  animateLiveMeter(avgBox,'.avg-val','.avg-bar-fill');
 }
 
 // ── FILTER & RENDER ──────────────────────────────────────────
 function setF(c){
-  activeF=c||'all';
+  activeF=c||'all_no_hmed';
   const sel=document.getElementById('attFilter');
   if(sel&&sel.value!==activeF)sel.value=activeF;
   initHeader();
