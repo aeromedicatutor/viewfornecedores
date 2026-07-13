@@ -726,7 +726,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260713-badge-acumulado-v5"></script>
+<script src="data.js?v=20260713-tooltip-checklist-v6"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -1538,6 +1538,44 @@ function trAlertHtml(v){
 }
 
 // ── ATT ROW ──────────────────────────────────────────────────
+function cleanReasonText(text){
+  const fixes={
+    'nÃ£o':'não','inserÃ§Ã£o':'inserção','UsuÃ¡rio':'Usuário','SaÃ­da':'Saída','SaÃda':'Saída',
+    'necessÃ¡rio':'necessário','VersÃ£o':'Versão','captaÃ§Ã£o':'captação','horÃ¡rio':'horário',
+    'integraÃ§Ã£o':'integração','usuÃ¡rio':'usuário','Ã§':'ç','Ã£':'ã','Ã¡':'á','Ã©':'é','Ã­':'í','Ã³':'ó','Ãº':'ú'
+  };
+  return Object.entries(fixes).reduce((s,[bad,good])=>s.split(bad).join(good),String(text||''));
+}
+function validationTooltip(a,cl){
+  const tokenOk=tokenYesFromAtt(a);
+  const deviceOk=!!String(a?.[6]||'').trim();
+  const dateOk=!!a?.[7];
+  const geoOk=a?.[16]!=null&&a?.[17]!=null;
+  const trackPoints=Number(a?.[21]||0);
+  const trackOk=trackPoints>3;
+  const saidaUser=resourceDepartureUserFromAtt(a);
+  const saidaOk=normMeta(saidaUser)==='USUARIO IRIS CONTINGENCIA';
+  const destinoUser=eventUserFromAtt(a,'chegada_destino');
+  const destinoOk=normMeta(destinoUser)==='USUARIO IRIS CONTINGENCIA';
+  const checks=[
+    ['TOKEN',tokenOk,'TOKEN SIM','TOKEN diferente de SIM'],
+    ['Dispositivo',deviceOk,`Informado: ${a?.[6]||'sim'}`,'Dispositivo não informado'],
+    ['Data/hora do token',dateOk,`Inserido em ${a?.[7]||'horário informado'}`,'Data/hora de inserção ausente'],
+    ['Lat/Long do token',geoOk,geoOk?`${a[16]}, ${a[17]}`:'Lat/Long ausente','Latitude/longitude da inserção ausente'],
+    ['Rastreio',trackOk,`${trackPoints} ponto(s) de rastreio`,`Apenas ${trackPoints} ponto(s); necessário mais de 3`],
+    ['Saída do Recurso',saidaOk,'Usuario IRIS Contingencia',`Preenchido por ${saidaUser||'vazio'}`],
+    ['Chegada no Destino',destinoOk,'Usuario IRIS Contingencia',`Preenchido por ${destinoUser||'vazio'}`]
+  ];
+  const okLines=checks.filter(([,ok])=>ok).map(([label,,good])=>`✅ ${label}: ${good}`);
+  const badLines=checks.filter(([,ok])=>!ok).map(([label,, ,bad])=>`❌ ${label}: ${bad}`);
+  const raw=cleanReasonText(a?.[22]||'');
+  const result=CLBL[cl]||'Status';
+  const out=[`Atendimento #${a?.[0]||'--'} - validação da regra`,`Resultado: ${result}`,''];
+  if(okLines.length)out.push('Validações positivas:',...okLines,'');
+  if(badLines.length)out.push('Validações negativas:',...badLines,'');
+  if(raw)out.push(cl===0?'Observação do correto com alerta:':'Motivo registrado:',raw);
+  return out.join('\n').trim();
+}
 function attRow(a){
   MAP_ATTS[a[0]]=a;
   const cl=a[5]??3;
@@ -1551,15 +1589,16 @@ function attRow(a){
   const eo=(a[14]||'').replace(/'/g,"\\'");
   const ed=(a[15]||'').replace(/'/g,"\\'");
   const motive=a[22]||'';
-  const reasonTitle=motive||'Fora da regra de usabilidade correta';
-  const reasonWarn=(motive||cl===2||cl===4)?`<span class="geo-alert" title="${esc(reasonTitle)}">${icon('icon-alert')}</span>`:'';
+  const hasReason=motive||cl===2||cl===4;
+  const reasonTitle=hasReason?validationTooltip(a,cl):'';
+  const reasonWarn=hasReason?`<span class="geo-alert" title="${esc(reasonTitle)}">${icon('icon-alert')}</span>`:'';
   return`<tr class="${RCLS[cl]||''}">
     <td><span class="anum">#${a[0]}</span></td>
     <td style="white-space:nowrap;font-size:.65rem;color:#6b7280">${a[1]||'—'}</td>
     <td style="text-align:center;font-size:.82rem" title="${SHIFT_TTL[a[2]]||''}">${SHIFT_ICO[a[2]]||'?'}</td>
     <td><span class="apers" title="${a[3]||''}">${a[3]||'—'}</span></td>
     <td><span class="apers" title="${a[4]||''}">${a[4]||'—'}</span></td>
-    <td><span class="status-cell"><span class="atag ${TCLS[cl]}" title="${motive||cl===2||cl===4?esc(reasonTitle):''}">${CLBL[cl]}</span>${reasonWarn}</span></td>
+    <td><span class="status-cell"><span class="atag ${TCLS[cl]}" title="${hasReason?esc(reasonTitle):''}">${CLBL[cl]}</span>${reasonWarn}</span></td>
     <td style="font-size:.62rem;color:#6b7280;white-space:nowrap">${a[6]||'—'}</td>
     <td style="white-space:nowrap;font-size:.65rem;color:#7c3aed;font-weight:600">${a[7]||'—'}</td>
     <td style="text-align:center;font-size:.65rem;font-weight:700;color:${dcl}">${dvl}</td>
