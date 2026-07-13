@@ -471,7 +471,7 @@ header{background:var(--brand);min-height:88px;padding:18px 32px;border-bottom:1
 .filter-wrap{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
 .filter-field{display:flex;flex-direction:column;gap:5px}
 .filter-field label{font-size:.58rem;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.06em}
-.filter-field select{min-width:150px}
+.filter-field select{min-width:230px}
 .tb-action{padding:0 14px;color:#fff;background:var(--primary);border-color:var(--primary)}
 .tb-action:hover{background:#ea580c;border-color:#ea580c;color:#fff}
 .fbtns{gap:6px}.fb{height:34px;padding:0 12px;border:1px solid var(--border);border-radius:999px;color:#475467;background:#fff;font-size:.72rem;font-weight:600}.fb:hover{border-color:#a7f3d0;color:var(--brand)}
@@ -597,8 +597,10 @@ main{max-width:1500px;padding:24px 32px 34px}
     <div class="filter-field">
       <label for="attFilter">Atendimentos</label>
       <select id="attFilter" onchange="setF(this.value)" title="Filtrar atendimentos">
-        <option value="all">Todos Fornecedores da Rede</option>
-        <option value="focus">Fornecedores de Maior Representatividade de Remoções</option>
+        <option value="all_no_hmed">Todos Fornecedores da Rede - Sem HMED</option>
+        <option value="all_with_hmed">Todos Fornecedores da Rede - Com HMED</option>
+        <option value="focus_no_hmed">Fornecedores de Maior Representatividade de Remoções - Sem HMED</option>
+        <option value="focus_with_hmed">Fornecedores de Maior Representatividade de Remoções - Com HMED</option>
         <option value="training">Base treinamento</option>
         <option value="hmed">Fornecedor HMED</option>
         <option value="cancelados">Cancelados</option>
@@ -690,8 +692,8 @@ main{max-width:1500px;padding:24px 32px 34px}
       <table class="rt">
         <thead><tr><th>Critério</th><th>Exigência</th><th>Resultado</th></tr></thead>
         <tbody id="rulesRows">
-          <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida e mais de 3 pontos de rastreio. Se a Saída do Recurso estiver diferente de Usuario IRIS Contingencia, mas os demais sinais estiverem completos, também é CORRETO.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-          <tr><td>Inteligência de rastreio</td><td>Token SIM, Lat/Long do token, mais de 3 rastreios, Saída da Base e Chegada no Destino podem validar como CORRETO quando faltarem data/hora e dispositivo. Esses casos aparecem com alerta: Versão 3.0.7 ainda não tinha captação do dispositivo.</td><td><span class="rtag mod">ALERTA</span></td></tr>
+          <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida, mais de 3 pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+          <tr><td>Inteligência de rastreio</td><td>Se TOKEN SIM, dispositivo, data/hora, Lat/Long e mais de 3 rastreios estiverem corretos, mas Saída do Recurso ou Chegada no Destino estiverem diferentes de IRIS Contingencia, também valida como CORRETO com alerta.</td><td><span class="rtag mod">ALERTA</span></td></tr>
           <tr><td>Tentativa sem sucesso</td><td>Quando as validações principais passam, mas o transporte tem 0 pontos de rastreio. Entra como sem movimentação e reduz a meta.</td><td><span class="rtag sm">SEM MOV.</span></td></tr>
           <tr><td>Rastreio insuficiente</td><td>Com 1 ou 2 pontos de rastreio, o atendimento não fecha a regra de usabilidade correta e o motivo aparece no tooltip.</td><td><span class="rtag er">ERRO</span></td></tr>
           <tr><td>Erro</td><td>Qualquer atendimento diferente das regras acima.</td><td><span class="rtag er">ERRO</span></td></tr>
@@ -700,7 +702,7 @@ main{max-width:1500px;padding:24px 32px 34px}
       <hr class="rd">
       <div class="rsec"><strong>Fórmula:</strong> % = Corretos ÷ Atendimentos válidos × 100. Na regra atual, todos os atendimentos do relatório entram como válidos.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Meta:</strong> foco nos fornecedores de maior representatividade de remoções, agora com HMED dentro da meta por regra própria de integração de horários. TransMedi fica fora da meta foco. Meta-alvo: 80%.</div>
+      <div class="rsec"><strong>Meta:</strong> os filtros Todos Fornecedores da Rede e Fornecedores de Maior Representatividade de Remoções possuem visão Sem HMED e Com HMED. Quando HMED entra no filtro, mantém regra própria de integração de horários. TransMedi fica fora da meta foco. Meta-alvo: 80%.</div>
       <hr class="rd">
       <div class="rsec"><strong>Inserção Horários:</strong> para fornecedores da rede, é indicador de assertividade no modal e não altera a regra de usabilidade/meta. A exceção é HMED, que usa a integração de horários como regra própria.</div>
       <hr class="rd">
@@ -717,7 +719,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260713-regra-307-v3"></script>
+<script src="data.js?v=20260713-regra-filtros-hmed-v4"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -756,7 +758,7 @@ const RAW_GS=typeof GS!=='undefined'?GS:{avg:0,meta:80,updated:'',baseTarget:33,
 let D=RAW_D;
 let GS2={...RAW_GS};
 const RULE_MODE=new URLSearchParams(location.search).get('regra')==='token'?'token':'completa';
-let activeF='all';
+let activeF='all_no_hmed';
 let activeMonth='all';
 const MAP_ATTS={};
 const DETAIL_LISTS={};
@@ -823,7 +825,11 @@ function normMeta(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u03
 function isHMedName(name){const n=normMeta(name);return n.includes('H MED')||n.includes('HMED')}
 function isTransMediName(name){const n=normMeta(name);return n.includes('TRANS MEDI')||n.includes('TRANSMEDI')}
 function isCanceledSupplierName(name){return normMeta(name)===normMeta(CANCELED_SUPPLIER_NAME)}
-function isMetaSupplierName(name){const n=normMeta(name);return !!n&&!isTransMediName(name)&&(isHMedName(name)||META_SUPPLIER_NAMES.has(n))}
+function isFocusSupplierName(name,includeHmed=true){
+  const n=normMeta(name);
+  return !!n&&!isTransMediName(name)&&(META_SUPPLIER_NAMES.has(n)||(includeHmed&&isHMedName(name)));
+}
+function isMetaSupplierName(name){return isFocusSupplierName(name,true)}
 function monthList(){
   const months=new Map();
   Object.values(D).forEach(v=>{
@@ -892,8 +898,12 @@ function trainingStats(month=activeMonth){
 }
 function filterLabel(filter=activeF){
   return {
-    all:'Todos Fornecedores da Rede',
-    focus:'Fornecedores de Maior Representatividade de Remoções',
+    all:'Todos Fornecedores da Rede - Sem HMED',
+    all_no_hmed:'Todos Fornecedores da Rede - Sem HMED',
+    all_with_hmed:'Todos Fornecedores da Rede - Com HMED',
+    focus:'Fornecedores de Maior Representatividade de Remoções - Com HMED',
+    focus_no_hmed:'Fornecedores de Maior Representatividade de Remoções - Sem HMED',
+    focus_with_hmed:'Fornecedores de Maior Representatividade de Remoções - Com HMED',
     training:'Base treinamento',
     hmed:'Fornecedor HMED',
     cancelados:'Cancelados',
@@ -905,11 +915,13 @@ function entryMatchesFilter(name,v,filter=activeF,month=activeMonth){
   const canceled=isCanceledSupplierName(name);
   if(filter==='cancelados')return canceled;
   if(canceled)return false;
-  if(filter==='focus')return isMetaSupplierName(name);
+  if(filter==='focus'||filter==='focus_with_hmed')return isFocusSupplierName(name,true);
+  if(filter==='focus_no_hmed')return isFocusSupplierName(name,false);
   if(filter==='training')return !!v[12];
   if(filter==='hmed')return isHMedName(name);
   if(filter==='pu')return isPu(v);
-  if(filter==='all')return true;
+  if(filter==='all'||filter==='all_no_hmed')return !isHMedName(name);
+  if(filter==='all_with_hmed')return true;
   return !isPu(v)&&cat(supplierView(v,month).pct)===filter;
 }
 function currentSearch(){
@@ -920,7 +932,8 @@ function scopedEntries(filter=activeF,month=activeMonth,includeSearch=false){
   return Object.entries(D).filter(([n,v])=>(!q||n.toLowerCase().includes(q))&&entryMatchesFilter(n,v,filter,month));
 }
 function scopeTargetTotal(filter=activeF){
-  if(filter==='focus')return META_SUPPLIER_TOTAL;
+  if(filter==='focus_no_hmed')return META_SUPPLIER_NAMES.size;
+  if(filter==='focus'||filter==='focus_with_hmed')return META_SUPPLIER_TOTAL;
   if(filter==='training')return GS2.trainingTarget||177;
   return scopedEntries(filter,'all').length;
 }
@@ -999,10 +1012,6 @@ function eventUserFromAtt(a,key){
   const ev=(Array.isArray(a?.[20])?a[20]:[]).find(e=>e&&e.key===key);
   return String(ev?.user||'').trim();
 }
-function eventHasTimeFromAtt(a,key){
-  const ev=(Array.isArray(a?.[20])?a[20]:[]).find(e=>e&&e.key===key);
-  return !!String(ev?.time||'').trim();
-}
 function isHmedIntegrationUser(user){
   return ['HMED INTEGRACAO','HMED ROOT'].includes(normMeta(user));
 }
@@ -1023,15 +1032,8 @@ function tokenYesFromAtt(a){
 function classifyTokenRule(a){
   const tokenOk=tokenYesFromAtt(a);
   const trackOk=Number(a?.[21]||0)>3;
-  const geoOk=a?.[16]!=null&&a?.[17]!=null;
   const userOk=normMeta(resourceDepartureUserFromAtt(a))==='USUARIO IRIS CONTINGENCIA';
   const destUserOk=normMeta(eventUserFromAtt(a,'chegada_destino'))==='USUARIO IRIS CONTINGENCIA';
-  const baseDepartureOk=eventHasTimeFromAtt(a,'saida_recurso');
-  const destinationArrivalOk=eventHasTimeFromAtt(a,'chegada_destino');
-  const legacyDeviceGapOk=tokenOk&&geoOk&&trackOk&&baseDepartureOk&&destinationArrivalOk&&(!a?.[6]&&!a?.[7]);
-  if(legacyDeviceGapOk){
-    return [0,'Versão 3.0.7 ainda não tinha captação do dispositivo'];
-  }
   if(tokenOk&&trackOk&&userOk&&destUserOk&&!a?.[6]){
     return [0,'Correto por inteligência de rastreio: TOKEN SIM, Saída do Recurso e Chegada no Destino pelo IRIS, mas houve falha em trazer dispositivo.'];
   }
@@ -1282,17 +1284,17 @@ function renderGoalTracking(){
 
 // ── HEADER ──────────────────────────────────────────────────
 function initHeader(){
-  const meta=metaStats();
+  const meta=scopeStats(activeF,activeMonth);
   const cats=meta.cats;
   document.getElementById('hstats').innerHTML=`
-    <div class="hs"><div class="metric-head"><div class="hs-l">Base meta</div>${icon('icon-target')}</div><div class="hs-n">${meta.targetTotal}</div></div>
-    <div class="hs"><div class="metric-head"><div class="hs-l">Atend. foco</div>${icon('icon-truck')}</div><div class="hs-n">${meta.att.toLocaleString('pt-BR')}</div></div>
-    <div class="hs"><div class="metric-head"><div class="hs-l">A+B foco</div>${icon('icon-check-circle')}</div><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div></div>
-    <div class="hs"><div class="metric-head"><div class="hs-l">Cat F foco</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${cats.F}</div></div>`;
+    <div class="hs"><div class="metric-head"><div class="hs-l">Base filtro</div>${icon('icon-target')}</div><div class="hs-n">${meta.targetTotal}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">Atend. filtro</div>${icon('icon-truck')}</div><div class="hs-n">${meta.att.toLocaleString('pt-BR')}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">A+B filtro</div>${icon('icon-check-circle')}</div><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">Cat F filtro</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${cats.F}</div></div>`;
   const a=meta.avg||GS2.avg;
   const col=a>=80?'#4ade80':a>=60?'#fbbf24':'#f87171';
   document.getElementById('avgBox').innerHTML=`
-    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Uso base foco</span><span class="avg-val" style="color:${col}">${a}%</span></div>
+    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Uso filtro atual</span><span class="avg-val" style="color:${col}">${a}%</span></div>
     <div class="avg-bar"><div class="avg-bar-fill" style="width:${a}%;background:${col}"></div></div>
     <div class="avg-upd">${meta.matched}/${meta.targetTotal} fornecedores da meta com dados${activeMonth!=='all'?` · ${esc(document.getElementById('monthFilter')?.selectedOptions?.[0]?.textContent||'mês')}`:''} · ${meta.base.toLocaleString('pt-BR')} atend. válidos${GS2.updated?` · ${GS2.updated}`:''}</div>`;
 }
@@ -2058,8 +2060,8 @@ function renderRulesContent(){
   }else{
     desc.textContent='Como cada atendimento é classificado pela regra atual de usabilidade e como a meta é calculada.';
     rows.innerHTML=`
-      <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida e mais de 3 pontos de rastreio. Se a Saída do Recurso estiver diferente de Usuario IRIS Contingencia, mas os demais sinais estiverem completos, também é CORRETO.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-      <tr><td>Inteligência de rastreio</td><td>Token SIM, Lat/Long do token, mais de 3 rastreios, Saída da Base e Chegada no Destino podem validar como CORRETO quando faltarem data/hora e dispositivo. Esses casos aparecem com alerta: Versão 3.0.7 ainda não tinha captação do dispositivo.</td><td><span class="rtag mod">ALERTA</span></td></tr>
+      <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida, mais de 3 pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Inteligência de rastreio</td><td>Se TOKEN SIM, dispositivo, data/hora, Lat/Long e mais de 3 rastreios estiverem corretos, mas Saída do Recurso ou Chegada no Destino estiverem diferentes de IRIS Contingencia, também valida como CORRETO com alerta.</td><td><span class="rtag mod">ALERTA</span></td></tr>
       <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
       <tr><td>Tentativa sem sucesso</td><td>Quando as validações principais passam, mas o transporte tem 0 pontos de rastreio. Entra como sem movimentação e reduz a meta.</td><td><span class="rtag sm">SEM MOV.</span></td></tr>
       <tr><td>Rastreio insuficiente</td><td>Com 1 ou 2 pontos de rastreio, o atendimento não fecha a regra de usabilidade correta e o motivo aparece no tooltip.</td><td><span class="rtag er">ERRO</span></td></tr>

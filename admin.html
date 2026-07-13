@@ -96,8 +96,8 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
     <table class="ct">
       <thead><tr><th>Fornecedor</th><th>Critério</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
       <tbody>
-        <tr><td>Rede</td><td>TOKEN SIM + dispositivo + data/hora do token + Lat/Long token + rastreios &gt; 3. Se a Saída do Recurso estiver diferente de contingência, mas os demais sinais estiverem completos, também é correto.</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
-        <tr><td>Rede</td><td>TOKEN SIM + Lat/Long do token + rastreios &gt; 3 + Saída da Base e Chegada no Destino. Se faltarem data/hora e dispositivo, valida como correto com alerta da versão 3.0.7</td><td><span class="tag tsm">⚠️ CORRETO COM ALERTA</span></td><td>✔ Sim</td></tr>
+        <tr><td>Rede</td><td>TOKEN SIM + dispositivo + data/hora do token + Lat/Long token + rastreios &gt; 3 + Saída do Recurso por Usuario IRIS Contingencia</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
+        <tr><td>Rede</td><td>Se TOKEN SIM + dispositivo + data/hora + Lat/Long + rastreios &gt; 3 estiverem corretos, mas Saída do Recurso ou Chegada no Destino forem diferentes de IRIS, valida como correto com alerta</td><td><span class="tag tsm">⚠️ CORRETO COM ALERTA</span></td><td>✔ Sim</td></tr>
         <tr><td>HMED</td><td>Etapas operacionais, exceto token/solicitação/finalização, preenchidas por HMED - INTEGRAÇÃO ou HMED ROOT</td><td><span class="tag tok">✅ CUSTOM</span></td><td>✔ Sim</td></tr>
         <tr><td>Qualquer</td><td>Fora das regras acima</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
       </tbody>
@@ -494,12 +494,6 @@ function eventUser(events,key){
   }
   return '';
 }
-function eventHasTime(events,key){
-  for(const ev of events){
-    if(ev.key===key&&String(ev.time||'').trim())return true;
-  }
-  return false;
-}
 function hasTokenInserted(rawDisp,dtTok,tokLat,tokLon){
   return !!String(rawDisp||'').trim()&&!!dtTok&&tokLat!=null&&tokLon!=null;
 }
@@ -509,19 +503,13 @@ function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,ras
   const geoOk=tokLat!=null&&tokLon!=null;
   const userOk=isIrisContingencyUser(resourceUser);
   const destUserOk=isIrisContingencyUser(eventUser(events,'chegada_destino'));
-  const baseDepartureOk=eventHasTime(events,'saida_recurso');
-  const destinationArrivalOk=eventHasTime(events,'chegada_destino');
   const trackPoints=Number(rastreios||0);
   const usageOk=tokenYes&&deviceOk&&dateOk&&geoOk&&trackPoints>3;
-  const legacyDeviceGapOk=tokenYes&&geoOk&&trackPoints>3&&baseDepartureOk&&destinationArrivalOk&&(!deviceOk&&!dateOk);
-  const irisFlowOk=tokenYes&&trackPoints>3&&userOk&&destUserOk;
   const baseOk=tokenYes&&deviceOk&&dateOk&&geoOk&&userOk;
   if(usageOk){
-    if(!userOk)return[0,'Correto por inteligência de rastreio: houve uso real do app e a Saída do Recurso parece ter sido alterada no sistema.'];
+    if(!userOk||!destUserOk)return[0,'Correto por inteligência de rastreio: houve uso real do app e a operação pode ter alterado Saída do Recurso ou Chegada no Destino no sistema.'];
     return[0,''];
   }
-  if(legacyDeviceGapOk)return[0,'Versão 3.0.7 ainda não tinha captação do dispositivo'];
-  if(irisFlowOk)return[0,'Correto por inteligência de rastreio: TOKEN SIM, Saída do Recurso e Chegada no Destino pelo IRIS, mas houve falha em trazer dispositivo/data/LatLong do token.'];
   if(baseOk&&trackPoints===0)return[2,'Tentativa sem sucesso: pontos de rastreio zerados.'];
   const reasons=[];
   if(!tokenYes)reasons.push('TOKEN diferente de SIM');
@@ -529,6 +517,7 @@ function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,ras
   if(!dateOk)reasons.push('Data/hora de inserção do token ausente');
   if(!geoOk)reasons.push('Lat/Long da inserção do token ausente');
   if(!userOk)reasons.push(`Usuário Saída do Recurso diferente de Usuario IRIS Contingencia (${String(resourceUser||'vazio').trim()})`);
+  if(!destUserOk)reasons.push(`Usuário Chegada no Destino diferente de Usuario IRIS Contingencia (${eventUser(events,'chegada_destino')||'vazio'})`);
   if(trackPoints===0)reasons.push('Pontos de rastreio zerados');
   else if(trackPoints<=3)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (necessário maior que 3)`);
   return[4,reasons.join('; ')||'Fora da regra de usabilidade correta'];
