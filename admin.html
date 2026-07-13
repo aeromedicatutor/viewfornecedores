@@ -94,12 +94,11 @@ main{max-width:860px;margin:32px auto;padding:0 22px 60px}
     <h2>📐 Critérios de Classificação</h2>
     <div class="sub">Fórmula: % Usabilidade = Corretos ÷ Atendimentos válidos × 100 · Meta alvo 80%</div>
     <table class="ct">
-      <thead><tr><th>TOKEN</th><th>Rastreio</th><th>Horário APP</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
+      <thead><tr><th>Fornecedor</th><th>Critério</th><th>Classificação</th><th>Conta na %?</th></tr></thead>
       <tbody>
-        <tr><td>SIM</td><td>Qualquer</td><td>Dispositivo + data/hora + usuário da saída do recurso contingência</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
-        <tr><td>SIM</td><td>0 pts</td><td>Se as validações principais passarem, vira correto com alerta de geolocalização</td><td><span class="tag tsm">📍 ALERTA GEO</span></td><td>✔ Sim</td></tr>
-        <tr><td>Qualquer</td><td>qualquer</td><td>Fora das regras acima</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
-        <tr><td>NÃO</td><td>Qualquer</td><td>NÃO</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
+        <tr><td>Rede</td><td>TOKEN SIM + dispositivo + data/hora do token + Lat/Long token + 3+ rastreios + Usuário Saída do Recurso contingência</td><td><span class="tag tok">✅ CORRETO</span></td><td>✔ Sim</td></tr>
+        <tr><td>HMED</td><td>Etapas operacionais, exceto token/solicitação/finalização, preenchidas por HMED - INTEGRAÇÃO ou HMED ROOT</td><td><span class="tag tok">✅ CUSTOM</span></td><td>✔ Sim</td></tr>
+        <tr><td>Qualquer</td><td>Fora das regras acima</td><td><span class="tag ter">❌ ERRO</span></td><td>✔ Sim (erro)</td></tr>
       </tbody>
     </table>
   </div>
@@ -246,8 +245,9 @@ function classify(token, dispositivo, tokenDt, tokenLat, tokenLon, rastreios, fi
 /* ── NORMALISE name for matching ─────────────────────────── */
 function norm(s) { return String(s||'').replace(/\s+/g,' ').trim().toUpperCase(); }
 
-const META_SUPPLIER_TOTAL=32;
+const META_SUPPLIER_TOTAL=33;
 const CANCELED_SUPPLIER_NAME='CANCELADOS - FORNECEDOR VAZIO';
+const HMED_AUDIT_EVENT_KEYS=new Set(['saida_recurso','chegada_origem','saida_origem','chegada_destino','saida_destino','lib_destino','chegada_origem_ret','saida_origem_ret','lib_recurso']);
 const META_SUPPLIER_NAMES=new Set([
   'ACURA SOLUCOES EM SAUDE SETE LAGOAS',
   'ALICIA UTI MOVEL SAO LUIS',
@@ -285,7 +285,7 @@ const META_SUPPLIER_NAMES=new Set([
 function normMeta(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&AMP;|&NBSP;/g,' ').replace(/[^A-Z0-9]+/gi,' ').replace(/\s+/g,' ').trim().toUpperCase()}
 function isHMedName(name){const n=normMeta(name);return n.includes('H MED')||n.includes('HMED')}
 function isTransMediName(name){const n=normMeta(name);return n.includes('TRANS MEDI')||n.includes('TRANSMEDI')}
-function isMetaSupplierName(name){const n=normMeta(name);return !!n&&!isHMedName(name)&&!isTransMediName(name)&&META_SUPPLIER_NAMES.has(n)}
+function isMetaSupplierName(name){const n=normMeta(name);return !!n&&!isTransMediName(name)&&(isHMedName(name)||META_SUPPLIER_NAMES.has(n))}
 
 /* ── CARD TYPE ───────────────────────────────────────────── */
 function getCardType(fn, csvMap) {
@@ -480,6 +480,7 @@ function buildRouteEvents(r,idx){
   return defs.map(d=>eventFrom(r,idx,d[0],d[1],d[2],d[3],d[4])).filter(Boolean);
 }
 function isIrisContingencyUser(user){return normMeta(user)==='USUARIO IRIS CONTINGENCIA'}
+function isHmedIntegrationUser(user){return ['HMED INTEGRACAO','HMED ROOT'].includes(normMeta(user))}
 function resourceDepartureUser(events){
   for(const ev of events){
     if(ev.key==='saida_recurso')return String(ev.user||'').trim();
@@ -489,13 +490,18 @@ function resourceDepartureUser(events){
 function hasTokenInserted(rawDisp,dtTok,tokLat,tokLon){
   return !!String(rawDisp||'').trim()&&!!dtTok&&tokLat!=null&&tokLon!=null;
 }
-function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,rastreios){
+function invalidIrisOperationalEvents(events){
+  return events.filter(ev=>ev&&HMED_AUDIT_EVENT_KEYS.has(ev.key)&&ev.time&&!isIrisContingencyUser(ev.user));
+}
+function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,rastreios,events=[]){
   const deviceOk=!!String(rawDisp||'').trim();
   const dateOk=!!dtTok;
   const geoOk=tokLat!=null&&tokLon!=null;
   const userOk=isIrisContingencyUser(resourceUser);
   const trackPoints=Number(rastreios||0);
-  const baseOk=tokenYes&&deviceOk&&dateOk&&geoOk&&userOk;
+  const invalidEvents=invalidIrisOperationalEvents(events);
+  const eventUsersOk=!invalidEvents.length;
+  const baseOk=tokenYes&&deviceOk&&dateOk&&geoOk&&userOk&&eventUsersOk;
   if(baseOk&&trackPoints>=3)return[0,''];
   if(baseOk&&trackPoints===0)return[2,'Tentativa sem sucesso: pontos de rastreio zerados.'];
   const reasons=[];
@@ -504,9 +510,23 @@ function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,ras
   if(!dateOk)reasons.push('Data/hora de inserção do token ausente');
   if(!geoOk)reasons.push('Lat/Long da inserção do token ausente');
   if(!userOk)reasons.push(`Usuário Saída do Recurso diferente de Usuario IRIS Contingencia (${String(resourceUser||'vazio').trim()})`);
+  if(invalidEvents.length){
+    const sample=invalidEvents.slice(0,4).map(ev=>`${ev.label}: ${ev.user||'sem usuÃ¡rio'}`).join('; ');
+    const extra=invalidEvents.length>4?`; +${invalidEvents.length-4} evento(s)`:'';
+    reasons.push(`HorÃ¡rios preenchidos fora do Usuario IRIS Contingencia (${sample}${extra})`);
+  }
   if(trackPoints===0)reasons.push('Pontos de rastreio zerados');
   else if(trackPoints<3)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (mínimo 3)`);
   return[4,reasons.join('; ')||'Fora da regra de usabilidade correta'];
+}
+function classifyHmedTransport(events){
+  const audited=events.filter(ev=>ev&&HMED_AUDIT_EVENT_KEYS.has(ev.key)&&ev.time);
+  if(!audited.length)return[4,'HMED: nenhum horário integrado encontrado para validar'];
+  const invalid=audited.filter(ev=>!isHmedIntegrationUser(ev.user));
+  if(!invalid.length)return[0,''];
+  const sample=invalid.slice(0,4).map(ev=>`${ev.label}: ${ev.user||'sem usuário'}`).join('; ');
+  const extra=invalid.length>4?`; +${invalid.length-4} evento(s)`:'';
+  return[4,`HMED: horários fora da integração (${sample}${extra})`];
 }
 function buildShifts(atts){
   const sh={M:[0,0,[]],T:[0,0,[]],N:[0,0,[]]};
@@ -656,7 +676,7 @@ async function processAll(){
       const disp=dm?(dm[1].trim()+'·'+dm[2]):rawDisp;
       // 0=CORRETO,1=RESERVADO,2=SEM_MOV,3=RESERVADO,4=ERRO
       const resourceUser=resourceDepartureUser(events);
-      const [cl,reason]=classifyTransport(rawDisp,tkn,dtTok,tokLat,tokLon,resourceUser,rst);
+      const [cl,reason]=isHMedName(fn)?classifyHmedTransport(events):classifyTransport(rawDisp,tkn,dtTok,tokLat,tokLon,resourceUser,rst,events);
       const{mes,ano,dt}=parseDate(r[idx.data]);
       const shift=getShift(dt);
       if(!supplierMap[fn])supplierMap[fn]=[];

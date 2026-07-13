@@ -597,10 +597,10 @@ main{max-width:1500px;padding:24px 32px 34px}
     <div class="filter-field">
       <label for="attFilter">Atendimentos</label>
       <select id="attFilter" onchange="setF(this.value)" title="Filtrar atendimentos">
-        <option value="all">Todos fornecedores</option>
-        <option value="focus">Foco 32</option>
+        <option value="all">Todos Fornecedores da Rede</option>
+        <option value="focus">Fornecedores de Maior Representatividade de Remoções</option>
         <option value="training">Base treinamento</option>
-        <option value="hmed">HMED</option>
+        <option value="hmed">Fornecedor HMED</option>
         <option value="cancelados">Cancelados</option>
         <option value="A">A</option>
         <option value="B">B</option>
@@ -699,7 +699,7 @@ main{max-width:1500px;padding:24px 32px 34px}
       <hr class="rd">
       <div class="rsec"><strong>Fórmula:</strong> % = Corretos ÷ Atendimentos válidos × 100. Na regra atual, todos os atendimentos do relatório entram como válidos.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Meta:</strong> foco fixo em 32 fornecedores que utilizam o app. HMED e TransMedi ficam fora da meta foco e podem ser avaliados em filtros separados. Meta-alvo: 80%.</div>
+      <div class="rsec"><strong>Meta:</strong> foco nos fornecedores de maior representatividade de remoções, agora com HMED dentro da meta por regra própria de integração de horários. TransMedi fica fora da meta foco. Meta-alvo: 80%.</div>
       <hr class="rd">
       <div class="rsec"><strong>Base treinamento:</strong> mostra fornecedores encontrados na planilha de implantação/treinamento, hoje com universo de 177 registros.</div>
       <hr class="rd">
@@ -714,7 +714,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260710-regra-token-v1"></script>
+<script src="data.js?v=20260713-horarios-user-v1"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -749,7 +749,7 @@ main{max-width:1500px;padding:24px 32px 34px}
 // ═══════════════════════════════════════════════════════════════
 
 const RAW_D=typeof SD!=='undefined'?SD:{};
-const RAW_GS=typeof GS!=='undefined'?GS:{avg:0,meta:80,updated:'',baseTarget:32,trainingTarget:177};
+const RAW_GS=typeof GS!=='undefined'?GS:{avg:0,meta:80,updated:'',baseTarget:33,trainingTarget:177};
 let D=RAW_D;
 let GS2={...RAW_GS};
 const RULE_MODE=new URLSearchParams(location.search).get('regra')==='token'?'token':'completa';
@@ -757,8 +757,9 @@ let activeF='all';
 let activeMonth='all';
 const MAP_ATTS={};
 const DETAIL_LISTS={};
-const META_SUPPLIER_TOTAL=32;
+const META_SUPPLIER_TOTAL=33;
 const CANCELED_SUPPLIER_NAME='CANCELADOS - FORNECEDOR VAZIO';
+const HMED_AUDIT_EVENT_KEYS=new Set(['saida_recurso','chegada_origem','saida_origem','chegada_destino','saida_destino','lib_destino','chegada_origem_ret','saida_origem_ret','lib_recurso']);
 
 const META_SUPPLIER_NAMES=new Set([
   'ACURA SOLUCOES EM SAUDE SETE LAGOAS',
@@ -819,7 +820,7 @@ function normMeta(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u03
 function isHMedName(name){const n=normMeta(name);return n.includes('H MED')||n.includes('HMED')}
 function isTransMediName(name){const n=normMeta(name);return n.includes('TRANS MEDI')||n.includes('TRANSMEDI')}
 function isCanceledSupplierName(name){return normMeta(name)===normMeta(CANCELED_SUPPLIER_NAME)}
-function isMetaSupplierName(name){const n=normMeta(name);return !!n&&!isHMedName(name)&&!isTransMediName(name)&&META_SUPPLIER_NAMES.has(n)}
+function isMetaSupplierName(name){const n=normMeta(name);return !!n&&!isTransMediName(name)&&(isHMedName(name)||META_SUPPLIER_NAMES.has(n))}
 function monthList(){
   const months=new Map();
   Object.values(D).forEach(v=>{
@@ -888,10 +889,10 @@ function trainingStats(month=activeMonth){
 }
 function filterLabel(filter=activeF){
   return {
-    all:'Todos fornecedores',
-    focus:'Foco 32',
+    all:'Todos Fornecedores da Rede',
+    focus:'Fornecedores de Maior Representatividade de Remoções',
     training:'Base treinamento',
-    hmed:'HMED',
+    hmed:'Fornecedor HMED',
     cancelados:'Cancelados',
     pu:'Especiais'
   }[filter]||`Categoria ${filter}`;
@@ -991,6 +992,23 @@ function resourceDepartureUserFromAtt(a){
   const ev=(Array.isArray(a?.[20])?a[20]:[]).find(e=>e&&e.key==='saida_recurso');
   return String(ev?.user||'').trim();
 }
+function isHmedIntegrationUser(user){
+  return ['HMED INTEGRACAO','HMED ROOT'].includes(normMeta(user));
+}
+function classifyHmedAtt(a){
+  const events=Array.isArray(a?.[20])?a[20]:[];
+  const audited=events.filter(e=>e&&HMED_AUDIT_EVENT_KEYS.has(e.key)&&e.time);
+  if(!audited.length)return[4,'HMED: nenhum horário integrado encontrado para validar'];
+  const invalid=audited.filter(e=>!isHmedIntegrationUser(e.user));
+  if(!invalid.length)return[0,''];
+  const sample=invalid.slice(0,4).map(e=>`${e.label}: ${e.user||'sem usuário'}`).join('; ');
+  const extra=invalid.length>4?`; +${invalid.length-4} evento(s)`:'';
+  return[4,`HMED: horários fora da integração (${sample}${extra})`];
+}
+function invalidIrisOperationalAttEvents(a){
+  const events=Array.isArray(a?.[20])?a[20]:[];
+  return events.filter(e=>e&&HMED_AUDIT_EVENT_KEYS.has(e.key)&&e.time&&!isIrisContingencyUserLabel(e.user));
+}
 function tokenYesFromAtt(a){
   if(typeof a?.[23]==='boolean')return a[23];
   return !!a?.[7];
@@ -999,13 +1017,19 @@ function classifyTokenRule(a){
   const tokenOk=tokenYesFromAtt(a);
   const trackOk=Number(a?.[21]||0)>=3;
   const userOk=normMeta(resourceDepartureUserFromAtt(a))==='USUARIO IRIS CONTINGENCIA';
-  if(tokenOk&&trackOk&&userOk)return [0,''];
+  const invalidEvents=invalidIrisOperationalAttEvents(a);
+  if(tokenOk&&trackOk&&userOk&&!invalidEvents.length)return [0,''];
   const reasons=[];
   if(!tokenOk)reasons.push('TOKEN diferente de SIM');
   if(!trackOk)reasons.push(`Pontos de rastreio insuficientes: ${Number(a?.[21]||0)} (mínimo 3)`);
   if(!userOk){
     const actual=resourceDepartureUserFromAtt(a)||'vazio';
     reasons.push(`Usuário Saída do Recurso diferente de Usuario IRIS Contingencia (${actual})`);
+  }
+  if(invalidEvents.length){
+    const sample=invalidEvents.slice(0,4).map(e=>`${e.label}: ${e.user||'sem usuário'}`).join('; ');
+    const extra=invalidEvents.length>4?`; +${invalidEvents.length-4} evento(s)`:'';
+    reasons.push(`Horários preenchidos fora do Usuario IRIS Contingencia (${sample}${extra})`);
   }
   return [4,reasons.join('; ')];
 }
@@ -1051,12 +1075,16 @@ function buildMetricFromRows(rows){
   const uso=base?Math.round(correto/base*1000)/10:0;
   return {total,correto,cormod,sem,web,erro,base,uso,tokenOk:correto};
 }
-function rebuildSupplierByRule(v,rule){
+function rebuildSupplierByRule(v,rule,name=''){
   const months={};
   Object.entries(v[11]||{}).forEach(([mn,m])=>{
     const rows=(m[11]||[]).map(a=>{
       const b=a.slice();
-      if(rule==='token'){
+      if(isHMedName(name)){
+        const [cl,reason]=classifyHmedAtt(b);
+        b[5]=cl;
+        b[22]=reason;
+      }else if(rule==='token'){
         const [cl,reason]=classifyTokenRule(b);
         b[5]=cl;
         b[22]=reason;
@@ -1072,7 +1100,7 @@ function rebuildSupplierByRule(v,rule){
 }
 function rebuildDataByRule(rule){
   if(rule==='completa')return RAW_D;
-  return Object.fromEntries(Object.entries(RAW_D).map(([name,v])=>[name,rebuildSupplierByRule(v,rule)]));
+  return Object.fromEntries(Object.entries(RAW_D).map(([name,v])=>[name,rebuildSupplierByRule(v,rule,name)]));
 }
 function refreshGsFromData(){
   let ok=0,base=0;
@@ -1552,42 +1580,47 @@ function isIrisContingencyUserLabel(user){
 function stageDetailItem(a,ev){
   return {att:a[0],time:ev?.time||'sem horário',user:ev?.user||'sem usuário'};
 }
-function stageAudit(atts,def){
+function expectedStageUserOk(user,isHmed){
+  return isHmed?isHmedIntegrationUser(user):isIrisContingencyUserLabel(user);
+}
+function stageAudit(atts,def,isHmed){
   const eligible=(def.returnOnly?atts.filter(hasReturnStages):atts).filter(Boolean);
-  const filled=[],external=[];
+  const filled=[],correct=[],external=[];
   eligible.forEach(a=>{
     const ev=eventForStage(a,def.key);
     if(ev&&ev.time){
       filled.push(stageDetailItem(a,ev));
-      if(!isIrisContingencyUserLabel(ev.user))external.push(stageDetailItem(a,ev));
+      if(expectedStageUserOk(ev.user,isHmed))correct.push(stageDetailItem(a,ev));
+      else external.push(stageDetailItem(a,ev));
     }
   });
-  const pct=eligible.length?Math.round(filled.length/eligible.length*1000)/10:0;
-  return {def,eligible,filled,external,pct};
+  const pct=eligible.length?Math.round(correct.length/eligible.length*1000)/10:0;
+  return {def,eligible,filled,correct,external,pct};
 }
-function hourInsertionHtml(v,nid){
+function hourInsertionHtml(v,nid,name){
   const atts=allAtts(v);
-  const stages=HOUR_STAGE_DEFS.map(def=>stageAudit(atts,def));
+  const isHmed=isHMedName(name);
+  const stages=HOUR_STAGE_DEFS.map(def=>stageAudit(atts,def,isHmed));
   const totalExpected=stages.reduce((s,x)=>s+x.eligible.length,0);
-  const totalFilled=stages.reduce((s,x)=>s+x.filled.length,0);
+  const totalCorrect=stages.reduce((s,x)=>s+x.correct.length,0);
   const totalExternal=stages.reduce((s,x)=>s+x.external.length,0);
-  const generalPct=totalExpected?Math.round(totalFilled/totalExpected*1000)/10:0;
+  const generalPct=totalExpected?Math.round(totalCorrect/totalExpected*1000)/10:0;
   const allExternal=stages.flatMap(x=>x.external.map(item=>({...item,stage:x.def.label})));
   const generalId=registerDetailList(`${nid}_hour_general`,allExternal);
-  const card=(label,pct,filled,total,external,id,general=false)=>{
+  const card=(label,pct,correct,total,external,id,general=false)=>{
     const color=pct>=90?'#059669':pct>=70?'#d97706':'#dc2626';
     return `<div class="hour-card ${general?'general':''}" onclick="openDetailList('${id}','${esc(label)}')">
       <div class="hour-top"><div class="hour-name">${esc(label)}</div><div class="hour-pct" style="color:${color}">${pct}%</div></div>
       <div class="hour-bar"><div class="hour-fill" style="width:${Math.min(100,pct)}%;background:${color}"></div></div>
-      <div class="hour-meta"><span>${filled}/${total} horários</span><span class="${external?'hour-alert':''}">${external} fora do padrão</span></div>
+      <div class="hour-meta"><span>${correct}/${total} corretos</span><span class="${external?'hour-alert':''}">${external} fora do padrão</span></div>
     </div>`;
   };
   const cards=stages.map(x=>{
     const id=registerDetailList(`${nid}_hour_${x.def.key}`,x.external);
-    return card(x.def.label,x.pct,x.filled.length,x.eligible.length,x.external.length,id);
+    return card(x.def.label,x.pct,x.correct.length,x.eligible.length,x.external.length,id);
   }).join('');
   return `<div class="hour-grid">
-    ${card('Geral das etapas',generalPct,totalFilled,totalExpected,totalExternal,generalId,true)}
+    ${card('Geral das etapas',generalPct,totalCorrect,totalExpected,totalExternal,generalId,true)}
     ${cards}
   </div>`;
 }
@@ -1638,7 +1671,7 @@ function openM(name){
     </div>
 
     ${sectionTitle('Inserção Horários','icon-clock','green')}
-    ${hourInsertionHtml(v,nid)}
+    ${hourInsertionHtml(v,nid,name)}
 
     ${sectionTitle('Versão do APP','icon-smartphone','green')}
     ${supplierDeviceHtml(v)}
@@ -2006,12 +2039,14 @@ function renderRulesContent(){
     desc.textContent='Visão alternativa: classifica a utilização somente por TOKEN SIM, 3 ou mais pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.';
     rows.innerHTML=`
       <tr><td>Usabilidade correta</td><td>Token SIM, 3 ou mais pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
       <tr><td>Erro</td><td>Qualquer atendimento sem TOKEN SIM, com menos de 3 pontos de rastreio ou com usuário da Saída do Recurso diferente de Usuario IRIS Contingencia.</td><td><span class="rtag er">ERRO</span></td></tr>
     `;
   }else{
     desc.textContent='Como cada atendimento é classificado pela regra atual de usabilidade e como a meta é calculada.';
     rows.innerHTML=`
       <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida, 3 ou mais pontos de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
       <tr><td>Tentativa sem sucesso</td><td>Quando as validações principais passam, mas o transporte tem 0 pontos de rastreio. Entra como sem movimentação e reduz a meta.</td><td><span class="rtag sm">SEM MOV.</span></td></tr>
       <tr><td>Rastreio insuficiente</td><td>Com 1 ou 2 pontos de rastreio, o atendimento não fecha a regra de usabilidade correta e o motivo aparece no tooltip.</td><td><span class="rtag er">ERRO</span></td></tr>
       <tr><td>Erro</td><td>Qualquer atendimento diferente das regras acima.</td><td><span class="rtag er">ERRO</span></td></tr>
