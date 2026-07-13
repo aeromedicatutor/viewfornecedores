@@ -701,6 +701,8 @@ main{max-width:1500px;padding:24px 32px 34px}
       <hr class="rd">
       <div class="rsec"><strong>Meta:</strong> foco nos fornecedores de maior representatividade de remoções, agora com HMED dentro da meta por regra própria de integração de horários. TransMedi fica fora da meta foco. Meta-alvo: 80%.</div>
       <hr class="rd">
+      <div class="rsec"><strong>Inserção Horários:</strong> para fornecedores da rede, é indicador de assertividade no modal e não altera a regra de usabilidade/meta. A exceção é HMED, que usa a integração de horários como regra própria.</div>
+      <hr class="rd">
       <div class="rsec"><strong>Base treinamento:</strong> mostra fornecedores encontrados na planilha de implantação/treinamento, hoje com universo de 177 registros.</div>
       <hr class="rd">
       <div class="rsec"><strong>Ranking:</strong> ranqueado por % de CORRETO. Sem movimentação e erro reduzem a usabilidade.</div>
@@ -714,7 +716,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260713-horarios-user-v1"></script>
+<script src="data.js?v=20260713-horarios-indicador-v1"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -1005,10 +1007,6 @@ function classifyHmedAtt(a){
   const extra=invalid.length>4?`; +${invalid.length-4} evento(s)`:'';
   return[4,`HMED: horários fora da integração (${sample}${extra})`];
 }
-function invalidIrisOperationalAttEvents(a){
-  const events=Array.isArray(a?.[20])?a[20]:[];
-  return events.filter(e=>e&&HMED_AUDIT_EVENT_KEYS.has(e.key)&&e.time&&!isIrisContingencyUserLabel(e.user));
-}
 function tokenYesFromAtt(a){
   if(typeof a?.[23]==='boolean')return a[23];
   return !!a?.[7];
@@ -1017,19 +1015,13 @@ function classifyTokenRule(a){
   const tokenOk=tokenYesFromAtt(a);
   const trackOk=Number(a?.[21]||0)>=3;
   const userOk=normMeta(resourceDepartureUserFromAtt(a))==='USUARIO IRIS CONTINGENCIA';
-  const invalidEvents=invalidIrisOperationalAttEvents(a);
-  if(tokenOk&&trackOk&&userOk&&!invalidEvents.length)return [0,''];
+  if(tokenOk&&trackOk&&userOk)return [0,''];
   const reasons=[];
   if(!tokenOk)reasons.push('TOKEN diferente de SIM');
   if(!trackOk)reasons.push(`Pontos de rastreio insuficientes: ${Number(a?.[21]||0)} (mínimo 3)`);
   if(!userOk){
     const actual=resourceDepartureUserFromAtt(a)||'vazio';
     reasons.push(`Usuário Saída do Recurso diferente de Usuario IRIS Contingencia (${actual})`);
-  }
-  if(invalidEvents.length){
-    const sample=invalidEvents.slice(0,4).map(e=>`${e.label}: ${e.user||'sem usuário'}`).join('; ');
-    const extra=invalidEvents.length>4?`; +${invalidEvents.length-4} evento(s)`:'';
-    reasons.push(`Horários preenchidos fora do Usuario IRIS Contingencia (${sample}${extra})`);
   }
   return [4,reasons.join('; ')];
 }
