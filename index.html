@@ -691,6 +691,7 @@ main{max-width:1500px;padding:24px 32px 34px}
         <thead><tr><th>Critério</th><th>Exigência</th><th>Resultado</th></tr></thead>
         <tbody id="rulesRows">
           <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida e mais de 3 pontos de rastreio. Se a Saída do Recurso estiver diferente de Usuario IRIS Contingencia, mas os demais sinais estiverem completos, também é CORRETO.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+          <tr><td>Inteligência de rastreio</td><td>Token SIM, mais de 3 rastreios, Saída do Recurso e Chegada no Destino pelo IRIS também podem validar como CORRETO quando houve falha em trazer o dispositivo. Esses casos aparecem com alerta.</td><td><span class="rtag mod">ALERTA</span></td></tr>
           <tr><td>Tentativa sem sucesso</td><td>Quando as validações principais passam, mas o transporte tem 0 pontos de rastreio. Entra como sem movimentação e reduz a meta.</td><td><span class="rtag sm">SEM MOV.</span></td></tr>
           <tr><td>Rastreio insuficiente</td><td>Com 1 ou 2 pontos de rastreio, o atendimento não fecha a regra de usabilidade correta e o motivo aparece no tooltip.</td><td><span class="rtag er">ERRO</span></td></tr>
           <tr><td>Erro</td><td>Qualquer atendimento diferente das regras acima.</td><td><span class="rtag er">ERRO</span></td></tr>
@@ -716,7 +717,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260713-gop-rastreio-v1"></script>
+<script src="data.js?v=20260713-inteligencia-rastreio-v2"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -994,6 +995,10 @@ function resourceDepartureUserFromAtt(a){
   const ev=(Array.isArray(a?.[20])?a[20]:[]).find(e=>e&&e.key==='saida_recurso');
   return String(ev?.user||'').trim();
 }
+function eventUserFromAtt(a,key){
+  const ev=(Array.isArray(a?.[20])?a[20]:[]).find(e=>e&&e.key===key);
+  return String(ev?.user||'').trim();
+}
 function isHmedIntegrationUser(user){
   return ['HMED INTEGRACAO','HMED ROOT'].includes(normMeta(user));
 }
@@ -1015,6 +1020,10 @@ function classifyTokenRule(a){
   const tokenOk=tokenYesFromAtt(a);
   const trackOk=Number(a?.[21]||0)>3;
   const userOk=normMeta(resourceDepartureUserFromAtt(a))==='USUARIO IRIS CONTINGENCIA';
+  const destUserOk=normMeta(eventUserFromAtt(a,'chegada_destino'))==='USUARIO IRIS CONTINGENCIA';
+  if(tokenOk&&trackOk&&userOk&&destUserOk&&!a?.[6]){
+    return [0,'Correto por inteligência de rastreio: TOKEN SIM, Saída do Recurso e Chegada no Destino pelo IRIS, mas houve falha em trazer dispositivo.'];
+  }
   if(tokenOk&&trackOk&&userOk)return [0,''];
   const reasons=[];
   if(!tokenOk)reasons.push('TOKEN diferente de SIM');
@@ -1484,15 +1493,16 @@ function attRow(a){
   const parada=a[19]||'—';
   const eo=(a[14]||'').replace(/'/g,"\\'");
   const ed=(a[15]||'').replace(/'/g,"\\'");
-  const motive=a[22]||'Fora da regra de usabilidade correta';
-  const reasonWarn=(cl===2||cl===4)?`<span class="geo-alert" title="${esc(motive)}">${icon('icon-alert')}</span>`:'';
+  const motive=a[22]||'';
+  const reasonTitle=motive||'Fora da regra de usabilidade correta';
+  const reasonWarn=(motive||cl===2||cl===4)?`<span class="geo-alert" title="${esc(reasonTitle)}">${icon('icon-alert')}</span>`:'';
   return`<tr class="${RCLS[cl]||''}">
     <td><span class="anum">#${a[0]}</span></td>
     <td style="white-space:nowrap;font-size:.65rem;color:#6b7280">${a[1]||'—'}</td>
     <td style="text-align:center;font-size:.82rem" title="${SHIFT_TTL[a[2]]||''}">${SHIFT_ICO[a[2]]||'?'}</td>
     <td><span class="apers" title="${a[3]||''}">${a[3]||'—'}</span></td>
     <td><span class="apers" title="${a[4]||''}">${a[4]||'—'}</span></td>
-    <td><span class="status-cell"><span class="atag ${TCLS[cl]}" title="${cl===2||cl===4?esc(motive):''}">${CLBL[cl]}</span>${reasonWarn}</span></td>
+    <td><span class="status-cell"><span class="atag ${TCLS[cl]}" title="${motive||cl===2||cl===4?esc(reasonTitle):''}">${CLBL[cl]}</span>${reasonWarn}</span></td>
     <td style="font-size:.62rem;color:#6b7280;white-space:nowrap">${a[6]||'—'}</td>
     <td style="white-space:nowrap;font-size:.65rem;color:#7c3aed;font-weight:600">${a[7]||'—'}</td>
     <td style="text-align:center;font-size:.65rem;font-weight:700;color:${dcl}">${dvl}</td>
@@ -2038,6 +2048,7 @@ function renderRulesContent(){
     desc.textContent='Como cada atendimento é classificado pela regra atual de usabilidade e como a meta é calculada.';
     rows.innerHTML=`
       <tr><td>Usabilidade correta</td><td>Token SIM, dispositivo informado, data/hora do token, Lat/Long do token preenchida e mais de 3 pontos de rastreio. Se a Saída do Recurso estiver diferente de Usuario IRIS Contingencia, mas os demais sinais estiverem completos, também é CORRETO.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Inteligência de rastreio</td><td>Token SIM, mais de 3 rastreios, Saída do Recurso e Chegada no Destino pelo IRIS também podem validar como CORRETO quando houve falha em trazer o dispositivo. Esses casos aparecem com alerta.</td><td><span class="rtag mod">ALERTA</span></td></tr>
       <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
       <tr><td>Tentativa sem sucesso</td><td>Quando as validações principais passam, mas o transporte tem 0 pontos de rastreio. Entra como sem movimentação e reduz a meta.</td><td><span class="rtag sm">SEM MOV.</span></td></tr>
       <tr><td>Rastreio insuficiente</td><td>Com 1 ou 2 pontos de rastreio, o atendimento não fecha a regra de usabilidade correta e o motivo aparece no tooltip.</td><td><span class="rtag er">ERRO</span></td></tr>
