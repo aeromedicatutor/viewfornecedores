@@ -323,7 +323,7 @@ function buildRanking(atts) {
   //       0   1      2     3    4   5
   const cond = {}, enf = {};
   for (const a of atts) {
-    const ok = a[5] === 0;
+    const ok = a[5] === 0 || a[5] === 1;
     if (a[3]) {
       if (!cond[a[3]]) cond[a[3]] = [0,0];
       ok ? cond[a[3]][0]++ : cond[a[3]][1]++;
@@ -415,6 +415,12 @@ function haversineKm(la1,lo1,la2,lo2){
   const a=Math.sin(dL/2)**2+Math.cos(r(la1))*Math.cos(r(la2))*Math.sin(dO/2)**2;
   return Math.round(R*2*Math.asin(Math.sqrt(a))*1.35*10)/10;
 }
+function geoDistanceKm(la1,lo1,la2,lo2){
+  if(!isBrazil(la1,lo1)||!isBrazil(la2,lo2))return null;
+  const R=6371,r=x=>x*Math.PI/180,dL=r(la2-la1),dO=r(lo2-lo1);
+  const a=Math.sin(dL/2)**2+Math.cos(r(la1))*Math.cos(r(la2))*Math.sin(dO/2)**2;
+  return Math.round(R*2*Math.asin(Math.sqrt(a))*1000)/1000;
+}
 function getShift(dt){
   if(!dt)return'N';
   const m=dt.match(/(\d{1,2})\/(\d{1,2})\s+(\d{1,2}):/);
@@ -494,6 +500,214 @@ function eventUser(events,key){
   }
   return '';
 }
+function eventByKey(events,key){
+  return events.find(ev=>ev&&ev.key===key)||null;
+}
+const ROUTE_MATCH_RADIUS_KM=0.1;
+const USER_META_EVENT_LABELS=[
+  ['saida_recurso','Saída da Base'],
+  ['chegada_origem','Chegada na Origem'],
+  ['saida_origem','Saída da Origem'],
+  ['chegada_destino','Chegada no Destino'],
+  ['saida_destino','Saída do Destino'],
+  ['lib_destino','Liberação do Destino'],
+  ['chegada_origem_ret','Chegada na Origem Volta'],
+  ['saida_origem_ret','Saída da Origem Volta'],
+  ['lib_recurso','Liberação do Recurso']
+];
+const USER_META_EVENT_KEYS=new Set(USER_META_EVENT_LABELS.map(([key])=>key));
+const EXPECTED_IDA_KEYS=['saida_recurso','chegada_origem','saida_origem','chegada_destino','lib_destino','lib_recurso'];
+const EXPECTED_ROUND_TRIP_KEYS=['saida_recurso','chegada_origem','saida_origem','chegada_destino','saida_destino','lib_destino','chegada_origem_ret','saida_origem_ret','lib_recurso'];
+function routeQuality(events,lat1,lon1,lat2,lon2){
+  const checks=[];
+  const hasReturn=!!(eventByKey(events,'chegada_origem_ret')||eventByKey(events,'saida_origem_ret'));
+  function check(label,event,refLat,refLon){
+    if(!isBrazil(refLat,refLon)){checks.push({label,ok:false,distance:null,reason:`${label}: endereço oficial sem Lat/Long válida`});return;}
+    if(!event){checks.push({label,ok:false,distance:null,reason:`${label}: etapa não registrada no APP`});return;}
+    if(event.lat==null||event.lon==null){checks.push({label,ok:false,distance:null,reason:`${label}: etapa sem ponto de geolocalização`});return;}
+    const distance=geoDistanceKm(refLat,refLon,event.lat,event.lon);
+    const ok=distance!=null&&distance<=ROUTE_MATCH_RADIUS_KM;
+    checks.push({label,ok,distance,reason:distance!=null?`${label}: ${distance.toFixed(2)} km do ponto oficial`:`${label}: distância indisponível`});
+  }
+  check('Chegada na Origem',eventByKey(events,'chegada_origem'),lat1,lon1);
+  check('Chegada no Destino',eventByKey(events,'chegada_destino'),lat2,lon2);
+  if(hasReturn)check('Chegada na Origem Volta',eventByKey(events,'chegada_origem_ret'),lat1,lon1);
+  const invalid=checks.filter(c=>!c.ok);
+  return {ok:!invalid.length,reason:invalid.map(c=>c.reason).join('; '),checks};
+}
+function classifyRouteTransport(events,lat1,lon1,lat2,lon2){
+  const q=routeQuality(events,lat1,lon1,lat2,lon2);
+  return q.ok?[0,'']:[4,q.reason||'Fora da regra operacional de chegada na origem/destino'];
+}
+function userStageAudit(events){
+  const labels=Object.fromEntries(USER_META_EVENT_LABELS);
+  const audited=events.filter(ev=>ev&&USER_META_EVENT_KEYS.has(ev.key)&&ev.time);
+  const checks=audited.map(ev=>{
+    const user=String(ev.user||'').trim();
+    const ok=isIrisContingencyUser(user);
+    const label=labels[ev.key]||ev.label||ev.key;
+    return {key:ev.key,label,time:ev.time||'',user,ok,reason:ok?'':`${label}: usuário diferente de Usuario IRIS Contingencia (${user||'vazio'})`};
+  });
+  const invalid=checks.filter(c=>!c.ok);
+  if(!checks.length)return{ok:false,reason:'Nenhuma chegada/saída com horário preenchido pelo APP para validar usuário',checks};
+  if(invalid.length)return{ok:false,reason:invalid.map(c=>c.reason).join('; '),checks};
+  return{ok:true,reason:'',checks};
+}
+function classifyUserTransport(tokenYes,events){
+  if(!tokenYes)return[4,'TOKEN diferente de SIM'];
+  const audit=userStageAudit(events);
+  return audit.ok?[0,'']:[4,audit.reason||'Etapas operacionais fora do usuário Usuario IRIS Contingencia'];
+}
+function expectedStageKeysV2(events){
+  const hasReturn=!!(eventByKey(events,'chegada_origem_ret')||eventByKey(events,'saida_origem_ret'));
+  return {keys:hasReturn?EXPECTED_ROUND_TRIP_KEYS:EXPECTED_IDA_KEYS,hasReturn};
+}
+function userStageAuditV2(events){
+  const labels=Object.fromEntries(USER_META_EVENT_LABELS);
+  const {keys,hasReturn}=expectedStageKeysV2(events);
+  const checks=keys.map(key=>{
+    const ev=eventByKey(events,key);
+    if(!ev||!ev.time){
+      const label=labels[key]||key;
+      return {key,label,time:'',user:'',ok:false,missing:true,differentUser:false,reason:`${label}: etapa não preenchida`};
+    }
+    const user=String(ev.user||'').trim();
+    const ok=isIrisContingencyUser(user);
+    const label=labels[ev.key]||ev.label||ev.key;
+    return {key:ev.key,label,time:ev.time||'',user,ok,missing:false,differentUser:!ok,reason:ok?'':`${label}: usuário diferente de Usuario IRIS Contingencia (${user||'vazio'})`};
+  });
+  const missing=checks.filter(c=>c.missing);
+  const different=checks.filter(c=>c.differentUser);
+  const filled=checks.filter(c=>!c.missing);
+  const summary={expected:checks.length,filled:filled.length,missing:missing.length,differentUser:different.length,hasRoundTrip:hasReturn};
+  if(missing.length)return{ok:false,reason:missing.map(c=>c.reason).join('; '),checks,summary};
+  if(different.length)return{ok:true,reason:'Houve Correção: '+different.map(c=>c.reason).join('; '),checks,summary};
+  return{ok:true,reason:'',checks,summary};
+}
+function userEvidenceAudit(events){
+  const labels=Object.fromEntries(USER_META_EVENT_LABELS);
+  const {keys,hasReturn}=expectedStageKeysV2(events);
+  const checks=keys.map(key=>{
+    const ev=eventByKey(events,key);
+    const label=labels[key]||key;
+    if(!ev||!ev.time)return{key,label,time:'',user:'',ok:false,missing:true,differentUser:false,hasPoint:false,reason:`${label}: etapa nÃ£o preenchida`};
+    const user=String(ev.user||'').trim();
+    const ok=isIrisContingencyUser(user);
+    return{key,label,time:ev.time||'',user,ok,missing:false,differentUser:!ok,hasPoint:ev.lat!=null&&ev.lon!=null,reason:ok?'':`${label}: usuÃ¡rio diferente de Usuario IRIS Contingencia (${user||'vazio'})`};
+  });
+  const filled=checks.filter(c=>!c.missing);
+  const missing=checks.filter(c=>c.missing);
+  const different=checks.filter(c=>c.differentUser);
+  const summary={expected:checks.length,filled:filled.length,missing:missing.length,differentUser:different.length,hasRoundTrip:hasReturn};
+  return{
+    ok:!!filled.length&&!missing.length&&!different.length,
+    allUsersContingency:!!filled.length&&!missing.length&&!different.length,
+    allUsersDifferent:!!filled.length&&!missing.length&&filled.every(c=>c.differentUser),
+    allPointLatLong:!!filled.length&&!missing.length&&filled.every(c=>c.hasPoint),
+    checks,summary,reason:[...missing,...different].map(c=>c.reason).join('; ')
+  };
+}
+function gmapsAvailability(events){
+  const pts=events.filter(ev=>ev&&USER_META_EVENT_KEYS.has(ev.key)&&ev.lat!=null&&ev.lon!=null);
+  if(pts.length<2)return{ok:false,reason:`Não foi possível montar rota no Google: apenas ${pts.length} ponto(s) com Lat/Long nas etapas.`};
+  return{ok:true,reason:''};
+}
+function paymentDecisionEvidence(scenario,evidence,stageSummary,gmapsOk=true,gmapsReason=''){
+  const payable=['correto_perfeito','correto','edicao_gop','falha_geolocalizacao','sem_movimentacao'].includes(scenario);
+  const attention=[];
+  if(stageSummary&&stageSummary.missing)attention.push(`${stageSummary.missing} etapa(s) esperada(s) sem horario`);
+  if(stageSummary&&stageSummary.differentUser)attention.push(`${stageSummary.differentUser} etapa(s) com usuario diferente`);
+  if(!evidence.nearRoute)attention.push('proximidade origem/destino sem comprovacao em 100m');
+  if(!evidence.allPointLatLong)attention.push('relatorio com Lat/Long ausente em alguma etapa');
+  if(!gmapsOk&&gmapsReason)attention.push(gmapsReason);
+  if(!payable)return{payable:false,level:'deny',title:'Nao pagar sem analise',reason:'Evidencia insuficiente de uso do TOKEN e execucao do transporte pelo APP.'};
+  if(scenario==='correto_perfeito')return{payable:true,level:'pay',title:'Pagamento liberado',reason:'TOKEN, dispositivo, horarios, rastreio, usuario, coordenadas e proximidade origem/destino confirmados.'};
+  if(scenario==='falha_geolocalizacao')return{payable:true,level:'warn',title:'Pagamento com analise de geolocalizacao',reason:attention.join('; ')||'Ha evidencia de uso do TOKEN, mas a geolocalizacao nao foi captada.'};
+  return{payable:true,level:'warn',title:'Pagamento liberado com atencao',reason:attention.join('; ')||'Transporte possui evidencia suficiente, mas com ressalvas operacionais.'};
+}
+function parseDeviceInfo(raw){
+  const text=String(raw||'').trim();
+  if(!text)return{raw:'',model:'',androidVersion:'',appVersion:''};
+  const full=text.match(/^(.+?)\s*\((Android[^)]*)\)\s*-\s*([\d.]+)$/i);
+  if(full)return{raw:text,model:full[1].trim(),androidVersion:full[2].trim(),appVersion:full[3].trim()};
+  const simple=text.match(/^(.+?)\s*-\s*([\d.]+)$/);
+  if(simple)return{raw:text,model:simple[1].trim(),androidVersion:'',appVersion:simple[2].trim()};
+  return{raw:text,model:text,androidVersion:'',appVersion:''};
+}
+function buildEvidenceTransport(rawDisp,tokenYes,tokenTimeOk,tokLat,tokLon,rastreios,appTimes,events,routeOk=true,routeReason='',gmapsOk=true,gmapsReason=''){
+  const deviceOk=!!String(rawDisp||'').trim();
+  const tokenLatLong=tokLat!=null&&tokLon!=null;
+  const trackPoints=Number(rastreios||0);
+  const trackingOk=trackPoints>=1;
+  const audit=userEvidenceAudit(events);
+  const s=audit.summary;
+  const evidence={tokenLatLong,device:deviceOk,token:!!tokenYes,tracking:trackingOk,trackingPoints:trackPoints,allUsersContingency:audit.allUsersContingency,allUsersDifferent:audit.allUsersDifferent,allPointLatLong:audit.allPointLatLong,nearRoute:!!routeOk,appTimes:!!appTimes,tokenTime:!!tokenTimeOk,gopEdited:!!s.differentUser};
+  const filledEvents=(s.filled||0)>0;
+  const tokenEvidence=!!(tokenYes||deviceOk||appTimes||tokenLatLong||tokenTimeOk);
+  const noEventGeolocation=!audit.checks.some(c=>c.hasPoint);
+  const requiredPartial=tokenYes&&trackingOk&&appTimes&&deviceOk;
+  let scenario='erro',label='Nao usou o TOKEN',cl=4,reasons=[];
+  if(!tokenYes&&!deviceOk&&!trackingOk&&audit.allUsersContingency&&!tokenLatLong&&!appTimes){
+    scenario='preenchimento_web';label='Preenchimento WEB';cl=3;
+    reasons.push('Horarios preenchidos por Usuario IRIS Contingencia, mas sem evidencia de TOKEN, dispositivo ou rastreio.');
+  }else if(!tokenYes&&tokenLatLong&&deviceOk&&trackPoints===0&&audit.allUsersContingency&&appTimes){
+    scenario='sem_movimentacao';label='Sem movimentacao';cl=2;
+    reasons.push('Tentativa com evidencia de APP, porem sem pontos de rastreio.');
+  }else if(tokenEvidence&&(!trackingOk||noEventGeolocation||!tokenLatLong)){
+    scenario='falha_geolocalizacao';label='Usou TOKEN com falha de geolocalizacao';cl=1;
+    if(!tokenYes)reasons.push('TOKEN diferente de SIM, mas ha outra evidencia de insercao/uso');
+    if(!deviceOk)reasons.push('Dispositivo nao informado');
+    if(!appTimes)reasons.push('Horarios via APP ausentes');
+    if(!filledEvents)reasons.push('Nenhuma etapa operacional preenchida para validar usuarios');
+    if(!tokenLatLong)reasons.push('Lat/Long da insercao do TOKEN ausente');
+    if(!trackingOk)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (necessario >= 1)`);
+    if(noEventGeolocation)reasons.push('Sem Lat/Long em todos os eventos da remocao');
+    else if(!audit.allPointLatLong)reasons.push('Lat/Long ausente nos pontos das etapas');
+    if(s.differentUser)reasons.push(`${s.differentUser} etapa(s) com usuario diferente de Usuario IRIS Contingencia`);
+  }else if(!tokenYes&&!tokenLatLong&&!deviceOk&&!trackingOk&&!appTimes){
+    scenario='nao_usou_token';label='Nao usou o TOKEN';cl=4;
+    reasons.push('Sem evidencia de TOKEN, dispositivo, rastreio, Lat/Long de insercao ou horarios via APP.');
+  }else if(requiredPartial){
+    const optional=[];
+    if(!tokenLatLong)optional.push('Lat/Long da insercao do TOKEN ausente');
+    if(!audit.allUsersContingency){
+      if(s.differentUser)optional.push('Houve Edicao GOP: etapas preenchidas por usuario diferente de Usuario IRIS Contingencia');
+      if(s.missing)optional.push(`${s.missing} etapa(s) esperada(s) sem horario`);
+    }
+    if(!audit.allPointLatLong)optional.push('Lat/Long ausente em pontos das etapas; possivel falha do relatorio');
+    if(!routeOk)optional.push(`Validacao 100m origem/destino nao comprovada: ${routeReason||'sem pontos suficientes'}`);
+    if(!gmapsOk)optional.push(gmapsReason);
+    if(!tokenTimeOk)optional.push('Data/hora de insercao do TOKEN ausente');
+    if(!optional.length&&tokenLatLong&&audit.allUsersContingency&&audit.allPointLatLong&&routeOk){scenario='correto_perfeito';label='Correto perfeito';cl=0;}
+    else{
+      if(evidence.gopEdited||audit.allUsersDifferent){scenario='edicao_gop';label='Houve correcao GOP';}
+      else{scenario='correto';label='Correto';}
+      cl=1;reasons=optional.length?optional:['Correto com ressalva operacional.'];
+    }
+  }else{
+    if(!tokenYes)reasons.push('TOKEN diferente de SIM');
+    if(!deviceOk)reasons.push('Dispositivo nao informado');
+    if(!trackingOk)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (necessario >= 1)`);
+    if(!appTimes)reasons.push('Horarios via APP ausentes');
+    if(!tokenLatLong)reasons.push('Lat/Long da insercao do TOKEN ausente');
+    if(s.missing)reasons.push(`${s.missing} etapa(s) esperada(s) sem horario`);
+    if(s.differentUser)reasons.push(`${s.differentUser} etapa(s) com usuario diferente de Usuario IRIS Contingencia`);
+  }
+  const info={scenario,scenarioLabel:label,evidence,stageSummary:s,userOk:audit.ok,userReason:audit.reason,userChecks:audit.checks,userSummary:s,gmapsOk,gmapsReason,device:parseDeviceInfo(rawDisp)};
+  info.payment=paymentDecisionEvidence(scenario,evidence,s,gmapsOk,gmapsReason);
+  return[cl,reasons.join('; '),info];
+}
+function classifyUserTransportV2(tokenYes,events,routeOk=true,routeReason='',gmapsOk=true,gmapsReason=''){
+  if(!tokenYes)return[4,'TOKEN diferente de SIM'];
+  const audit=userStageAuditV2(events);
+  if(!audit.ok)return[4,audit.reason||'Etapas operacionais fora do usuário Usuario IRIS Contingencia'];
+  const attention=[];
+  if(audit.summary&&audit.summary.differentUser)attention.push(audit.reason);
+  if(!routeOk&&routeReason)attention.push(`Inconsistência de geolocalização: ${routeReason}`);
+  if(!gmapsOk&&gmapsReason)attention.push(gmapsReason);
+  return attention.length?[1,attention.join(' | ')]:[0,''];
+}
+function isCorrectClass(cl){return cl===0||cl===1||cl===2}
 function hasTokenInserted(rawDisp,dtTok,tokLat,tokLon){
   return !!String(rawDisp||'').trim()&&!!dtTok&&tokLat!=null&&tokLon!=null;
 }
@@ -504,7 +718,7 @@ function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,ras
   const userOk=isIrisContingencyUser(resourceUser);
   const destUserOk=isIrisContingencyUser(eventUser(events,'chegada_destino'));
   const trackPoints=Number(rastreios||0);
-  const usageOk=tokenYes&&deviceOk&&dateOk&&geoOk&&trackPoints>3;
+  const usageOk=tokenYes&&deviceOk&&dateOk&&geoOk&&trackPoints>=1;
   const baseOk=tokenYes&&deviceOk&&dateOk&&geoOk&&userOk;
   if(usageOk){
     if(!userOk||!destUserOk)return[0,'Correto por inteligência de rastreio: houve uso real do app e a operação pode ter alterado Saída do Recurso ou Chegada no Destino no sistema.'];
@@ -519,7 +733,7 @@ function classifyTransport(rawDisp,tokenYes,dtTok,tokLat,tokLon,resourceUser,ras
   if(!userOk)reasons.push(`Usuário Saída do Recurso diferente de Usuario IRIS Contingencia (${String(resourceUser||'vazio').trim()})`);
   if(!destUserOk)reasons.push(`Usuário Chegada no Destino diferente de Usuario IRIS Contingencia (${eventUser(events,'chegada_destino')||'vazio'})`);
   if(trackPoints===0)reasons.push('Pontos de rastreio zerados');
-  else if(trackPoints<=3)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (necessário maior que 3)`);
+  else if(trackPoints<1)reasons.push(`Pontos de rastreio insuficientes: ${trackPoints} (necessário >= 1)`);
   return[4,reasons.join('; ')||'Fora da regra de usabilidade correta'];
 }
 function classifyHmedTransport(events){
@@ -533,11 +747,11 @@ function classifyHmedTransport(events){
 }
 function buildShifts(atts){
   const sh={M:[0,0,[]],T:[0,0,[]],N:[0,0,[]]};
-  for(const a of atts){const cl=a[5];const s=a[2];if(!sh[s])continue;sh[s][1]++;if(cl===0)sh[s][0]++;sh[s][2].push(a[0]);}
+  for(const a of atts){const cl=a[5];const s=a[2];if(!sh[s])continue;sh[s][1]++;if(isCorrectClass(cl))sh[s][0]++;sh[s][2].push(a[0]);}
   return Object.fromEntries(Object.entries(sh).map(([k,v])=>[k,[v[0],v[1],v[1]>0?+(v[0]/v[1]*100).toFixed(1):0,v[2]]]));
 }
 function buildTokDelay(atts){
-  const ds=atts.filter(a=>a[8]!==null&&a[8]!==undefined&&a[5]===0).map(a=>a[8]);
+  const ds=atts.filter(a=>a[8]!==null&&a[8]!==undefined&&isCorrectClass(a[5])).map(a=>a[8]);
   if(!ds.length)return null;
   const avg=+(ds.reduce((s,v)=>s+v,0)/ds.length).toFixed(1);
   return[avg,ds.length,Math.min(...ds),Math.max(...ds)];
@@ -679,16 +893,26 @@ async function processAll(){
       const disp=dm?(dm[1].trim()+'·'+dm[2]):rawDisp;
       // 0=CORRETO,1=RESERVADO,2=SEM_MOV,3=RESERVADO,4=ERRO
       const resourceUser=resourceDepartureUser(events);
-      const [cl,reason]=isHMedName(fn)?classifyHmedTransport(events):classifyTransport(rawDisp,tkn,dtTok,tokLat,tokLon,resourceUser,rst,events);
+      const rq=routeQuality(events,lat1,lon1,lat2,lon2);
+      const uq=userStageAuditV2(events);
+      const gq=gmapsAvailability(events);
+      let cl,reason,evidenceInfo;
+      if(isHMedName(fn)){
+        [cl,reason]=classifyHmedTransport(events);
+        evidenceInfo={scenario:cl===0?'hmed_integracao':'hmed_erro',scenarioLabel:cl===0?'HMED integracao':'HMED erro',evidence:{token:!!tkn,trackingPoints:rst,tracking:rst>=1,appTimes:!!hor},stageSummary:uq.summary,userOk:uq.ok,userReason:uq.reason,userChecks:uq.checks,userSummary:uq.summary,gmapsOk:gq.ok,gmapsReason:gq.reason,device:parseDeviceInfo(rawDisp),payment:{payable:cl===0,level:cl===0?'pay':'deny',title:cl===0?'Pagamento liberado':'Nao pagar sem analise',reason:cl===0?'HMED com integracao de horarios validada.':reason}};
+      }else{
+        [cl,reason,evidenceInfo]=buildEvidenceTransport(rawDisp,tkn,!!dtTok,tokLat,tokLon,rst,hor,events,rq.ok,rq.reason,gq.ok,gq.reason);
+      }
       const{mes,ano,dt}=parseDate(r[idx.data]);
       const shift=getShift(dt);
       if(!supplierMap[fn])supplierMap[fn]=[];
-      // [num,dt_rem,shift,cond,enf,cl,disp,dtTok,delay,km,lat1,lon1,lat2,lon2,eo,ed,tokLat,tokLon,kmRodado,horaParada,events,rastreios,motivo,tokenSim,mes,ano]
+      // [num,dt_rem,shift,cond,enf,cl,disp,dtTok,delay,km,lat1,lon1,lat2,lon2,eo,ed,tokLat,tokLon,kmRodado,horaParada,events,rastreios,motivo,tokenSim,rota,mes,ano]
       supplierMap[fn].push([att,dt,shift,cond,enf,cl,disp,
         dtTok?fmtFullDate(rawTok):'',delay!==null?delay:null,kmRodado??kmCalc,
         lat1,lon1,lat2,lon2,
         idx.eo>=0&&r[idx.eo]?String(r[idx.eo]):'',idx.ed>=0&&r[idx.ed]?String(r[idx.ed]):'',
-        tokLat,tokLon,kmRodado,idx.horaParada>=0?fmtDuration(r[idx.horaParada]):'',events,rst,reason,!!tkn,mes,ano]);
+        tokLat,tokLon,kmRodado,idx.horaParada>=0?fmtDuration(r[idx.horaParada]):'',events,rst,reason,!!tkn,
+        {ok:rq.ok,radiusKm:ROUTE_MATCH_RADIUS_KM,checks:rq.checks,reason:rq.reason,...evidenceInfo},mes,ano]);
     }
     ss(3,'done',`${totalEvents} eventos com Lat/Long`);
     ss(4,'done',`${Object.keys(supplierMap).length} fornecedores`);
@@ -703,25 +927,25 @@ async function processAll(){
       const total=rows_.length;
       let correto=0,cormod=0,sem_mov=0,web=0,erro=0;
       rows_.forEach(r=>{if(r[5]===0)correto++;else if(r[5]===1)cormod++;else if(r[5]===2)sem_mov++;else if(r[5]===3)web++;else erro++;});
-      const tokenOk=correto;
+      const tokenOk=rows_.filter(r=>r[23]).length;
       const base=total;
-      const uso=base>0?Math.round(correto/base*1000)/10:0;
-      if(isMetaSupplierName(fn)){globalCorreto+=correto;globalBase+=base;}
-      const cmpct=r=>r.slice(0,24);
+      const uso=base>0?Math.round((correto+cormod+sem_mov)/base*1000)/10:0;
+      if(isMetaSupplierName(fn)){globalCorreto+=correto+cormod+sem_mov;globalBase+=base;}
+      const cmpct=r=>r.slice(0,25);
       const allC=rows_.map(cmpct);
       const[rc,re_]=buildRanking(allC);
       const shAll=buildShifts(allC);
       const tdAll=buildTokDelay(allC);
       const monthMap={};
-      for(const r of rows_){const mn=r[24];if(!mn)continue;if(!monthMap[mn])monthMap[mn]={label:MESES[mn]+'/'+r[25],rows:[]};monthMap[mn].rows.push(r);}
+      for(const r of rows_){const mn=r[25];if(!mn)continue;if(!monthMap[mn])monthMap[mn]={label:MESES[mn]+'/'+r[26],rows:[]};monthMap[mn].rows.push(r);}
       const meses={};
       for(const[mn,md] of Object.entries(monthMap)){
         const mc_=md.rows.map(cmpct).sort((a,b)=>a[0]-b[0]);
         let mc=0,mm=0,ms=0,mw=0,me=0;
         md.rows.forEach(r=>{if(r[5]===0)mc++;else if(r[5]===1)mm++;else if(r[5]===2)ms++;else if(r[5]===3)mw++;else me++;});
-        const mtok=mc;
+        const mtok=md.rows.filter(r=>r[23]).length;
         const mb=md.rows.length;
-        const mu=mb>0?Math.round(mc/mb*1000)/10:0;
+        const mu=mb>0?Math.round((mc+mm+ms)/mb*1000)/10:0;
         const[mrc,mre]=buildRanking(mc_);
         // [label,total,correto,cor_mod,sem_mov,web,erro,base,uso,rc,re,atts,shifts,tok_delay]
         meses[mn]=[md.label,md.rows.length,mc,mm,ms,mw,me,mb,mu,mrc,mre,mc_,buildShifts(mc_),buildTokDelay(mc_),mtok];
