@@ -728,7 +728,7 @@ main{max-width:1500px;padding:24px 32px 34px}
         <thead><tr><th>Critério</th><th>Exigência</th><th>Resultado</th></tr></thead>
         <tbody id="rulesRows">
           <tr><td>Perfeito</td><td>Atendimento que cumpriu todas as validações: TOKEN, dispositivo, horários, usuários, rastreio e geolocalização completa.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-          <tr><td>Correto</td><td>Cumpriu as validações cruciais de uso do TOKEN.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+          <tr><td>Correto</td><td>Cumpriu as validações de uso do TOKEN.</td><td><span class="rtag ok">CORRETO</span></td></tr>
           <tr><td>Não cumpriu as validações</td><td>Não cumpriu as validações mínimas para ficar como Perfeito ou Correto no resumo do fornecedor.</td><td><span class="rtag mod">VALIDAÇÃO</span></td></tr>
           <tr><td>Usou TOKEN com falha de geolocalização</td><td>Existe evidência de inserção do TOKEN por TOKEN SIM, dispositivo, horários/usuários ou Lat/Long do token, mas a captação de rastreio/geolocalização falhou.</td><td><span class="rtag mod">GEO</span></td></tr>
           <tr><td>Preenchimento WEB</td><td>Preenchimento operacional sem evidência de uso do TOKEN pelo APP.</td><td><span class="rtag er">FORA</span></td></tr>
@@ -1225,7 +1225,7 @@ function resultRuleCard(key,cls,iconId,label,value,desc){
 }
 const RESULT_RULES={
   perfeito:{title:'PERFEITO',body:'Atendimento que cumpriu todas as validações esperadas do fluxo.',items:['TOKEN SIM.','Dispositivo identificado.','Horários e usuários preenchidos pelo fluxo esperado.','Lat/Long da inserção do TOKEN.','Pontos de rastreio e geolocalização dos eventos suficientes para validar a remoção.']},
-  correto:{title:'CORRETO',body:'Atendimento que cumpriu as validações cruciais de uso, mesmo que exista ressalva operacional que não descaracteriza o uso do TOKEN.',items:['Há evidência de TOKEN e execução do fluxo.','As etapas principais permitem considerar a utilização correta.','Falhas não críticas ficam no tooltip do atendimento.']},
+  correto:{title:'CORRETO',body:'Atendimento que cumpriu as validações de uso, mesmo que exista ressalva operacional que não descaracteriza o uso do TOKEN.',items:['Há evidência de TOKEN e execução do fluxo.','As etapas principais permitem considerar a utilização correta.','Falhas não críticas ficam no tooltip do atendimento.']},
   naoCumpriu:{title:'NÃO CUMPRIU AS VALIDAÇÕES',body:'Agrupa tudo que não entrou como Perfeito ou Correto no resultado do fornecedor.',items:['Não cumpriu as validações mínimas para ser classificado como correto sem ressalva.','Pode incluir falha de geolocalização, modificação GOP, não uso de TOKEN, WEB ou outros cenários fora do correto.','Não significa automaticamente erro técnico do prestador; o tooltip do atendimento mostra o motivo real.']},
   token:{title:'TOKEN',body:'Mostra quantos atendimentos têm evidência de inserção ou uso do TOKEN.',items:['TOKEN SIM no relatório, ou dispositivo registrado, ou horários/usuários via APP, ou Lat/Long da inserção do TOKEN.','Se qualquer uma dessas evidências existir, entendemos que houve tentativa/uso do TOKEN.']},
   naoUsou:{title:'NÃO USOU TOKEN',body:'Atendimento sem evidência de inserção/uso do TOKEN.',items:['Não tem TOKEN SIM.','Não tem dispositivo, horário de token, Lat/Long de token ou evidência de uso via APP.','Também não é um fluxo preenchido pelo Usuario IRIS Contingencia que caracterize WEB.']},
@@ -1916,7 +1916,7 @@ function openM(name){
     ${sectionTitle('Resultado dos Atendimentos','icon-activity','green')}
     <div class="result-clean">
       ${resultRuleCard('perfeito','ok','icon-check-circle','Perfeito',rs.perfeito,'cumpriu todas as validações')}
-      ${resultRuleCard('correto','ok','icon-check','Correto',rs.correto,'cumpriu validações cruciais')}
+      ${resultRuleCard('correto','ok','icon-check','Correto',rs.correto,'cumpriu validações')}
       ${resultRuleCard('naoCumpriu','token','icon-alert','Não cumpriu as validações',rs.naoCumpriu,'Não cumpriu as validações mínimas')}
       ${resultRuleCard('token','neutral','icon-smartphone','Token',rs.token,`de ${rs.total} atendimentos usaram o TOKEN`)}
       ${resultRuleCard('naoUsou','bad','icon-x','Não usou TOKEN',rs.naoUsou,'sem evidência de inserção')}
@@ -2415,7 +2415,7 @@ function renderRulesContent(){
     desc.textContent='Como cada atendimento entra no acompanhamento por evidência de uso do TOKEN, preenchimento via APP e validação operacional.';
     rows.innerHTML=`
       <tr><td>Perfeito</td><td>Atendimento que cumpriu todas as validações: TOKEN, dispositivo, horários, usuários, rastreio e geolocalização completa.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-      <tr><td>Correto</td><td>Cumpriu as validações cruciais de uso do TOKEN.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Correto</td><td>Cumpriu as validações de uso do TOKEN.</td><td><span class="rtag ok">CORRETO</span></td></tr>
       <tr><td>Não cumpriu as validações</td><td>Não cumpriu as validações mínimas para ficar como Perfeito ou Correto no resumo do fornecedor.</td><td><span class="rtag mod">VALIDAÇÃO</span></td></tr>
       <tr><td>Usou TOKEN com falha de geolocalização</td><td>Existe evidência de inserção do TOKEN por TOKEN SIM, dispositivo, horários/usuários ou Lat/Long do token, mas a captação de rastreio/geolocalização falhou.</td><td><span class="rtag mod">GEO</span></td></tr>
       <tr><td>Preenchimento WEB</td><td>Preenchimento operacional sem evidência de uso do TOKEN pelo APP.</td><td><span class="rtag er">FORA</span></td></tr>
