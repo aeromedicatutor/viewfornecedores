@@ -82,16 +82,24 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .goal-sub{font-size:.62rem;color:#9ca3af;font-weight:600;margin-top:2px}
 .goal-target{font-size:.68rem;font-weight:800;color:#065f46;background:#d1fae5;border:1px solid #a7f3d0;border-radius:20px;padding:5px 10px;white-space:nowrap}
 .goal-body{padding:12px 14px}
-.goal-summary{display:grid;grid-template-columns:minmax(180px,.75fr) repeat(5,minmax(112px,1fr));gap:10px;margin-bottom:11px}
-.goal-main{border:1px solid #e5e7eb;background:#f9fafb;border-radius:8px;padding:10px 12px}
+.goal-summary{display:grid;grid-template-columns:minmax(210px,.9fr) repeat(auto-fit,minmax(126px,1fr));gap:10px;margin-bottom:11px}
+.goal-main{border:1px solid #bbf7d0;background:linear-gradient(135deg,#f0fdf4,#fff);border-radius:10px;padding:11px 13px}
 .goal-main .goal-pct{font-size:1.75rem;font-weight:800;line-height:1;color:#111827}
 .goal-main .goal-label{font-size:.64rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
 .goal-main .goal-bar{height:6px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-top:10px}
 .goal-main .goal-fill{height:100%;border-radius:4px;transform-origin:left center}
 .goal-main.live{animation:goalAlive 2.4s ease-in-out infinite}
 .goal-kpi{border:1px solid #f1f5f9;background:#fff;border-radius:8px;padding:9px 10px}
+.goal-kpi.good{background:#f0fdf4;border-color:#bbf7d0}.goal-kpi.good strong{color:#047857}
+.goal-kpi.bad{background:#fff1f2;border-color:#fecdd3}.goal-kpi.bad strong{color:#be123c}
+.goal-kpi.warn{background:#fffbeb;border-color:#fde68a}.goal-kpi.warn strong{color:#b45309}
+.goal-kpi.token{background:#fff7ed;border-color:#fed7aa}.goal-kpi.token strong{color:#ea580c}
+.goal-kpi.web{background:#f5f3ff;border-color:#ddd6fe}.goal-kpi.web strong{color:#6d28d9}
+.goal-kpi.neutral{background:#f8fafc;border-color:#e2e8f0}.goal-kpi.neutral strong{color:#334155}
 .goal-kpi strong{display:block;font-size:1rem;color:#111827;line-height:1.1}
 .goal-kpi span{display:block;font-size:.6rem;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+.goal-explain{border:1px solid #fed7aa;background:#fff7ed;color:#7c2d12;border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:.68rem;font-weight:700;line-height:1.45}
+.goal-explain strong{color:#9a3412}
 .week-track{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 .week-card{border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:9px 10px}
 .week-card.empty{background:#f9fafb;color:#9ca3af}
@@ -989,21 +997,28 @@ function scopeTargetTotal(filter=activeF){
 function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
   const entries=scopedEntries(filter,month,includeSearch);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0;
+  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0,web=0,naoUsou=0,geoFalha=0;
   entries.forEach(([,v])=>{
     const sv=supplierView(v,month);
+    const rows=allAtts(v,month);
     att+=sv.total;
     base+=sv.base;
     ok+=sv.correto+sv.gop+sv.sem;
-    token+=sv.tokenOk;
     sem+=sv.sem;
     erro+=sv.erro;
+    web+=sv.web;
     err+=sv.sem+sv.erro;
+    rows.forEach(a=>{
+      if(hasTokenEvidence(a))token++;
+      if(scenarioOfAtt(a)==='nao_usou_token')naoUsou++;
+      if(scenarioOfAtt(a)==='falha_geolocalizacao')geoFalha++;
+    });
     cats[cat(sv.pct)]++;
   });
   const avg=base>0?Math.round(ok/base*1000)/10:0;
   const targetTotal=scopeTargetTotal(filter);
-  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,avg,cats,label:filterLabel(filter)};
+  const naoAprovado=Math.max(0,base-ok);
+  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,geoFalha,naoAprovado,avg,cats,label:filterLabel(filter)};
 }
 function allAtts(v,month=activeMonth){return month==='all'?Object.values(v[11]||{}).flatMap(m=>m[11]||[]):(((v[11]||{})[month]||[])[11]||[])}
 function devParts(disp){
@@ -1280,7 +1295,7 @@ function renderRuleModeButton(){
 
 // ── META TRACKING ────────────────────────────────────────────
 function emptyMetric(label='',order=0){
-  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0};
+  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0,naoUsou:0,geoFalha:0};
 }
 function addMetric(m,a){
   const cl=a[5];
@@ -1291,7 +1306,9 @@ function addMetric(m,a){
   if(cl===2)m.sem++;
   if(cl===3)m.web++;
   if(cl===4)m.erro++;
-  if(tokenYesFromAtt(a))m.token++;
+  if(hasTokenEvidence(a))m.token++;
+  if(scenarioOfAtt(a)==='nao_usou_token')m.naoUsou++;
+  if(scenarioOfAtt(a)==='falha_geolocalizacao')m.geoFalha++;
   return m;
 }
 function metricPct(m){return m.base>0?Math.round(m.ok/m.base*1000)/10:0}
@@ -1327,7 +1344,7 @@ function buildGoalTracking(){
   });
   const monthList=[...months.entries()].map(([key,m])=>({key,...m,pct:metricPct(m)})).sort((a,b)=>b.order-a.order);
   const latest=activeMonth==='all'
-    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,pct:meta.avg}
+    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,web:meta.web,naoUsou:meta.naoUsou,geoFalha:meta.geoFalha,pct:meta.avg}
     : (monthList.find(m=>m.key===activeMonth)||emptyMetric('Sem dados'));
   latest.pct=metricPct(latest);
   const chronological=[...monthList].sort((a,b)=>a.order-b.order);
@@ -1368,42 +1385,50 @@ function renderGoalTracking(){
   const color=metricColor(p);
   const targetBase=Math.ceil((GS2.meta||80)/100*(m.base||0));
   const gap=Math.max(0,targetBase-(m.ok||0));
-  const tokenPct=m.total?Math.round((m.token||0)/m.total*1000)/10:0;
+  const notOk=Math.max(0,(m.base||0)-(m.ok||0));
+  const tokenPct=m.base?Math.round((m.token||0)/m.base*1000)/10:0;
+  const noToken=m.naoUsou||0;
+  const web=m.web||0;
+  const geo=m.geoFalha||0;
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
-        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento da Meta</div><div class="goal-sub">${esc(ruleModeLabel())} · ${esc(data.meta.label)} · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados${activeMonth!=='all'?' em '+esc(m.label||'mês selecionado'):''} · ${esc(GS2.updated||'')}</div></div></div>
-        <div class="goal-target">Meta ${GS2.meta||80}%</div>
+        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Meta de Uso do TOKEN</div><div class="goal-sub">${esc(ruleModeLabel())} · ${esc(data.meta.label)} · ${esc(m.label||'período selecionado')} · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados · ${esc(GS2.updated||'')}</div></div></div>
+        <div class="goal-target">Alvo ${GS2.meta||80}%</div>
       </div>
       <div class="goal-body">
         <div class="goal-summary">
           <div class="goal-main">
             <div class="goal-pct" data-target="${p}" style="color:${color}">0%</div>
-            <div class="goal-label">${esc(m.label||'Último mês')}</div>
+            <div class="goal-label">Aprovados ÷ Analisados</div>
             <div class="goal-bar"><div class="goal-fill" data-target="${Math.min(100,p)}" style="width:0%;background:${color}"></div></div>
           </div>
-          <div class="goal-kpi"><strong>${(m.base||0).toLocaleString('pt-BR')}</strong><span>Atend. válidos</span></div>
-          <div class="goal-kpi"><strong>${(m.ok||0).toLocaleString('pt-BR')}</strong><span>Corretos</span></div>
-          <div class="goal-kpi"><strong>${(m.token||0).toLocaleString('pt-BR')}</strong><span>Utilização do token · ${tokenPct}%</span></div>
-          <div class="goal-kpi"><strong>${(m.sem||0)+(m.erro||0)}</strong><span>Sem mov. / não usou</span></div>
-          <div class="goal-kpi"><strong>${gap}</strong><span>Faltam p/ meta</span></div>
+          <div class="goal-kpi neutral"><strong>${(m.base||0).toLocaleString('pt-BR')}</strong><span>Atendimentos analisados</span></div>
+          <div class="goal-kpi good"><strong>${(m.ok||0).toLocaleString('pt-BR')}</strong><span>Aprovados para meta</span></div>
+          <div class="goal-kpi bad"><strong>${notOk.toLocaleString('pt-BR')}</strong><span>Não aprovados</span></div>
+          <div class="goal-kpi token"><strong>${(m.token||0).toLocaleString('pt-BR')}</strong><span>Usaram TOKEN · ${tokenPct}%</span></div>
+          <div class="goal-kpi bad"><strong>${noToken.toLocaleString('pt-BR')}</strong><span>Não usaram TOKEN</span></div>
+          <div class="goal-kpi web"><strong>${web.toLocaleString('pt-BR')}</strong><span>WEB / Sistema</span></div>
+          <div class="goal-kpi warn"><strong>${geo.toLocaleString('pt-BR')}</strong><span>Falha GEO com TOKEN</span></div>
+          <div class="goal-kpi neutral"><strong>${gap.toLocaleString('pt-BR')}</strong><span>Faltam para 80%</span></div>
         </div>
+        <div class="goal-explain"><strong>Leitura rápida:</strong> aprovado é atendimento que conta positivamente na meta. Não aprovado é tudo que não cumpriu a regra mínima. Falha GEO com TOKEN não vira erro: mostra que houve evidência de uso, mas o relatório não trouxe todos os pontos de localização.</div>
         <div class="scope-row">
-          <div class="scope-card"><strong>Filtro atual</strong><span>${esc(data.meta.label)} · ${data.meta.avg}% · ${data.meta.matched}/${data.meta.targetTotal} com dados · ${data.meta.ok}/${data.meta.base} corretos</span></div>
+          <div class="scope-card"><strong>Filtro atual</strong><span>${esc(data.meta.label)} · ${data.meta.avg}% · ${data.meta.ok}/${data.meta.base} aprovados · ${data.meta.naoAprovado} não aprovados</span></div>
           <div class="scope-card"><strong>Base treinamento</strong><span>${data.training.avg}% · ${data.training.matched}/${data.training.targetTotal} com dados no relatório · ${data.training.trained} treinados</span></div>
         </div>
         ${data.compare?`<div class="before-after">
           <div class="ba-card">
             <div class="ba-k">Antes do painel · ${esc(data.compare.before.label)}</div>
             <div class="ba-v" style="color:${metricColor(data.compare.before.pct)}">${data.compare.before.pct}%</div>
-            <div class="ba-s">${(data.compare.before.ok||0).toLocaleString('pt-BR')}/${(data.compare.before.base||0).toLocaleString('pt-BR')} válidos · ${data.compare.before.total||0} total</div>
+            <div class="ba-s">${(data.compare.before.ok||0).toLocaleString('pt-BR')}/${(data.compare.before.base||0).toLocaleString('pt-BR')} aprovados · ${data.compare.before.total||0} total</div>
           </div>
           <div class="ba-arrow">${icon('icon-arrow-right','route-ico')}</div>
           <div class="ba-card">
             <div class="ba-k">Depois · ${esc(data.compare.after.label)}</div>
             <div class="ba-v" style="color:${metricColor(data.compare.after.pct)}">${data.compare.after.pct}%</div>
-            <div class="ba-s">${(data.compare.after.ok||0).toLocaleString('pt-BR')}/${(data.compare.after.base||0).toLocaleString('pt-BR')} válidos · ${data.compare.after.total||0} total</div>
-            <span class="ba-delta ${baTone(data.compare.deltaPct)}">${signedDelta(data.compare.deltaPct)} · ${data.compare.deltaOk>=0?'+':''}${data.compare.deltaOk} corretos · ${data.compare.deltaBase>=0?'+':''}${data.compare.deltaBase} válidos</span>
+            <div class="ba-s">${(data.compare.after.ok||0).toLocaleString('pt-BR')}/${(data.compare.after.base||0).toLocaleString('pt-BR')} aprovados · ${data.compare.after.total||0} total</div>
+            <span class="ba-delta ${baTone(data.compare.deltaPct)}">${signedDelta(data.compare.deltaPct)} · ${data.compare.deltaOk>=0?'+':''}${data.compare.deltaOk} aprovados · ${data.compare.deltaBase>=0?'+':''}${data.compare.deltaBase} analisados</span>
           </div>
         </div>`:''}
         <div class="week-track">
@@ -1412,7 +1437,7 @@ function renderGoalTracking(){
             return `<div class="week-card ${w.base?'':'empty'}">
               <div class="week-top"><div><div class="week-name">${esc(w.label)}</div><div class="goal-sub">${esc(w.range)}</div></div><div class="week-pct" style="color:${wc}">${w.base?w.pct+'%':'—'}</div></div>
               <div class="week-bar"><div class="week-fill" style="width:${Math.min(100,w.pct||0)}%;background:${wc}"></div></div>
-              <div class="week-meta"><span>${w.ok||0}/${w.base||0} corretos</span><span>${w.token||0} tokens</span></div>
+              <div class="week-meta"><span>${w.ok||0}/${w.base||0} aprovados</span><span>${w.token||0} usaram token</span></div>
             </div>`;
           }).join('')}
         </div>
@@ -1460,15 +1485,16 @@ function initHeader(){
   document.getElementById('hstats').innerHTML=`
     <div class="hs"><div class="metric-head"><div class="hs-l">Base filtro</div>${icon('icon-target')}</div><div class="hs-n">${meta.targetTotal}</div></div>
     <div class="hs"><div class="metric-head"><div class="hs-l">Atend. filtro</div>${icon('icon-truck')}</div><div class="hs-n">${meta.att.toLocaleString('pt-BR')}</div></div>
-    <div class="hs"><div class="metric-head"><div class="hs-l">A+B filtro</div>${icon('icon-check-circle')}</div><div class="hs-n" style="color:#86efac">${cats.A+cats.B}</div></div>
-    <div class="hs"><div class="metric-head"><div class="hs-l">Cat F filtro</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${cats.F}</div></div>`;
+    <div class="hs"><div class="metric-head"><div class="hs-l">Aprovados</div>${icon('icon-check-circle')}</div><div class="hs-n" style="color:#86efac">${meta.ok.toLocaleString('pt-BR')}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">Não aprovados</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${meta.naoAprovado.toLocaleString('pt-BR')}</div></div>`;
   const a=meta.avg||GS2.avg;
   const col=a>=80?'#4ade80':a>=60?'#fbbf24':'#f87171';
   const avgBox=document.getElementById('avgBox');
+  const notOk=Math.max(0,(meta.base||0)-(meta.ok||0));
   avgBox.innerHTML=`
-    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Uso filtro atual</span><span class="avg-val" data-target="${a}" style="color:${col}">0%</span></div>
+    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Meta do filtro</span><span class="avg-val" data-target="${a}" style="color:${col}">0%</span></div>
     <div class="avg-bar"><div class="avg-bar-fill" data-target="${Math.min(100,a)}" style="width:0%;background:${col}"></div></div>
-    <div class="avg-upd">${meta.matched}/${meta.targetTotal} fornecedores da meta com dados${activeMonth!=='all'?` · ${esc(document.getElementById('monthFilter')?.selectedOptions?.[0]?.textContent||'mês')}`:''} · ${meta.base.toLocaleString('pt-BR')} atend. válidos${GS2.updated?` · ${GS2.updated}`:''}</div>`;
+    <div class="avg-upd">${(meta.ok||0).toLocaleString('pt-BR')}/${(meta.base||0).toLocaleString('pt-BR')} aprovados · ${notOk.toLocaleString('pt-BR')} não aprovados · ${(meta.token||0).toLocaleString('pt-BR')} usaram TOKEN${GS2.updated?` · ${GS2.updated}`:''}</div>`;
   animateLiveMeter(avgBox,'.avg-val','.avg-bar-fill');
 }
 
