@@ -723,7 +723,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   <div class="rmodal">
     <div class="rhdr"><h2>Regras de Classificação</h2><button class="mcls" onclick="closeRules()">×</button></div>
     <div class="rbody">
-      <p id="ruleModeDesc" style="font-size:.77rem;color:#6b7280;margin-bottom:10px">Como cada atendimento é classificado pela regra atual de usabilidade operacional e como a meta é calculada.</p>
+      <p id="ruleModeDesc" style="font-size:.77rem;color:#6b7280;margin-bottom:10px">Como cada atendimento é classificado pela regra atual de usabilidade operacional e como o acompanhamento é calculado.</p>
       <table class="rt">
         <thead><tr><th>Critério</th><th>Exigência</th><th>Resultado</th></tr></thead>
         <tbody id="rulesRows">
@@ -739,9 +739,9 @@ main{max-width:1500px;padding:24px 32px 34px}
       <hr class="rd">
       <div class="rsec"><strong>Fórmula:</strong> a falha de geolocalização não é erro quando existe evidência de uso do TOKEN. Não usou TOKEN só ocorre quando literalmente não há evidência de inserção/uso.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Meta:</strong> os filtros Todos Fornecedores da Rede e Fornecedores de Maior Representatividade de Remoções possuem visão Sem HMED e Com HMED. Quando HMED entra no filtro, mantém regra própria de integração de horários. TransMedi fica fora da meta foco. Meta-alvo: 80%.</div>
+      <div class="rsec"><strong>Acompanhamento:</strong> os filtros Todos Fornecedores da Rede e Fornecedores de Maior Representatividade de Remoções possuem visão Sem HMED e Com HMED. Quando HMED entra no filtro, mantém regra própria de integração de horários. TransMedi fica fora do grupo foco. Alvo: 80%.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Inserção Horários:</strong> para fornecedores da rede, é indicador de assertividade no modal e não altera a regra de usabilidade/meta. A exceção é HMED, que usa a integração de horários como regra própria.</div>
+      <div class="rsec"><strong>Inserção Horários:</strong> para fornecedores da rede, é indicador de assertividade no modal e não altera a regra de usabilidade do transporte. A exceção é HMED, que usa a integração de horários como regra própria.</div>
       <hr class="rd">
       <div class="rsec"><strong>Base treinamento:</strong> mostra fornecedores encontrados na planilha de implantação/treinamento, hoje com universo de 177 registros.</div>
       <hr class="rd">
@@ -756,7 +756,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260721-base15-meta-badge-v12"></script>
+<script src="data.js?v=20260721-acompanhamento-v13"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -1393,42 +1393,42 @@ function renderGoalTracking(){
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
-        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Meta de Uso do TOKEN</div><div class="goal-sub">${esc(ruleModeLabel())} · ${esc(data.meta.label)} · ${esc(m.label||'período selecionado')} · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados · ${esc(GS2.updated||'')}</div></div></div>
+        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento do Transporte</div><div class="goal-sub">${esc(ruleModeLabel())} · ${esc(data.meta.label)} · ${esc(m.label||'período selecionado')} · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados · ${esc(GS2.updated||'')}</div></div></div>
         <div class="goal-target">Alvo ${GS2.meta||80}%</div>
       </div>
       <div class="goal-body">
         <div class="goal-summary">
           <div class="goal-main">
             <div class="goal-pct" data-target="${p}" style="color:${color}">0%</div>
-            <div class="goal-label">Aprovados ÷ Analisados</div>
+            <div class="goal-label">Corretos ÷ Analisados</div>
             <div class="goal-bar"><div class="goal-fill" data-target="${Math.min(100,p)}" style="width:0%;background:${color}"></div></div>
           </div>
           <div class="goal-kpi neutral"><strong>${(m.base||0).toLocaleString('pt-BR')}</strong><span>Atendimentos analisados</span></div>
-          <div class="goal-kpi good"><strong>${(m.ok||0).toLocaleString('pt-BR')}</strong><span>Aprovados para meta</span></div>
-          <div class="goal-kpi bad"><strong>${notOk.toLocaleString('pt-BR')}</strong><span>Não aprovados</span></div>
-          <div class="goal-kpi token"><strong>${(m.token||0).toLocaleString('pt-BR')}</strong><span>Usaram TOKEN · ${tokenPct}%</span></div>
-          <div class="goal-kpi bad"><strong>${noToken.toLocaleString('pt-BR')}</strong><span>Não usaram TOKEN</span></div>
+          <div class="goal-kpi good"><strong>${(m.ok||0).toLocaleString('pt-BR')}</strong><span>Corretos com requisitos mínimos</span></div>
+          <div class="goal-kpi bad"><strong>${notOk.toLocaleString('pt-BR')}</strong><span>Sem requisitos</span></div>
+          <div class="goal-kpi token"><strong>${(m.token||0).toLocaleString('pt-BR')}</strong><span>Inseriram TOKEN · ${tokenPct}%</span></div>
+          <div class="goal-kpi bad"><strong>${noToken.toLocaleString('pt-BR')}</strong><span>Não inseriram o TOKEN</span></div>
           <div class="goal-kpi web"><strong>${web.toLocaleString('pt-BR')}</strong><span>WEB / Sistema</span></div>
           <div class="goal-kpi warn"><strong>${geo.toLocaleString('pt-BR')}</strong><span>Falha GEO com TOKEN</span></div>
           <div class="goal-kpi neutral"><strong>${gap.toLocaleString('pt-BR')}</strong><span>Faltam para 80%</span></div>
         </div>
-        <div class="goal-explain"><strong>Leitura rápida:</strong> aprovado é atendimento que conta positivamente na meta. Não aprovado é tudo que não cumpriu a regra mínima. Falha GEO com TOKEN não vira erro: mostra que houve evidência de uso, mas o relatório não trouxe todos os pontos de localização.</div>
+        <div class="goal-explain"><strong>Leitura rápida:</strong> correto é o transporte que cumpriu os requisitos mínimos. Sem requisitos é o transporte que não teve evidência suficiente para validar o uso. Falha GEO com TOKEN não vira erro: mostra que houve evidência de uso, mas o relatório não trouxe todos os pontos de localização.</div>
         <div class="scope-row">
-          <div class="scope-card"><strong>Filtro atual</strong><span>${esc(data.meta.label)} · ${data.meta.avg}% · ${data.meta.ok}/${data.meta.base} aprovados · ${data.meta.naoAprovado} não aprovados</span></div>
+          <div class="scope-card"><strong>Filtro atual</strong><span>${esc(data.meta.label)} · ${data.meta.avg}% · ${data.meta.ok}/${data.meta.base} corretos · ${data.meta.naoAprovado} sem requisitos</span></div>
           <div class="scope-card"><strong>Base treinamento</strong><span>${data.training.avg}% · ${data.training.matched}/${data.training.targetTotal} com dados no relatório · ${data.training.trained} treinados</span></div>
         </div>
         ${data.compare?`<div class="before-after">
           <div class="ba-card">
             <div class="ba-k">Antes do painel · ${esc(data.compare.before.label)}</div>
             <div class="ba-v" style="color:${metricColor(data.compare.before.pct)}">${data.compare.before.pct}%</div>
-            <div class="ba-s">${(data.compare.before.ok||0).toLocaleString('pt-BR')}/${(data.compare.before.base||0).toLocaleString('pt-BR')} aprovados · ${data.compare.before.total||0} total</div>
+            <div class="ba-s">${(data.compare.before.ok||0).toLocaleString('pt-BR')}/${(data.compare.before.base||0).toLocaleString('pt-BR')} corretos · ${data.compare.before.total||0} total</div>
           </div>
           <div class="ba-arrow">${icon('icon-arrow-right','route-ico')}</div>
           <div class="ba-card">
             <div class="ba-k">Depois · ${esc(data.compare.after.label)}</div>
             <div class="ba-v" style="color:${metricColor(data.compare.after.pct)}">${data.compare.after.pct}%</div>
-            <div class="ba-s">${(data.compare.after.ok||0).toLocaleString('pt-BR')}/${(data.compare.after.base||0).toLocaleString('pt-BR')} aprovados · ${data.compare.after.total||0} total</div>
-            <span class="ba-delta ${baTone(data.compare.deltaPct)}">${signedDelta(data.compare.deltaPct)} · ${data.compare.deltaOk>=0?'+':''}${data.compare.deltaOk} aprovados · ${data.compare.deltaBase>=0?'+':''}${data.compare.deltaBase} analisados</span>
+            <div class="ba-s">${(data.compare.after.ok||0).toLocaleString('pt-BR')}/${(data.compare.after.base||0).toLocaleString('pt-BR')} corretos · ${data.compare.after.total||0} total</div>
+            <span class="ba-delta ${baTone(data.compare.deltaPct)}">${signedDelta(data.compare.deltaPct)} · ${data.compare.deltaOk>=0?'+':''}${data.compare.deltaOk} corretos · ${data.compare.deltaBase>=0?'+':''}${data.compare.deltaBase} analisados</span>
           </div>
         </div>`:''}
         <div class="week-track">
@@ -1437,7 +1437,7 @@ function renderGoalTracking(){
             return `<div class="week-card ${w.base?'':'empty'}">
               <div class="week-top"><div><div class="week-name">${esc(w.label)}</div><div class="goal-sub">${esc(w.range)}</div></div><div class="week-pct" style="color:${wc}">${w.base?w.pct+'%':'—'}</div></div>
               <div class="week-bar"><div class="week-fill" style="width:${Math.min(100,w.pct||0)}%;background:${wc}"></div></div>
-              <div class="week-meta"><span>${w.ok||0}/${w.base||0} aprovados</span><span>${w.token||0} usaram token</span></div>
+              <div class="week-meta"><span>${w.ok||0}/${w.base||0} corretos</span><span>${w.token||0} inseriram token</span></div>
             </div>`;
           }).join('')}
         </div>
@@ -1485,16 +1485,16 @@ function initHeader(){
   document.getElementById('hstats').innerHTML=`
     <div class="hs"><div class="metric-head"><div class="hs-l">Base filtro</div>${icon('icon-target')}</div><div class="hs-n">${meta.targetTotal}</div></div>
     <div class="hs"><div class="metric-head"><div class="hs-l">Atend. filtro</div>${icon('icon-truck')}</div><div class="hs-n">${meta.att.toLocaleString('pt-BR')}</div></div>
-    <div class="hs"><div class="metric-head"><div class="hs-l">Aprovados</div>${icon('icon-check-circle')}</div><div class="hs-n" style="color:#86efac">${meta.ok.toLocaleString('pt-BR')}</div></div>
-    <div class="hs"><div class="metric-head"><div class="hs-l">Não aprovados</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${meta.naoAprovado.toLocaleString('pt-BR')}</div></div>`;
+    <div class="hs"><div class="metric-head"><div class="hs-l">Corretos</div>${icon('icon-check-circle')}</div><div class="hs-n" style="color:#86efac">${meta.ok.toLocaleString('pt-BR')}</div></div>
+    <div class="hs"><div class="metric-head"><div class="hs-l">Sem requisitos</div>${icon('icon-alert')}</div><div class="hs-n" style="color:#fca5a5">${meta.naoAprovado.toLocaleString('pt-BR')}</div></div>`;
   const a=meta.avg||GS2.avg;
   const col=a>=80?'#4ade80':a>=60?'#fbbf24':'#f87171';
   const avgBox=document.getElementById('avgBox');
   const notOk=Math.max(0,(meta.base||0)-(meta.ok||0));
   avgBox.innerHTML=`
-    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Meta do filtro</span><span class="avg-val" data-target="${a}" style="color:${col}">0%</span></div>
+    <div class="avg-top"><span class="avg-lbl">${icon('icon-activity')} Acompanhamento</span><span class="avg-val" data-target="${a}" style="color:${col}">0%</span></div>
     <div class="avg-bar"><div class="avg-bar-fill" data-target="${Math.min(100,a)}" style="width:0%;background:${col}"></div></div>
-    <div class="avg-upd">${(meta.ok||0).toLocaleString('pt-BR')}/${(meta.base||0).toLocaleString('pt-BR')} aprovados · ${notOk.toLocaleString('pt-BR')} não aprovados · ${(meta.token||0).toLocaleString('pt-BR')} usaram TOKEN${GS2.updated?` · ${GS2.updated}`:''}</div>`;
+    <div class="avg-upd">${(meta.ok||0).toLocaleString('pt-BR')}/${(meta.base||0).toLocaleString('pt-BR')} corretos · ${notOk.toLocaleString('pt-BR')} sem requisitos · ${(meta.token||0).toLocaleString('pt-BR')} inseriram TOKEN${GS2.updated?` · ${GS2.updated}`:''}</div>`;
   animateLiveMeter(avgBox,'.avg-val','.avg-bar-fill');
 }
 
@@ -1537,7 +1537,7 @@ function render(){
   const meta=scopeStats(activeF);
   const universeTotal=scopedEntries(activeF,activeMonth).length;
   const monthTxt=activeMonth==='all'?'todos os meses':(document.getElementById('monthFilter')?.selectedOptions?.[0]?.textContent||'mês selecionado');
-  document.getElementById('ri').textContent=`${entries.length} de ${universeTotal} fornecedores exibidos · ${filterLabel(activeF)} · ${monthTxt} · base ${meta.matched}/${meta.targetTotal} · treinamento ${trainingStats().matched}/${trainingStats().targetTotal} · ${sum.att.toLocaleString('pt-BR')} atend. · ${sum.err.toLocaleString('pt-BR')} não usou/sem mov.`;
+  document.getElementById('ri').textContent=`${entries.length} de ${universeTotal} fornecedores exibidos · ${filterLabel(activeF)} · ${monthTxt} · base ${meta.matched}/${meta.targetTotal} · treinamento ${trainingStats().matched}/${trainingStats().targetTotal} · ${sum.att.toLocaleString('pt-BR')} atend. · ${sum.err.toLocaleString('pt-BR')} sem requisitos`;
   if(!entries.length){document.getElementById('grid').innerHTML='';document.getElementById('nodata').style.display='block';return;}
   document.getElementById('nodata').style.display='none';
 
@@ -1726,7 +1726,7 @@ function validationTooltip(a,cl){
   }
   if(routeInfo?.userChecks?.length){
     const s=routeInfo.userSummary||{};
-    out.push(`Meta de usabilidade - etapas esperadas: ${s.filled??'?'}/${s.expected??routeInfo.userChecks.length} preenchidas`);
+    out.push(`Acompanhamento do transporte - etapas esperadas: ${s.filled??'?'}/${s.expected??routeInfo.userChecks.length} preenchidas`);
     if(s.missing)out.push(`❌ Etapas não preenchidas: ${s.missing}`);
     if(s.differentUser)out.push(`⚠️ Etapas com usuário diferente: ${s.differentUser}`);
     routeInfo.userChecks.forEach(ch=>{
@@ -1738,7 +1738,7 @@ function validationTooltip(a,cl){
   if(okLines.length)out.push('Auditoria complementar positiva:',...okLines,'');
   if(badLines.length)out.push('Auditoria complementar com atenção:',...badLines,'');
   if(routeInfo?.checks?.length){
-    out.push('Auditoria de geolocalização (não reduz a meta):');
+    out.push('Auditoria de geolocalização (não reduz o acompanhamento):');
     routeInfo.checks.forEach(ch=>{
       const icon=ch.ok?'✅':'❌';
       const dist=ch.distance==null?'sem distância':`${Number(ch.distance).toFixed(2)} km`;
@@ -2412,7 +2412,7 @@ function renderRulesContent(){
       <tr><td>Não usou o TOKEN</td><td>Qualquer atendimento sem TOKEN SIM, sem ponto de rastreio ou sem evidência suficiente de execução via APP.</td><td><span class="rtag er">FORA</span></td></tr>
     `;
   }else{
-    desc.textContent='Como cada atendimento entra na meta por evidência de uso do TOKEN, preenchimento via APP e validação operacional.';
+    desc.textContent='Como cada atendimento entra no acompanhamento por evidência de uso do TOKEN, preenchimento via APP e validação operacional.';
     rows.innerHTML=`
       <tr><td>Perfeito</td><td>Atendimento que cumpriu todas as validações: TOKEN, dispositivo, horários, usuários, rastreio e geolocalização completa.</td><td><span class="rtag ok">CORRETO</span></td></tr>
       <tr><td>Correto</td><td>Cumpriu as validações cruciais de uso do TOKEN.</td><td><span class="rtag ok">CORRETO</span></td></tr>
