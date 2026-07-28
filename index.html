@@ -728,17 +728,17 @@ main{max-width:1500px;padding:24px 32px 34px}
       <table class="rt">
         <thead><tr><th>Critério</th><th>Exigência</th><th>Resultado</th></tr></thead>
         <tbody id="rulesRows">
-          <tr><td>Perfeito</td><td>Atendimento que cumpriu todas as validações: TOKEN, dispositivo, horários, usuários, rastreio e geolocalização completa.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-          <tr><td>Correto</td><td>Cumpriu as validações de uso do TOKEN.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-          <tr><td>Não cumpriu as validações</td><td>Não cumpriu as validações mínimas para ficar como Perfeito ou Correto no resumo do fornecedor.</td><td><span class="rtag mod">VALIDAÇÃO</span></td></tr>
-          <tr><td>Usou TOKEN com falha de geolocalização</td><td>Existe evidência de inserção do TOKEN por TOKEN SIM, dispositivo, horários/usuários ou Lat/Long do token, mas a captação de rastreio/geolocalização falhou.</td><td><span class="rtag mod">GEO</span></td></tr>
-          <tr><td>Preenchimento WEB</td><td>Preenchimento operacional sem evidência de uso do TOKEN pelo APP.</td><td><span class="rtag er">FORA</span></td></tr>
+          <tr><td>Perfeito</td><td>TOKEN, dispositivo, Lat/Long e data/hora do TOKEN, horários via APP, rastreio, usuários IRIS, coordenadas essenciais e origem/destino dentro de 700m.</td><td><span class="rtag ok">PERFEITO</span></td></tr>
+          <tr><td>Requisitos mínimos</td><td>TOKEN SIM e horários via APP SIM.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+          <tr><td>Sem requisitos</td><td>TOKEN SIM, mas horários via APP NÃO.</td><td><span class="rtag mod">VALIDAÇÃO</span></td></tr>
+          <tr><td>Preencheu via link</td><td>TOKEN SIM, horários via APP SIM, rastreio zerado e sem dispositivo.</td><td><span class="rtag er">ANÁLISE</span></td></tr>
+          <tr><td>Sem geolocalização</td><td>Rastreio zerado ou sem Lat/Long da chegada na origem/destino.</td><td><span class="rtag mod">GEO</span></td></tr>
           <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
-          <tr><td>Não usou o TOKEN</td><td>Sem evidência suficiente de TOKEN, dispositivo, rastreio ou execução via APP. O tooltip mostra as validações ausentes.</td><td><span class="rtag er">FORA</span></td></tr>
+          <tr><td>Não utilizou o TOKEN</td><td>TOKEN NÃO e horários via APP NÃO.</td><td><span class="rtag er">FORA</span></td></tr>
         </tbody>
       </table>
       <hr class="rd">
-      <div class="rsec"><strong>Fórmula:</strong> a falha de geolocalização não é erro quando existe evidência de uso do TOKEN. Não usou TOKEN só ocorre quando literalmente não há evidência de inserção/uso.</div>
+      <div class="rsec"><strong>Fórmula:</strong> Perfeito exige todas as validações e raio de 700m. Requisitos mínimos exige TOKEN SIM + horários via APP. Sem geolocalização vira alerta para análise.</div>
       <hr class="rd">
       <div class="rsec"><strong>Acompanhamento:</strong> os filtros Todos Fornecedores da Rede e Fornecedores de Maior Representatividade de Remoções possuem visão Sem HMED e Com HMED. Quando HMED entra no filtro, mantém regra própria de integração de horários. TransMedi fica fora do grupo foco. Alvo: 80%.</div>
       <hr class="rd">
@@ -746,7 +746,7 @@ main{max-width:1500px;padding:24px 32px 34px}
       <hr class="rd">
       <div class="rsec"><strong>Base treinamento:</strong> mostra fornecedores encontrados na planilha de implantação/treinamento, hoje com universo de 177 registros.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Ranking:</strong> ranqueado por % de atendimentos comprovados. WEB e Não usou TOKEN reduzem a usabilidade.</div>
+      <div class="rsec"><strong>Ranking:</strong> ranqueado por % de transportes perfeitos ou com requisitos mínimos.</div>
       <hr class="rd">
       <div class="rsec"><strong>Turnos (data da remoção):</strong> Manhã 06h–12h · Tarde 12h–18h · Noite 18h–06h</div>
       <hr class="rd">
@@ -757,7 +757,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260721-criterios-explicados-v14"></script>
+<script src="data.js?v=20260723-marcadores-arrastaveis-v20"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -842,7 +842,7 @@ const META_SUPPLIER_NAMES=new Set([
 const CCLR={A:'#059669',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 const CTLBL={1:'Pendente',2:'Em instalação',3:'Não usa APP',4:'Integrada IRIS'};
 const CTBNR={1:'bp',2:'bi',3:'bn',4:'bint'};
-const CLBL=['Correto perfeito','Correto parcial','Sem movimentação','Preenchimento WEB','Não usou o TOKEN'];
+const CLBL=['Perfeito','Transporte realizado com requisitos mínimos','Transporte sem geolocalização','Preencheu via link','Não utilizou o TOKEN'];
 const TCLS=['t0','t1','t2','t3','t4'];
 const RCLS=['r0','r1','r2','r3','r4'];
 const SHIFT_ICO={M:'M',T:'T',N:'N'};
@@ -881,11 +881,11 @@ function isFocusSupplierName(name,includeHmed=true){
   return !!n&&!isTransMediName(name)&&(META_SUPPLIER_NAMES.has(n)||(includeHmed&&isHMedName(name)));
 }
 function isMetaSupplierName(name){return isFocusSupplierName(name,true)}
-function isCorrectClass(cl){return cl===0||cl===1||cl===2}
+function isCorrectClass(cl){return cl===0||cl===1}
 function statusLabelForAtt(a,cl=a?.[5]){
   const label=a?.[24]?.scenarioLabel||CLBL[cl]||'Status';
-  if(cl===4&&String(label).toLowerCase()==='erro')return'Não usou o TOKEN';
-  if(cl===4)return String(label).replace(/^Erro$/i,'Não usou o TOKEN').replace(/HMED erro/i,'Não usou o TOKEN');
+  if(cl===4&&String(label).toLowerCase()==='erro')return'Não utilizou o TOKEN';
+  if(cl===4)return String(label).replace(/^Erro$/i,'Não utilizou o TOKEN').replace(/HMED erro/i,'Não utilizou o TOKEN').replace(/Não usou o TOKEN/i,'Não utilizou o TOKEN');
   return label;
 }
 function monthList(){
@@ -998,7 +998,7 @@ function scopeTargetTotal(filter=activeF){
 function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
   const entries=scopedEntries(filter,month,includeSearch);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0,web=0,naoUsou=0,geoFalha=0;
+  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0,web=0,naoUsou=0,geoFalha=0,perfeito=0,minimos=0,semReq=0,viaLink=0,semGeo=0;
   entries.forEach(([,v])=>{
     const sv=supplierView(v,month);
     const rows=allAtts(v,month);
@@ -1010,16 +1010,22 @@ function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
     web+=sv.web;
     err+=sv.sem+sv.erro;
     rows.forEach(a=>{
-      if(hasTokenEvidence(a))token++;
-      if(scenarioOfAtt(a)==='nao_usou_token')naoUsou++;
-      if(scenarioOfAtt(a)==='falha_geolocalizacao')geoFalha++;
+      const scenario=scenarioOfAtt(a);
+      if(tokenYesFromAtt(a))token++;
+      if(scenario==='correto_perfeito')perfeito++;
+      if(scenario==='requisitos_minimos')minimos++;
+      if(scenario==='sem_requisitos_minimos')semReq++;
+      if(scenario==='nao_utilizou_token'||scenario==='nao_usou_token')naoUsou++;
+      if(scenario==='preencheu_via_link')viaLink++;
+      if(a?.[24]?.evidence?.semGeolocalizacao||scenario==='falha_geolocalizacao')semGeo++;
+      if(scenario==='falha_geolocalizacao')geoFalha++;
     });
     cats[cat(sv.pct)]++;
   });
   const avg=base>0?Math.round(ok/base*1000)/10:0;
   const targetTotal=scopeTargetTotal(filter);
   const naoAprovado=Math.max(0,base-ok);
-  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,geoFalha,naoAprovado,avg,cats,label:filterLabel(filter)};
+  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,geoFalha,perfeito,minimos,semReq,viaLink,semGeo,naoAprovado,avg,cats,label:filterLabel(filter)};
 }
 function allAtts(v,month=activeMonth){return month==='all'?Object.values(v[11]||{}).flatMap(m=>m[11]||[]):(((v[11]||{})[month]||[])[11]||[])}
 function devParts(disp){
@@ -1208,17 +1214,21 @@ function hasAnyEventGeo(a){
 }
 function modalResultStats(atts){
   const total=atts.length;
-  const token=atts.filter(hasTokenEvidence).length;
+  const token=atts.filter(tokenYesFromAtt).length;
   const perfeito=atts.filter(a=>a[5]===0||scenarioOfAtt(a)==='correto_perfeito').length;
-  const correto=atts.filter(a=>scenarioOfAtt(a)==='correto').length;
+  const minimos=atts.filter(a=>scenarioOfAtt(a)==='requisitos_minimos').length;
   return {
     total,
     perfeito,
-    correto,
-    naoCumpriu:Math.max(0,total-perfeito-correto),
+    correto:minimos,
+    minimos,
+    semReq:atts.filter(a=>scenarioOfAtt(a)==='sem_requisitos_minimos').length,
+    naoCumpriu:atts.filter(a=>scenarioOfAtt(a)==='sem_requisitos_minimos').length,
     token,
-    naoUsou:atts.filter(a=>scenarioOfAtt(a)==='nao_usou_token').length,
-    web:atts.filter(a=>scenarioOfAtt(a)==='preenchimento_web').length
+    naoUsou:atts.filter(a=>['nao_utilizou_token','nao_usou_token'].includes(scenarioOfAtt(a))).length,
+    web:atts.filter(a=>scenarioOfAtt(a)==='preenchimento_web').length,
+    viaLink:atts.filter(a=>scenarioOfAtt(a)==='preencheu_via_link').length,
+    semGeo:atts.filter(a=>a?.[24]?.evidence?.semGeolocalizacao||scenarioOfAtt(a)==='falha_geolocalizacao').length
   };
 }
 let CURRENT_RESULT_CONTEXT=null;
@@ -1229,13 +1239,14 @@ function resultRuleCard(key,cls,iconId,label,value,desc){
   return `<button class="result-card ${cls}" onclick="openResultRule('${key}')"><span>${statusIcon(iconId,cls==='bad'?'bad':cls==='token'?'warn':'ok')}${esc(label)}</span><strong>${esc(value)}</strong><small>${esc(desc)}</small></button>`;
 }
 const RESULT_RULES={
-  indice:{title:'ÍNDICE DE USABILIDADE',body:'É o placar geral do fornecedor no período selecionado.',items:['Pegamos todos os transportes analisados.','Contamos quantos ficaram corretos com os requisitos mínimos.','Dividimos corretos por analisados e transformamos em porcentagem.']},
-  perfeito:{title:'PERFEITO',body:'É o transporte que veio completo, sem ressalva importante.',items:['Inseriu o TOKEN.','Tem dispositivo e versão do APP.','Tem horários pelo fluxo esperado.','Tem rastreio/geolocalização suficiente.','As evidências batem com o transporte.']},
-  correto:{title:'CORRETO',body:'É o transporte que cumpriu os requisitos mínimos para confirmar uso correto.',items:['Existe evidência de TOKEN e execução do fluxo.','Mesmo que tenha uma ressalva pequena, dá para comprovar que o transporte foi feito pelo APP.','Esses atendimentos entram como corretos no acompanhamento.']},
-  naoCumpriu:{title:'SEM REQUISITOS',body:'É o transporte que não teve evidência mínima suficiente para ficar como correto.',items:['Não entrou como Perfeito.','Não entrou como Correto.','Pode faltar TOKEN, rastreio, dispositivo, horário ou outra evidência importante.','O tooltip do atendimento mostra o motivo específico.']},
-  token:{title:'INSERIRAM TOKEN',body:'Mostra quantos transportes têm algum sinal de inserção ou uso do TOKEN.',items:['TOKEN SIM no relatório, ou dispositivo registrado, ou horários/usuários via APP, ou Lat/Long da inserção do TOKEN.','Se qualquer uma dessas evidências existir, entendemos que o fornecedor tentou/usou o TOKEN.']},
-  naoUsou:{title:'NÃO INSERIRAM TOKEN',body:'Mostra os transportes sem evidência de inserção do TOKEN.',items:['Não tem TOKEN SIM.','Não tem dispositivo.','Não tem horário de token.','Não tem Lat/Long do token.','Não tem outra evidência de uso via APP.']},
-  web:{title:'WEB',body:'É preenchimento pelo sistema/WEB, sem evidência de uso do TOKEN pelo APP.',items:['Pode existir preenchimento operacional.','Mas não aparece evidência suficiente de TOKEN, dispositivo ou geolocalização do APP.']}
+  indice:{title:'ÍNDICE DE USABILIDADE',body:'É o placar geral do fornecedor no período selecionado.',items:['Pegamos todos os transportes analisados.','Contamos Perfeito + Requisitos mínimos.','Dividimos esse total por todos os transportes analisados.']},
+  perfeito:{title:'PERFEITO',body:'É o transporte que veio completo e confiável para pagamento sem análise extra.',items:['TOKEN SIM.','Dispositivo informado.','Lat/Long e data/hora da inserção do TOKEN.','Horários via APP.','Pontos de rastreio maiores que zero.','Todos os eventos preenchidos pelo Usuario IRIS Contingencia.','Chegada/saída da origem, chegada no destino e liberação do destino com Lat/Long.','Chegada na origem e destino dentro de 700m do local oficial.']},
+  correto:{title:'REQUISITOS MÍNIMOS',body:'É o transporte que teve o mínimo necessário para considerar que foi realizado pelo fluxo do APP.',items:['TOKEN SIM.','Horários via APP SIM.','Dispositivo, data/hora do TOKEN, Lat/Long do TOKEN e usuário dos eventos entram como observação: podem estar verdadeiros ou falsos.','Pontos de rastreio podem ser zero ou mais.']},
+  naoCumpriu:{title:'NÃO ALCANÇOU AS VALIDAÇÕES MÍNIMAS',body:'É o transporte que inseriu TOKEN, mas não teve horários via APP.',items:['TOKEN SIM.','Horários via APP NÃO.','Sem horários via APP não dá para confirmar o fluxo mínimo do transporte.']},
+  token:{title:'INSERIRAM TOKEN',body:'Mostra quantos transportes têm evidência de TOKEN SIM.',items:['Conta quando o relatório trouxe TOKEN SIM.','Serve para medir adoção do TOKEN, separado da qualidade da geolocalização.']},
+  naoUsou:{title:'NÃO UTILIZOU O TOKEN',body:'É o transporte sem uso do TOKEN e sem horários via APP.',items:['TOKEN NÃO.','Horários via APP NÃO.','É o caso em que não apareceu evidência mínima de uso do fluxo.']},
+  web:{title:'PREENCHEU VIA LINK',body:'É quando o TOKEN e os horários existem, mas o transporte veio sem dispositivo e sem rastreio.',items:['TOKEN SIM.','Horários via APP SIM.','Pontos de rastreio iguais a zero.','Dispositivo não informado.']},
+  semGeo:{title:'TRANSPORTES SEM GEOLOCALIZAÇÃO',body:'É um alerta para mostrar transportes que precisam de cuidado na análise geográfica.',items:['Pontos de rastreio iguais a zero, ou','sem Lat/Long na chegada da origem, ou','sem Lat/Long na chegada do destino.','Esse alerta ajuda o financeiro a saber quando confiar direto e quando analisar melhor.']}
 };
 function ruleNumbersFor(key,ctx=CURRENT_RESULT_CONTEXT){
   const rs=ctx?.stats||{};
@@ -1246,11 +1257,12 @@ function ruleNumbersFor(key,ctx=CURRENT_RESULT_CONTEXT){
   const map={
     indice:{main:percentText(sv.correto+sv.gop+sv.sem,base),formula:`(${sv.correto+sv.gop+sv.sem} corretos com requisitos mínimos ÷ ${base} transportes analisados) × 100`,simple:'É como uma prova: quanto mais transportes corretos, maior a nota.'},
     perfeito:{main:rs.perfeito||0,formula:`${rs.perfeito||0} transporte(s) perfeito(s) dentro de ${total} transporte(s)`,simple:'Entrou aqui quando veio tudo redondinho, sem faltar evidência importante.'},
-    correto:{main:rs.correto||0,formula:`${rs.correto||0} transporte(s) correto(s) dentro de ${total} transporte(s)`,simple:'Entrou aqui quando teve o básico necessário para confiar que o transporte foi feito pelo APP.'},
-    naoCumpriu:{main:rs.naoCumpriu||0,formula:`${total} total - ${rs.perfeito||0} perfeito(s) - ${rs.correto||0} correto(s) = ${rs.naoCumpriu||0} sem requisitos`,simple:'É a caixinha do “não deu para comprovar direito”. Precisa olhar o motivo no atendimento.'},
-    token:{main:rs.token||0,formula:`${rs.token||0} de ${total} transporte(s) têm evidência de TOKEN`,simple:'Se apareceu qualquer sinal de TOKEN, conta aqui.'},
-    naoUsou:{main:rs.naoUsou||0,formula:`${rs.naoUsou||0} de ${total} transporte(s) não têm evidência de TOKEN`,simple:'Aqui fica quando não apareceu nenhum sinal de que o TOKEN foi inserido.'},
-    web:{main:rs.web||0,formula:`${rs.web||0} de ${total} transporte(s) foram classificados como WEB`,simple:'Foi preenchido pelo sistema, mas sem sinal claro do APP/TOKEN.'}
+    correto:{main:rs.minimos||rs.correto||0,formula:`${rs.minimos||rs.correto||0} transporte(s) com TOKEN SIM + horários via APP dentro de ${total}`,simple:'É o mínimo: colocou o token e preencheu horários pelo APP.'},
+    naoCumpriu:{main:rs.semReq||rs.naoCumpriu||0,formula:`${rs.semReq||rs.naoCumpriu||0} transporte(s) com TOKEN SIM, mas sem horários via APP`,simple:'Colocou token, mas não completou o mínimo que prova o fluxo.'},
+    token:{main:rs.token||0,formula:`${rs.token||0} de ${total} transporte(s) têm TOKEN SIM`,simple:'Aqui só olhamos se o token apareceu como SIM.'},
+    naoUsou:{main:rs.naoUsou||0,formula:`${rs.naoUsou||0} de ${total} transporte(s) estão com TOKEN NÃO e sem horários via APP`,simple:'Aqui fica quando não usou o token nem preencheu pelo APP.'},
+    web:{main:rs.viaLink||0,formula:`${rs.viaLink||0} transporte(s) com TOKEN SIM + horários via APP + rastreio 0 + sem dispositivo`,simple:'Parece preenchimento por link: tem token e horário, mas não veio dispositivo nem rastreio.'},
+    semGeo:{main:rs.semGeo||0,formula:`${rs.semGeo||0} transporte(s) sem rastreio ou sem Lat/Long de origem/destino`,simple:'É o aviso de “não dá para confiar 100% no mapa sem olhar melhor”.'}
   };
   const item=map[key]||{main:0,formula:'Sem cálculo disponível.',simple:'Sem explicação disponível.'};
   return {...item,total,correct};
@@ -1331,10 +1343,11 @@ function renderRuleModeButton(){
 
 // ── META TRACKING ────────────────────────────────────────────
 function emptyMetric(label='',order=0){
-  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0,naoUsou:0,geoFalha:0};
+  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0,naoUsou:0,geoFalha:0,perfeito:0,minimos:0,semReq:0,viaLink:0,semGeo:0};
 }
 function addMetric(m,a){
   const cl=a[5];
+  const scenario=scenarioOfAtt(a);
   m.total++;
   m.base++;
   if(isCorrectClass(cl))m.ok++;
@@ -1342,9 +1355,14 @@ function addMetric(m,a){
   if(cl===2)m.sem++;
   if(cl===3)m.web++;
   if(cl===4)m.erro++;
-  if(hasTokenEvidence(a))m.token++;
-  if(scenarioOfAtt(a)==='nao_usou_token')m.naoUsou++;
-  if(scenarioOfAtt(a)==='falha_geolocalizacao')m.geoFalha++;
+  if(tokenYesFromAtt(a))m.token++;
+  if(scenario==='correto_perfeito')m.perfeito++;
+  if(scenario==='requisitos_minimos')m.minimos++;
+  if(scenario==='sem_requisitos_minimos')m.semReq++;
+  if(scenario==='nao_utilizou_token'||scenario==='nao_usou_token')m.naoUsou++;
+  if(scenario==='preencheu_via_link')m.viaLink++;
+  if(a?.[24]?.evidence?.semGeolocalizacao||scenario==='falha_geolocalizacao')m.semGeo++;
+  if(scenario==='falha_geolocalizacao')m.geoFalha++;
   return m;
 }
 function metricPct(m){return m.base>0?Math.round(m.ok/m.base*1000)/10:0}
@@ -1380,7 +1398,7 @@ function buildGoalTracking(){
   });
   const monthList=[...months.entries()].map(([key,m])=>({key,...m,pct:metricPct(m)})).sort((a,b)=>b.order-a.order);
   const latest=activeMonth==='all'
-    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,web:meta.web,naoUsou:meta.naoUsou,geoFalha:meta.geoFalha,pct:meta.avg}
+    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,web:meta.web,naoUsou:meta.naoUsou,geoFalha:meta.geoFalha,perfeito:meta.perfeito,minimos:meta.minimos,semReq:meta.semReq,viaLink:meta.viaLink,semGeo:meta.semGeo,pct:meta.avg}
     : (monthList.find(m=>m.key===activeMonth)||emptyMetric('Sem dados'));
   latest.pct=metricPct(latest);
   const chronological=[...monthList].sort((a,b)=>a.order-b.order);
@@ -1424,8 +1442,8 @@ function renderGoalTracking(){
   const notOk=Math.max(0,(m.base||0)-(m.ok||0));
   const tokenPct=m.base?Math.round((m.token||0)/m.base*1000)/10:0;
   const noToken=m.naoUsou||0;
-  const web=m.web||0;
-  const geo=m.geoFalha||0;
+  const viaLink=m.viaLink||0;
+  const geo=m.semGeo||0;
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
@@ -1440,15 +1458,14 @@ function renderGoalTracking(){
             <div class="goal-bar"><div class="goal-fill" data-target="${Math.min(100,p)}" style="width:0%;background:${color}"></div></div>
           </div>
           <div class="goal-kpi neutral"><strong>${(m.base||0).toLocaleString('pt-BR')}</strong><span>Atendimentos analisados</span></div>
-          <div class="goal-kpi good"><strong>${(m.ok||0).toLocaleString('pt-BR')}</strong><span>Corretos com requisitos mínimos</span></div>
-          <div class="goal-kpi bad"><strong>${notOk.toLocaleString('pt-BR')}</strong><span>Sem requisitos</span></div>
-          <div class="goal-kpi token"><strong>${(m.token||0).toLocaleString('pt-BR')}</strong><span>Inseriram TOKEN · ${tokenPct}%</span></div>
-          <div class="goal-kpi bad"><strong>${noToken.toLocaleString('pt-BR')}</strong><span>Não inseriram o TOKEN</span></div>
-          <div class="goal-kpi web"><strong>${web.toLocaleString('pt-BR')}</strong><span>WEB / Sistema</span></div>
-          <div class="goal-kpi warn"><strong>${geo.toLocaleString('pt-BR')}</strong><span>Falha GEO com TOKEN</span></div>
-          <div class="goal-kpi neutral"><strong>${gap.toLocaleString('pt-BR')}</strong><span>Faltam para 80%</span></div>
+          <div class="goal-kpi good"><strong>${(m.perfeito||0).toLocaleString('pt-BR')}</strong><span>Perfeitos</span></div>
+          <div class="goal-kpi good"><strong>${(m.minimos||0).toLocaleString('pt-BR')}</strong><span>Requisitos mínimos</span></div>
+          <div class="goal-kpi bad"><strong>${(m.semReq||notOk).toLocaleString('pt-BR')}</strong><span>Sem requisitos</span></div>
+          <div class="goal-kpi bad"><strong>${noToken.toLocaleString('pt-BR')}</strong><span>Não utilizou TOKEN</span></div>
+          <div class="goal-kpi web"><strong>${viaLink.toLocaleString('pt-BR')}</strong><span>Preencheu via link</span></div>
+          <div class="goal-kpi warn"><strong>${geo.toLocaleString('pt-BR')}</strong><span>Sem geolocalização</span></div>
         </div>
-        <div class="goal-explain"><strong>Leitura rápida:</strong> correto é o transporte que cumpriu os requisitos mínimos. Sem requisitos é o transporte que não teve evidência suficiente para validar o uso. Falha GEO com TOKEN não vira erro: mostra que houve evidência de uso, mas o relatório não trouxe todos os pontos de localização.</div>
+        <div class="goal-explain"><strong>Leitura rápida:</strong> perfeito é pronto para confiar melhor no financeiro. Requisitos mínimos é TOKEN SIM + horários via APP. Sem geolocalização mostra transportes que precisam de mais cuidado no mapa.</div>
         <div class="scope-row">
           <div class="scope-card"><strong>Filtro atual</strong><span>${esc(data.meta.label)} · ${data.meta.avg}% · ${data.meta.ok}/${data.meta.base} corretos · ${data.meta.naoAprovado} sem requisitos</span></div>
           <div class="scope-card"><strong>Base treinamento</strong><span>${data.training.avg}% · ${data.training.matched}/${data.training.targetTotal} com dados no relatório · ${data.training.trained} treinados</span></div>
@@ -1584,8 +1601,8 @@ function render(){
     const bnr=pu?`<div class="cbnr ${CTBNR[v[0]]}">${CTLBL[v[0]]}</div>`:'';
     const pills=[
       sv.tokenOk>0?`<span class="pill mod">Utilização token ${sv.tokenOk}</span>`:'',
-      sv.sem>0?`<span class="pill sm">Sem mov. ${sv.sem}</span>`:'',
-      sv.erro>0?`<span class="pill err">Não usou ${sv.erro}</span>`:'',
+      sv.sem>0?`<span class="pill sm">Sem geolocalização ${sv.sem}</span>`:'',
+      sv.erro>0?`<span class="pill err">Sem requisitos ${sv.erro}</span>`:'',
     ].filter(Boolean).join('');
     // Training chip
     const tr=v[12];
@@ -1607,7 +1624,7 @@ function render(){
         <div class="cs"><div class="cs-n">${sv.total}</div><div class="cs-l">Total</div></div>
         <div class="cs"><div class="cs-n" style="color:#059669">${sv.correto+sv.gop+sv.sem}</div><div class="cs-l">Comprovados</div></div>
         <div class="cs"><div class="cs-n" style="color:#7c3aed">${sv.tokenOk}</div><div class="cs-l">Utilização token</div></div>
-        <div class="cs"><div class="cs-n" style="color:#dc2626">${sv.web+sv.erro}</div><div class="cs-l">WEB/Não usou</div></div>
+        <div class="cs"><div class="cs-n" style="color:#dc2626">${sv.web+sv.erro}</div><div class="cs-l">Análise</div></div>
       </div>
       ${pills?`<div class="cpills">${pills}</div>`:''}
       ${trChip}
@@ -1618,7 +1635,7 @@ function render(){
 // ── RANKING RENDERERS ────────────────────────────────────────
 function csvCell(v){return `"${String(v??'').replace(/"/g,'""')}"`}
 function downloadFilteredCsv(){
-  const rows=[['Fornecedor','Categoria/Status','Usabilidade','Total','Base','Correto','Utilização do token','Sem movimentação','Não usou TOKEN']];
+  const rows=[['Fornecedor','Categoria/Status','Usabilidade','Total','Base','Correto','Utilização do token','Sem geolocalização','Sem requisitos']];
   filteredEntries().forEach(([n,v])=>{
     const sv=supplierView(v);
     rows.push([n,isPu(v)?CTLBL[v[0]]:'CAT '+cat(sv.pct),sv.pct,sv.total,sv.base,sv.correto,sv.tokenOk,sv.sem,sv.erro]);
@@ -1749,7 +1766,7 @@ function validationTooltip(a,cl){
     ['Pontos de rastreio',!!ev.tracking,`${trackPoints} ponto(s) de rastreio`,`Apenas ${trackPoints} ponto(s); necessário >= 1`],
     ['Usuários das etapas',!!ev.allUsersContingency,'Todos Usuario IRIS Contingencia','Houve etapa com usuário diferente ou etapa ausente'],
     ['Lat/Long das etapas',!!ev.allPointLatLong,'Pontos das etapas disponíveis','Alguma etapa veio sem Lat/Long no relatório'],
-    ['Origem/Destino 100m',!!ev.nearRoute,'Fornecedor marcou perto da origem/destino','Não foi possível comprovar proximidade em até 100m']
+    ['Origem/Destino 700m',!!ev.nearRoute,'Fornecedor marcou perto da origem/destino','Não foi possível comprovar proximidade em até 700m']
   ];
   const okLines=checks.filter(([,ok])=>ok).map(([label,,good])=>`✅ ${label}: ${good}`);
   const badLines=checks.filter(([,ok])=>!ok).map(([label,, ,bad])=>`❌ ${label}: ${bad}`);
@@ -1759,6 +1776,13 @@ function validationTooltip(a,cl){
   const out=[`Atendimento #${a?.[0]||'--'} - validação da regra`,`Resultado: ${result}`,''];
   if(pay){
     out.push('Pagamento:',`${pay.payable?'✅':'❌'} ${pay.title}: ${cleanReasonText(pay.reason||'')}`,'');
+  }
+  if(ev.operacaoEditou){
+    out.push(
+      'Alerta de operação:',
+      '⚠️ Houve edição da operação: o transporte tem TOKEN SIM, dispositivo, Lat/Long e data/hora do TOKEN, horários via APP e rastreio, mas todos os eventos preenchidos foram feitos por usuário diferente de Usuario IRIS Contingencia.',
+      ''
+    );
   }
   if(routeInfo?.userChecks?.length){
     const s=routeInfo.userSummary||{};
@@ -1953,11 +1977,11 @@ function openM(name){
     ${sectionTitle('Resultado dos Atendimentos','icon-activity','green')}
     <div class="result-clean">
       ${resultRuleCard('perfeito','ok','icon-check-circle','Perfeito',rs.perfeito,'cumpriu todas as validações')}
-      ${resultRuleCard('correto','ok','icon-check','Correto',rs.correto,'cumpriu validações')}
-      ${resultRuleCard('naoCumpriu','token','icon-alert','Sem requisitos',rs.naoCumpriu,'não cumpriu o mínimo')}
-      ${resultRuleCard('token','neutral','icon-smartphone','Inseriram TOKEN',rs.token,`de ${rs.total} atendimentos`)}
-      ${resultRuleCard('naoUsou','bad','icon-x','Não inseriram TOKEN',rs.naoUsou,'sem evidência de inserção')}
-      ${resultRuleCard('web','neutral','icon-info','WEB',rs.web,'preenchimento WEB')}
+      ${resultRuleCard('correto','ok','icon-check','Requisitos mínimos',rs.minimos,'TOKEN + horários APP')}
+      ${resultRuleCard('naoCumpriu','token','icon-alert','Sem requisitos',rs.semReq,'TOKEN sem horários APP')}
+      ${resultRuleCard('naoUsou','bad','icon-x','Não utilizou TOKEN',rs.naoUsou,'TOKEN não + sem APP')}
+      ${resultRuleCard('web','neutral','icon-info','Preencheu via link',rs.viaLink,'sem dispositivo/rastreio')}
+      ${resultRuleCard('semGeo','token','icon-pin','Sem geolocalização',rs.semGeo,'mapa exige análise')}
     </div>
     ${zeroRastAtts.length?`<button class="soft-action" onclick='openSd("${nid}_zero","Rastreios zerados",${JSON.stringify(zeroRastAtts)})'>${icon('icon-alert')} ${zeroRastAtts.length} chamados com rastreio zerado</button>`:''}
 
@@ -2124,7 +2148,7 @@ function paymentModalHtml(a){
     item(!!ev.tracking,'Rastreio',`${Number(ev.trackingPoints??a?.[21]??0)} ponto(s) de rastreio`,!ev.tracking&&isCorrectClass(a?.[5])),
     item(!!ev.allUsersContingency,'Usuários das etapas',`${stage.filled??0}/${stage.expected??0} preenchidas · ${stage.differentUser??0} diferente(s)`,!!stage.differentUser),
     item(!!ev.allPointLatLong,'Lat/Long das etapas',ev.allPointLatLong?'Todos os pontos vieram com coordenada':'Há etapa sem Lat/Long no relatório',!ev.allPointLatLong&&isCorrectClass(a?.[5])),
-    item(!!ev.nearRoute,'Origem/Destino',ev.nearRoute?'Marcação próxima em até 100m':'Não comprovado em até 100m; usar como estimativa',!ev.nearRoute&&isCorrectClass(a?.[5]))
+    item(!!ev.nearRoute,'Origem/Destino',ev.nearRoute?'Marcação próxima em até 700m':'Não comprovado em até 700m; usar como estimativa',!ev.nearRoute&&isCorrectClass(a?.[5]))
   ].join('');
   return `<div class="pay-summary">
     <h4>${esc(p.title||'Pagamento')} · Atendimento #${esc(a?.[0]||'')}</h4>
@@ -2370,6 +2394,13 @@ function initMap(a,route){
         <div style="background:${color};width:${size}px;height:${size}px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>
         <div style="position:absolute;top:${Math.round(size*.2)}px;left:0;right:0;text-align:center;color:#fff;font-size:${String(label).length>1?'.58rem':(size>28?'.78rem':'.62rem')};font-weight:800">${label}</div>
       </div>`});
+    const hospitalIcon=(color)=>L.divIcon({className:'',iconSize:[26,26],iconAnchor:[13,13],html:`
+      <div style="width:26px;height:26px;border-radius:999px;background:#fff;border:2px solid ${color};box-shadow:0 3px 9px rgba(16,24,40,.22);display:flex;align-items:center;justify-content:center;color:${color};font-size:14px;font-weight:950">✚</div>`});
+    const enableVisualDrag=(marker,latLng)=>{
+      marker.on('dragend',()=>marker.setLatLng(latLng));
+      marker.on('dragstart',()=>marker.closePopup());
+      return marker;
+    };
 
     const spreadMarkers=pts=>{
       const groups=new Map();
@@ -2386,16 +2417,30 @@ function initMap(a,route){
         return {...p,displayLat:+p.lat+Math.sin(angle)*rad,displayLon:+p.lon+Math.cos(angle)*rad,overlap:n};
       });
     };
-    const markerItems=spreadMarkers([
-      ...route.official.map(p=>({...p,markerKind:'official'})),
-      ...stageMarkerPoints.map(p=>({...p,markerKind:'stage'}))
-    ]);
+    const markerItems=spreadMarkers(stageMarkerPoints.map(p=>({...p,markerKind:'stage'})));
+    route.official.forEach(p=>{
+      const isOrigin=p.role==='origem-oficial';
+      const color=isOrigin?'#059669':'#dc2626';
+      const label=isOrigin?'Origem oficial':'Destino oficial';
+      L.circle([p.lat,p.lon],{
+        radius:700,
+        color,
+        weight:2,
+        opacity:.9,
+        fillColor:color,
+        fillOpacity:.10,
+        dashArray:'8,6'
+      }).addTo(map).bindPopup(`<strong>Raio de validação - ${esc(label)}</strong><br>Fornecedor precisa marcar dentro de 0,7 km / 700m.`);
+      enableVisualDrag(L.marker([p.lat,p.lon],{icon:hospitalIcon(color),zIndexOffset:300,draggable:true,autoPan:true}).addTo(map),[p.lat,p.lon])
+        .bindPopup(`<strong>${esc(label)}</strong><br>Ícone oficial do hospital/unidade.<br>Geo: ${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}<br>Raio aceito: 700m.<br><em>Você pode arrastar para visualizar; ao soltar, volta ao lugar.</em>`);
+    });
     markerItems.forEach(p=>{
-      const lbl=p.markerKind==='official'?(p.role==='origem-oficial'?'OR':'DE'):String(p.stage);
-      const size=p.markerKind==='official'?30:34;
+      const lbl=String(p.stage);
+      const size=34;
       const pointColor=p.markerKind==='stage'&&isExternalPointUser(p.user)?'#facc15':(p.color||'#374151');
-      L.marker([p.displayLat,p.displayLon],{icon:pin(pointColor,lbl,size)}).addTo(map)
-        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>Horário: '+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}<br>Geo: ${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}${p.overlap>1?'<br><em>Ponto deslocado no mapa para não sobrepor.</em>':''}`);
+      const markerIcon=pin(pointColor,lbl,size);
+      enableVisualDrag(L.marker([p.displayLat,p.displayLon],{icon:markerIcon,draggable:true,autoPan:true}).addTo(map),[p.displayLat,p.displayLon])
+        .bindPopup(`<strong>${esc(p.stageLabel)}</strong><br>${esc(p.label||'')}${p.time?'<br>Horário: '+esc(p.time):''}${p.user?'<br>'+esc(p.user):''}<br>Geo: ${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)}${p.overlap>1?'<br><em>Ponto deslocado no mapa para não sobrepor.</em>':''}<br><em>Você pode arrastar para visualizar; ao soltar, volta ao lugar.</em>`);
       if(p.overlap>1)L.polyline([[p.lat,p.lon],[p.displayLat,p.displayLon]],{color:pointColor,weight:1,opacity:.45,dashArray:'2,4'}).addTo(map);
     });
     const expectedGroup=L.layerGroup().addTo(map);
@@ -2412,8 +2457,8 @@ function initMap(a,route){
     legend.onAdd=()=>{
       const div=L.DomUtil.create('div','route-legend');
       div.innerHTML=`<div><span class="route-dot" style="background:#7c3aed"></span>0 Base / Token</div>
-        <div><span class="route-dot" style="background:#059669"></span>OR Origem oficial</div>
-        <div><span class="route-dot" style="background:#dc2626"></span>DE Destino oficial</div>
+        <div><span class="route-dot" style="background:#059669"></span>✚ OR Origem oficial + raio 700m</div>
+        <div><span class="route-dot" style="background:#dc2626"></span>✚ DE Destino oficial + raio 700m</div>
         <div><span class="route-dot" style="background:#2563eb"></span>Rota esperada calculada</div>
         <div><span class="route-dot" style="background:#ea580c"></span>Cliques do fornecedor / ida</div>
         <div><span class="route-dot" style="background:#ef4444"></span>Realizado pelo fornecedor - volta</div>
@@ -2421,7 +2466,7 @@ function initMap(a,route){
       return div;
     };
     legend.addTo(map);
-    const fitPts=markerItems.length?markerItems.map(p=>[p.displayLat,p.displayLon]):all.map(p=>[p.lat,p.lon]);
+    const fitPts=[...route.official.map(p=>[p.lat,p.lon]),...markerItems.map(p=>[p.displayLat,p.displayLon])];
     if(fitPts.length>1)map.fitBounds(L.latLngBounds(fitPts).pad(0.22));
 
     el._map=map;
@@ -2446,18 +2491,19 @@ function renderRulesContent(){
     rows.innerHTML=`
       <tr><td>Usabilidade correta</td><td>Token SIM, pelo menos 1 ponto de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
       <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
-      <tr><td>Não usou o TOKEN</td><td>Qualquer atendimento sem TOKEN SIM, sem ponto de rastreio ou sem evidência suficiente de execução via APP.</td><td><span class="rtag er">FORA</span></td></tr>
+      <tr><td>Não utilizou o TOKEN</td><td>Qualquer atendimento sem TOKEN SIM, sem ponto de rastreio ou sem evidência suficiente de execução via APP.</td><td><span class="rtag er">FORA</span></td></tr>
     `;
   }else{
     desc.textContent='Como cada atendimento entra no acompanhamento por evidência de uso do TOKEN, preenchimento via APP e validação operacional.';
     rows.innerHTML=`
-      <tr><td>Perfeito</td><td>Atendimento que cumpriu todas as validações: TOKEN, dispositivo, horários, usuários, rastreio e geolocalização completa.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-      <tr><td>Correto</td><td>Cumpriu as validações de uso do TOKEN.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-      <tr><td>Não cumpriu as validações</td><td>Não cumpriu as validações mínimas para ficar como Perfeito ou Correto no resumo do fornecedor.</td><td><span class="rtag mod">VALIDAÇÃO</span></td></tr>
-      <tr><td>Usou TOKEN com falha de geolocalização</td><td>Existe evidência de inserção do TOKEN por TOKEN SIM, dispositivo, horários/usuários ou Lat/Long do token, mas a captação de rastreio/geolocalização falhou.</td><td><span class="rtag mod">GEO</span></td></tr>
-      <tr><td>Preenchimento WEB</td><td>Preenchimento operacional sem evidência de uso do TOKEN pelo APP.</td><td><span class="rtag er">FORA</span></td></tr>
+      <tr><td>Perfeito</td><td>TOKEN, dispositivo, Lat/Long e data/hora do TOKEN, horários via APP, rastreio, usuários IRIS, coordenadas essenciais e origem/destino dentro de 700m.</td><td><span class="rtag ok">PERFEITO</span></td></tr>
+      <tr><td>Requisitos mínimos</td><td>TOKEN SIM e horários via APP SIM.</td><td><span class="rtag ok">CORRETO</span></td></tr>
+      <tr><td>Sem requisitos</td><td>TOKEN SIM, mas horários via APP NÃO.</td><td><span class="rtag mod">VALIDAÇÃO</span></td></tr>
+      <tr><td>Preencheu via link</td><td>TOKEN SIM, horários via APP SIM, rastreio zerado e sem dispositivo.</td><td><span class="rtag er">ANÁLISE</span></td></tr>
+      <tr><td>Sem geolocalização</td><td>Rastreio zerado ou sem Lat/Long da chegada na origem/destino.</td><td><span class="rtag mod">GEO</span></td></tr>
       <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
       <tr><td>Pagamento</td><td>O modal do mapa mostra se há evidência suficiente para pagar, quais validações passaram, quais ficaram estimadas e se o Google Maps não pode simular a rota.</td><td><span class="rtag ok">LAUDO</span></td></tr>
+      <tr><td>Não utilizou o TOKEN</td><td>TOKEN NÃO e horários via APP NÃO.</td><td><span class="rtag er">FORA</span></td></tr>
     `;
   }
 }
