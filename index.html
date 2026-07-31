@@ -43,6 +43,7 @@ header{background:var(--green);padding:0 28px;display:flex;align-items:center;ju
 .avg-upd{font-size:.57rem;color:rgba(255,255,255,.4);margin-top:3px}
 .avg-box.live{animation:badgeAlive 2.2s ease-in-out infinite}
 .avg-box.live .avg-bar-fill,.goal-main.live .goal-fill{animation:barAlive 1.6s ease-in-out infinite}
+.hstats,.avg-box{display:none!important}
 .ibtn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .ibtn:hover{background:rgba(255,255,255,.22)}
 
@@ -68,48 +69,61 @@ header{background:var(--green);padding:0 28px;display:flex;align-items:center;ju
 
 /* ── MAIN ───────────────────────────── */
 main{padding:20px 28px;max-width:1440px;margin:0 auto}
-.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:9px 14px;background:#fff;border-radius:var(--radius);border:1px solid #e5e7eb;box-shadow:var(--shadow)}
+.legend{display:none;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:9px 14px;background:#fff;border-radius:var(--radius);border:1px solid #e5e7eb;box-shadow:var(--shadow)}
 .li{display:flex;align-items:center;gap:5px;font-size:.67rem;color:#6b7280;font-weight:500}
 .ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
-.ri{font-size:.72rem;color:#9ca3af;margin-bottom:10px}
+.ri{display:none;font-size:.72rem;color:#9ca3af;margin-bottom:10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 
 /* ── META TRACKING ─────────────────── */
-.intel{margin-bottom:14px}
+.intel{margin-bottom:12px}
 .goal-panel{background:#fff;border:1px solid #e5e7eb;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.goal-head{padding:12px 14px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.goal-title{font-size:.76rem;font-weight:800;color:#111827;text-transform:uppercase;letter-spacing:.05em}
-.goal-sub{font-size:.62rem;color:#9ca3af;font-weight:600;margin-top:2px}
-.goal-target{font-size:.68rem;font-weight:800;color:#065f46;background:#d1fae5;border:1px solid #a7f3d0;border-radius:20px;padding:5px 10px;white-space:nowrap}
-.goal-body{padding:12px 14px}
-.goal-summary{display:grid;grid-template-columns:minmax(210px,.9fr) repeat(auto-fit,minmax(126px,1fr));gap:10px;margin-bottom:11px}
-.goal-main{border:1px solid #bbf7d0;background:linear-gradient(135deg,#f0fdf4,#fff);border-radius:10px;padding:11px 13px}
-.goal-main .goal-pct{font-size:1.75rem;font-weight:800;line-height:1;color:#111827}
-.goal-main .goal-label{font-size:.64rem;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
-.goal-main .goal-bar{height:6px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-top:10px}
+.goal-head{padding:10px 16px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.goal-title{display:flex;align-items:center;gap:10px;font-size:.76rem;font-weight:800;color:#111827;text-transform:uppercase;letter-spacing:.05em}
+.goal-sub{font-size:.58rem;color:#9ca3af;font-weight:650;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goal-target{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:900;color:#344054;background:#fff;border:1px solid #e4e7ec;border-radius:999px;padding:7px 12px;white-space:nowrap;box-shadow:var(--shadow)}
+.goal-body{padding:10px 16px 12px}
+.goal-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:10px;align-items:stretch}
+.goal-main{border:1px solid #e4e7ec;background:#fff;border-radius:10px;padding:10px 12px;min-height:86px}
+.goal-main .goal-pct{font-size:1.85rem;font-weight:900;line-height:.98;color:#111827}
+.goal-main .goal-label{font-size:.58rem;color:#344054;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-top:5px}
+.goal-main .goal-bar{height:5px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-top:9px}
 .goal-main .goal-fill{height:100%;border-radius:4px;transform-origin:left center}
 .goal-main.live{animation:goalAlive 2.4s ease-in-out infinite}
-.goal-kpi{border:1px solid #f1f5f9;background:#fff;border-radius:8px;padding:9px 10px}
+.goal-kpi{border:1px solid #f1f5f9;background:#fff;border-radius:10px;padding:10px 10px;min-height:86px}
 .goal-kpi.good{background:#f0fdf4;border-color:#bbf7d0}.goal-kpi.good strong{color:#047857}
 .goal-kpi.bad{background:#fff1f2;border-color:#fecdd3}.goal-kpi.bad strong{color:#be123c}
 .goal-kpi.warn{background:#fffbeb;border-color:#fde68a}.goal-kpi.warn strong{color:#b45309}
 .goal-kpi.token{background:#fff7ed;border-color:#fed7aa}.goal-kpi.token strong{color:#ea580c}
 .goal-kpi.web{background:#f5f3ff;border-color:#ddd6fe}.goal-kpi.web strong{color:#6d28d9}
 .goal-kpi.neutral{background:#f8fafc;border-color:#e2e8f0}.goal-kpi.neutral strong{color:#334155}
-.goal-kpi strong{display:block;font-size:1rem;color:#111827;line-height:1.1}
-.goal-kpi span{display:block;font-size:.6rem;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
-.goal-explain{border:1px solid #fed7aa;background:#fff7ed;color:#7c2d12;border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:.68rem;font-weight:700;line-height:1.45}
+.goal-kpi strong{display:block;font-size:1.02rem;color:#111827;line-height:1}
+.goal-kpi span{display:block;font-size:.55rem;color:#344054;font-weight:900;text-transform:uppercase;letter-spacing:.035em;margin-top:7px;line-height:1.22}
+.goal-compact-score{display:inline-flex;align-items:center;gap:6px;margin:0;border:1px solid #fed7aa;background:#fff7ed;border-radius:999px;padding:4px 9px}.goal-compact-score b{font-size:.86rem;line-height:1;font-weight:950}.goal-compact-score span{font-size:.55rem;font-weight:900;color:#9a3412;text-transform:uppercase;letter-spacing:.04em}
+.metric-badge{position:relative;overflow:hidden;border:0;border-radius:20px;padding:16px 18px;min-height:112px;display:flex;flex-direction:column;justify-content:flex-start;box-shadow:var(--shadow-md);isolation:isolate}
+.metric-badge::after{content:attr(data-value);position:absolute;right:14px;bottom:-13px;font-size:4.8rem;line-height:1;font-weight:950;color:rgba(255,255,255,.34);letter-spacing:-.06em;z-index:-1}
+.metric-badge strong{font-size:.82rem;line-height:1.2;text-transform:uppercase;letter-spacing:.025em;color:#fff;max-width:180px}
+.metric-badge span{display:none}
+.metric-badge small{display:none}
+.metric-badge.green{background:linear-gradient(135deg,#0f9f62,#16a34a)}
+.metric-badge.orange{background:linear-gradient(135deg,#ff8000,#f97316)}
+.metric-badge.red{background:linear-gradient(135deg,#ff3f46,#ef4444)}
+.metric-badge.yellow{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
+.metric-badge.gray{background:linear-gradient(135deg,#475467,#667085)}
+.metric-badge.purple{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+.metric-badge.light{border:1px solid #e4e7ec;background:#fff;color:#101828}.metric-badge.light strong,.metric-badge.light span,.metric-badge.light small{color:#101828}.metric-badge.light small{border-color:#e4e7ec;background:#f8fafc}.metric-badge.light::after{color:rgba(16,24,40,.08)}
+.goal-explain{display:none;border:1px solid #fed7aa;background:#fff7ed;color:#7c2d12;border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:.68rem;font-weight:700;line-height:1.45}
 .goal-explain strong{color:#9a3412}
-.week-track{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-.week-card{border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:9px 10px}
+.week-track{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.week-card{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:8px 10px}
 .week-card.empty{background:#f9fafb;color:#9ca3af}
 .week-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
-.week-name{font-size:.66rem;font-weight:800;color:#374151}
+.week-name{font-size:.64rem;font-weight:850;color:#374151}
 .week-pct{font-size:.72rem;font-weight:800}
 .week-bar{height:5px;background:#f3f4f6;border-radius:4px;overflow:hidden}
 .week-fill{height:100%;border-radius:4px}
-.week-meta{display:flex;justify-content:space-between;gap:6px;margin-top:6px;font-size:.6rem;color:#6b7280;font-weight:700}
-.before-after{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin:0 0 12px}
+.week-meta{display:flex;justify-content:space-between;gap:6px;margin-top:5px;font-size:.56rem;color:#6b7280;font-weight:800}
+.before-after{display:none;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin:0 0 12px}
 .ba-card{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:10px 12px;min-width:0}
 .ba-k{font-size:.6rem;color:#9ca3af;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
 .ba-v{font-size:1.35rem;font-weight:850;line-height:1.05;margin-top:5px}
@@ -117,18 +131,19 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .ba-arrow{display:flex;align-items:center;justify-content:center;min-width:42px;color:#ea580c;font-weight:900}
 .ba-delta{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:.65rem;font-weight:850;background:#f8fafc;border:1px solid #e5e7eb;margin-top:8px}
 .ba-delta.up{color:#047857;background:#ecfdf3;border-color:#a7f3d0}.ba-delta.down{color:#b42318;background:#fef3f2;border-color:#fecaca}.ba-delta.flat{color:#475467}
-.scope-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
+.scope-row{display:none;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
 .scope-card{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:10px 12px}
 .scope-card strong{display:block;font-size:.68rem;color:#344054;text-transform:uppercase;letter-spacing:.04em}
 .scope-card span{display:block;font-size:.72rem;color:#667085;font-weight:700;margin-top:5px}
-.month-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.month-row{display:none;gap:6px;flex-wrap:wrap;margin-top:10px}
 .month-chip{font-size:.61rem;font-weight:750;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;border-radius:20px;padding:4px 8px}
 .month-chip.on{background:#111827;color:#fff;border-color:#111827}
 @keyframes badgeAlive{0%,100%{box-shadow:0 0 0 rgba(255,255,255,0);transform:translateY(0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.08);transform:translateY(-1px)}}
 @keyframes goalAlive{0%,100%{box-shadow:0 0 0 rgba(16,185,129,0);transform:translateY(0)}50%{box-shadow:0 8px 22px rgba(16,185,129,.10);transform:translateY(-1px)}}
 @keyframes barAlive{0%,100%{filter:saturate(1)}50%{filter:saturate(1.35) brightness(1.08)}}
 @media (prefers-reduced-motion:reduce){.avg-box.live,.goal-main.live,.avg-box.live .avg-bar-fill,.goal-main.live .goal-fill{animation:none}}
-@media(max-width:980px){.goal-summary{grid-template-columns:1fr 1fr}.goal-main{grid-column:1/-1}.before-after,.scope-row{grid-template-columns:1fr}.ba-arrow{display:none}}
+@media(max-width:1180px){.goal-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.goal-main{grid-column:span 2}.week-track{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:980px){.goal-summary{grid-template-columns:1fr 1fr}.goal-main{grid-column:1/-1}.before-after,.scope-row{grid-template-columns:1fr}.ba-arrow{display:none}.week-track{grid-template-columns:1fr 1fr}}
 
 /* ── CARDS ──────────────────────────── */
 .card{background:#fff;border-radius:var(--radius);border:1px solid #e5e7eb;padding:14px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;box-shadow:var(--shadow)}
@@ -320,7 +335,7 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .anum{font-weight:700;color:#111827;font-size:.72rem}
 .atag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:.6rem;font-weight:600;white-space:nowrap;cursor:help}
 .atag.t0{background:#dcfce7;color:#14532d}.atag.t1{background:#fef9c3;color:#713f12}
-.atag.t2{background:#fef3c7;color:#92400e}.atag.t3{background:#ede9fe;color:#4c1d95}.atag.t4{background:#fee2e2;color:#991b1b}
+.atag.t2{background:#fef3c7;color:#92400e}.atag.t3{background:#ede9fe;color:#4c1d95}.atag.t4{background:#ff3f46!important;color:#fff!important;border-color:#ff3f46!important}
 .status-cell{display:flex;align-items:center;justify-content:center;gap:5px}
 .geo-alert{width:18px;height:18px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:#fffaeb;border:1px solid #fedf89;color:#b54708;cursor:help}
 .geo-alert .ico{width:11px;height:11px;stroke-width:2.8}
@@ -349,7 +364,7 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .map-addr{font-size:.7rem;color:#475467;display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:9px 10px;box-shadow:var(--shadow)}
 .map-addr b{display:block;font-size:.58rem;line-height:1;text-transform:uppercase;letter-spacing:.06em;color:#98a2b3;margin-bottom:4px}
 .map-addr span{min-width:0;line-height:1.35}.map-addr span:last-child{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-.map-stats-bar{padding:10px 18px;background:#fff;border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;align-items:center;gap:10px;flex-shrink:0}
+.map-stats-bar{padding:10px 18px;background:#fff;border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;align-items:center;gap:10px;flex-shrink:0}
 .map-stat{font-size:.72rem;font-weight:750;color:#344054;display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:9px 10px;min-height:42px}
 .map-stat strong{font-size:.78rem;color:var(--text)}
 .map-note{font-size:.63rem;color:var(--muted);justify-self:end;white-space:nowrap}
@@ -398,7 +413,7 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
   .map-modal{width:98vw;height:96vh;max-height:96vh}
   .map-hdr{padding:8px 10px}.map-hdr h3{font-size:.9rem}.map-addrs{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
   .map-addr{padding:6px 7px;font-size:.62rem;max-height:58px;overflow:hidden}.map-addr b{font-size:.52rem}.map-addr span:last-child{-webkit-line-clamp:2}
-  .map-stats-bar{grid-template-columns:repeat(4,minmax(0,1fr));padding:7px 10px;gap:6px}.map-stat{padding:6px 7px;min-height:34px;font-size:.62rem;gap:5px}.map-stat strong{font-size:.66rem}.map-note{display:none}
+  .map-stats-bar{grid-template-columns:repeat(5,minmax(0,1fr));padding:7px 10px;gap:6px}.map-stat{padding:6px 7px;min-height:34px;font-size:.62rem;gap:5px}.map-stat strong{font-size:.66rem}.map-note{display:none}
   .route-timeline{grid-template-columns:1fr 1fr}.route-steps,.route-points{grid-template-columns:1fr}
   .map-workspace{grid-template-columns:1fr;padding:8px;gap:8px}
   .map-canvas-panel{height:32vh;min-height:190px}
@@ -504,7 +519,7 @@ main{max-width:1500px;padding:24px 32px 34px}
 .goal-head{padding:16px 18px;border-bottom:1px solid var(--border)}
 .goal-title{font-size:.78rem;color:var(--text);letter-spacing:.06em}.goal-sub{font-size:.68rem;color:var(--muted)}
 .goal-target{background:var(--primary-soft);border-color:#fed7aa;color:#9a3412}
-.goal-body{padding:16px 18px}.goal-summary{gap:12px}.goal-main,.goal-kpi,.week-card,.ba-card,.scope-card{border-color:var(--border);background:#fff;border-radius:12px}
+.goal-body{padding:10px 16px 12px}.goal-summary{gap:10px}.goal-main,.goal-kpi,.week-card,.ba-card,.scope-card{border-color:var(--border);background:#fff;border-radius:12px}
 .goal-main .goal-pct{font-size:2rem}.goal-main .goal-label,.goal-kpi span,.week-name,.ba-k{color:#475467}
 .ba-v{color:var(--text)}.ba-arrow{color:var(--primary)}
 .month-chip{background:#fff;border-color:var(--border);color:#475467}.month-chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
@@ -557,11 +572,172 @@ main{max-width:1500px;padding:24px 32px 34px}
 .fold{border:1px solid var(--border);border-radius:14px;background:#fff;box-shadow:var(--shadow);margin-top:18px;overflow:hidden}.fold-head{width:100%;border:0;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}.fold-head:hover{background:#fff7ed}.fold-head>span:first-child{display:flex;align-items:center;gap:9px;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:#344054;font-weight:850}.fold-toggle{width:30px;height:30px;border-radius:999px;border:1px solid #fed7aa;background:#fff7ed;color:#c2410c;display:flex;align-items:center;justify-content:center;transition:transform .18s}.fold-toggle .ico{margin:0;width:15px;height:15px}.fold:not(.collapsed) .fold-toggle{transform:rotate(90deg)}.fold-body{padding:0 14px 14px}.fold.collapsed .fold-body{display:none}
 .device-panel{display:grid;gap:12px}.phone-card{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#0f5132,#157347);color:#fff;border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.18);box-shadow:var(--shadow-md)}.phone-visual{width:54px;height:82px;border-radius:14px;background:#101828;border:3px solid #344054;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 2px rgba(255,255,255,.08)}.phone-screen{width:40px;height:66px;border-radius:10px;background:linear-gradient(160deg,#ecfdf3,#ffedd5);display:flex;align-items:center;justify-content:center;color:#0f5132}.phone-screen .ico{width:24px;height:24px}.phone-label{font-size:.62rem;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#bbf7d0}.phone-name{font-size:1.05rem;font-weight:850;line-height:1.2;margin-top:3px}.phone-sub{font-size:.68rem;color:#d1fae5;margin-top:3px}
 .result-clean{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.result-card{border:1px solid var(--border);border-radius:13px;background:#fff;padding:12px 13px;box-shadow:var(--shadow);min-height:92px;cursor:pointer;text-align:left;transition:transform .15s,box-shadow .15s,border-color .15s}.result-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);border-color:#fdba74}.result-card span{display:flex;align-items:center;gap:7px;font-size:.66rem;font-weight:850;color:#475467;text-transform:uppercase;letter-spacing:.05em}.result-card strong{display:block;font-size:1.55rem;line-height:1;margin:10px 0 5px;color:#101828}.result-card small{font-size:.66rem;color:#667085;line-height:1.3}.result-card.ok{border-color:#abefc6;background:#fcfffd}.result-card.token{border-color:#fed7aa;background:#fffaf5}.result-card.bad{border-color:#fecdca;background:#fffafa}.result-card.neutral{background:#fcfcfd}.rule-explain{display:grid;gap:10px}.rule-explain-card{border:1px solid var(--border);border-radius:12px;background:#fff;padding:12px;box-shadow:var(--shadow)}.rule-explain-card h4{font-size:.82rem;color:#101828;margin-bottom:6px}.rule-explain-card p,.rule-explain-card li{font-size:.72rem;color:#475467;line-height:1.45}.rule-explain-card ul{padding-left:18px;margin:6px 0 0}.rule-calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}.rule-metric{border:1px solid #e4e7ec;background:#f8fafc;border-radius:11px;padding:10px}.rule-metric b{display:block;font-size:1.1rem;color:#101828}.rule-metric span{display:block;font-size:.64rem;color:#667085;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}.rule-formula{border:1px solid #fed7aa;background:#fff7ed;color:#7c2d12;border-radius:12px;padding:11px 12px;font-size:.74rem;line-height:1.45;font-weight:750}.rule-formula strong{color:#9a3412}.soft-action{margin-top:10px;border:1px solid #fed7aa;background:#fff7ed;color:#c2410c;border-radius:999px;padding:8px 12px;font-size:.72rem;font-weight:800;display:inline-flex;align-items:center;gap:7px;cursor:pointer}.soft-action:hover{background:#ffedd5}.soft-action .ico{margin:0;width:14px;height:14px}@media(max-width:760px){.result-clean{grid-template-columns:1fr 1fr}.result-card{min-height:86px}}
+.classification-summary{display:grid;grid-template-columns:140px 180px 1fr;gap:8px}.classification-pill,.classification-reason{border:1px solid #fed7aa;background:#fff7ed;border-radius:12px;padding:10px 12px}.classification-pill b,.classification-reason b{display:block;font-size:.6rem;color:#9a3412;text-transform:uppercase;letter-spacing:.05em}.classification-pill span{display:block;margin-top:4px;font-size:.82rem;font-weight:900;color:#101828}.classification-reason span{display:block;margin-top:4px;font-size:.72rem;line-height:1.35;color:#475467;font-weight:700}.modal-report-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}.pdf-action{border:1px solid #fb923c;background:#fff7ed;color:#c2410c;border-radius:999px;padding:8px 12px;font-size:.72rem;font-weight:900;display:inline-flex;align-items:center;gap:7px;cursor:pointer}.pdf-action:hover{background:#ffedd5}.pdf-action .ico{width:14px;height:14px}@media(max-width:900px){.classification-summary{grid-template-columns:1fr}}
+.ops-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.ops-card{border:1px solid var(--border);border-radius:13px;background:#fff;padding:12px;box-shadow:var(--shadow);min-height:146px}.ops-card.good{border-color:#abefc6;background:#fcfffd}.ops-card.bad{border-color:#fecdca;background:#fffafa}.ops-card.warn{border-color:#fed7aa;background:#fffaf5}.ops-head{display:flex;align-items:center;gap:7px;font-size:.66rem;font-weight:900;color:#475467;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}.ops-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid #f2f4f7}.ops-row:first-of-type{border-top:0}.ops-name{font-size:.72rem;font-weight:850;color:#101828;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ops-meta{font-size:.62rem;color:#667085;margin-top:2px}.ops-pct{font-size:.7rem;font-weight:950;border-radius:999px;padding:4px 7px}.ops-empty{font-size:.7rem;color:#9ca3af;font-style:italic;padding-top:8px}@media(max-width:1100px){.ops-grid{grid-template-columns:1fr 1fr}}@media(max-width:680px){.ops-grid{grid-template-columns:1fr}}
+.ops-row{width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;text-align:left;cursor:pointer}.ops-row:hover .ops-name{color:#ea580c}
 .month-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}.month-card{border:1px solid var(--border);border-radius:13px;background:#fff;padding:12px;cursor:pointer;text-align:left;box-shadow:var(--shadow);transition:all .16s}.month-card:hover{border-color:#fdba74;background:#fff7ed;transform:translateY(-1px)}.month-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.month-card-title{display:flex;align-items:center;gap:7px;font-size:.78rem;font-weight:850;color:#344054}.month-card-pct{font-size:1.18rem;font-weight:900}.month-card-bar{display:block;height:6px;background:#eef2f6;border-radius:999px;overflow:hidden;margin:10px 0 8px}.month-card-bar span{display:block;height:100%;border-radius:999px}.month-card-meta{font-size:.68rem;color:#667085;line-height:1.35}.month-detail-table{padding:0;max-width:100%;width:100%}.sdmodal{max-width:min(980px,96vw)}
 .map-number-band{display:inline-flex;align-items:center;gap:8px;background:#FF8000;color:#fff;border-radius:11px;padding:8px 12px;box-shadow:0 8px 18px rgba(255,128,0,.20)}.map-number-band .icon-box{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}.map-title-text{font-weight:900}.route-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.google-route-btn{display:inline-flex;align-items:center;gap:7px;border:1px solid #fdba74;background:#fff7ed;color:#c2410c;border-radius:10px;padding:9px 12px;font-size:.72rem;font-weight:850;text-decoration:none}.google-route-btn:hover{background:#ffedd5}.google-route-btn.disabled{cursor:default;background:#f8fafc;border-color:#e4e7ec;color:#667085}.payment-panel{border:1px solid #fed7aa;background:#fff7ed;border-radius:13px;padding:12px;margin:0 0 12px;box-shadow:var(--shadow)}.payment-panel.pay{border-color:#abefc6;background:#f0fdf4}.payment-panel.deny{border-color:#fecdca;background:#fffafa}.payment-head{display:flex;align-items:flex-start;gap:10px}.payment-head strong{font-size:.82rem;color:#101828}.payment-head span{display:block;font-size:.69rem;color:#667085;line-height:1.35;margin-top:3px}.evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}.evidence-chip{display:flex;align-items:center;gap:6px;border:1px solid #e4e7ec;background:#fff;border-radius:9px;padding:7px 8px;font-size:.66rem;font-weight:800;color:#475467}.evidence-chip.ok{border-color:#abefc6;color:#047857}.evidence-chip.bad{border-color:#fecdca;color:#b42318}.evidence-chip.warn{border-color:#fed7aa;color:#c2410c}
+.rule-intro{border:1px solid #fed7aa;background:#fff7ed;color:#7c2d12;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:.76rem;line-height:1.5;font-weight:650}
+.rule-intro strong{color:#9a3412}
+.rule-cell{display:grid;gap:7px;min-width:300px}
+.rule-cell p{font-size:.72rem;line-height:1.45;color:#475467;margin:0}
+.rule-cell b{color:#101828}
+.rule-examples{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rule-example{border:1px solid #e4e7ec;background:#f8fafc;border-radius:10px;padding:8px;font-size:.68rem;line-height:1.35;color:#475467}
+.rule-example.pass{background:#f0fdf4;border-color:#abefc6}.rule-example.fail{background:#fff7ed;border-color:#fed7aa}
+.rule-example strong{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;color:#344054}
+.rmodal{max-width:980px}
+.rt.plans-mode thead{display:none}
+.rt.plans-mode,.rt.plans-mode tbody,.rt.plans-mode tr,.rt.plans-mode td{display:block;width:100%}
+.rt.plans-mode td{border:0;padding:0}
+.rule-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+.rule-plan{border:1px solid var(--border);background:#fff;border-radius:16px;padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.rule-plan::before{content:'';position:absolute;left:0;right:0;top:0;height:4px;background:#FF8000}
+.rule-plan.perfect::before{background:#059669}
+.rule-plan.good::before{background:#22c55e}
+.rule-plan.warn::before{background:#f59e0b}
+.rule-plan.bad::before{background:#ef4444}
+.rule-plan.neutral::before{background:#6b7280}
+.rule-plan h3{font-size:.86rem;color:#101828;text-transform:uppercase;letter-spacing:.05em;margin:5px 0 4px;display:flex;align-items:center;gap:7px}
+.rule-plan .plan-sub{font-size:.7rem;color:#667085;line-height:1.4;margin-bottom:10px}
+.criteria-list{display:grid;gap:6px;margin:10px 0}
+.criterion{display:grid;grid-template-columns:22px 1fr;gap:7px;align-items:start;border:1px solid #e4e7ec;background:#f8fafc;border-radius:10px;padding:7px 8px;font-size:.7rem;line-height:1.35;color:#475467}
+.criterion b{color:#101828}
+.criterion .letter{width:20px;height:20px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900;background:#fff;border:1px solid #e4e7ec;color:#344054}
+.criterion.yes{background:#f0fdf4;border-color:#abefc6}.criterion.yes .letter{background:#dcfce7;border-color:#86efac;color:#166534}
+.criterion.no{background:#fff7ed;border-color:#fed7aa}.criterion.no .letter{background:#ffedd5;border-color:#fdba74;color:#c2410c}
+.criterion.opt{background:#f8fafc;border-color:#d0d5dd}.criterion.opt .letter{background:#fff;color:#475467}
+.plan-examples{display:grid;gap:7px;margin-top:10px}
+.plan-example{border-radius:11px;padding:9px 10px;font-size:.7rem;line-height:1.42;border:1px solid #e4e7ec;background:#fff;color:#475467}
+.plan-example.good{background:#f0fdf4;border-color:#abefc6}.plan-example.bad{background:#fff7ed;border-color:#fed7aa}
+.plan-example strong{display:block;color:#101828;font-size:.64rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.rules-note-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+.rules-note{border:1px solid #fed7aa;background:#fff7ed;color:#7c2d12;border-radius:13px;padding:11px 12px;font-size:.72rem;line-height:1.45}
+.rules-note strong{display:block;color:#9a3412;margin-bottom:3px;text-transform:uppercase;font-size:.62rem;letter-spacing:.05em}
+@media(max-width:760px){.rule-examples{grid-template-columns:1fr}.rule-cell{min-width:220px}}
+
+/* TEMA ESCURO ---------------------------------------------------------- */
+body.theme-dark{
+  --brand:#0f5132;--brand-2:#0a3320;--primary:#ff8000;--primary-soft:#302017;
+  --surface:#111111;--surface-2:#181818;--surface-3:#242424;--border:#343434;
+  --text:#f5f5f5;--muted:#c7c7c7;--muted-2:#9b9b9b;
+  --ok:#4ade80;--ok-bg:#102016;--ok-bd:#28643d;
+  --warn:#fbbf24;--warn-bg:#2d2411;--warn-bd:#76601f;
+  --bad:#fb923c;--bad-bg:#2b1810;--bad-bd:#8a4219;
+  --info:#34d399;--info-bg:#10231b;--info-bd:#286451;
+  --neutral:#e5e5e5;--neutral-bg:#202020;--neutral-bd:#444;
+  --shadow:0 1px 2px rgba(0,0,0,.35);
+  --shadow-md:0 14px 32px rgba(0,0,0,.38);
+  --shadow-lg:0 28px 74px rgba(0,0,0,.58);
+  background:linear-gradient(180deg,#0b0b0b 0,#111 320px,#0f0f0f 100%);
+  color:var(--text);
+}
+body.theme-dark header{background:#0b0b0b;border-bottom-color:#2f6b4b;box-shadow:0 10px 30px rgba(0,0,0,.34)}
+body.theme-dark .logo-icon{background:#ecfdf3;color:#06351f;border-color:#86efac}
+body.theme-dark .logo p,body.theme-dark .hs-l,body.theme-dark .avg-lbl,body.theme-dark .avg-upd{color:#bbf7d0}
+body.theme-dark .hs,body.theme-dark .avg-box,body.theme-dark .ibtn{background:rgba(236,253,243,.08);border-color:rgba(187,247,208,.22);color:#f0fdf4}
+body.theme-dark .ibtn:hover{background:rgba(255,128,0,.20);border-color:rgba(255,128,0,.50)}
+body.theme-dark .theme-btn{background:#ff8000;border-color:#ffb066;color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 10px 22px rgba(255,128,0,.20)}
+body.theme-dark .theme-btn:hover{background:#ff9a35}
+body.theme-dark .toolbar{background:rgba(15,15,15,.90);border-bottom-color:var(--border);box-shadow:0 10px 26px rgba(0,0,0,.24)}
+body.theme-dark main{color:var(--text)}
+body.theme-dark .toolbar input,body.theme-dark .toolbar select,body.theme-dark .fb,body.theme-dark .tb-action,body.theme-dark .card,body.theme-dark .legend,body.theme-dark .goal-panel,body.theme-dark .goal-main,body.theme-dark .goal-kpi,body.theme-dark .week-card,body.theme-dark .ba-card,body.theme-dark .scope-card,body.theme-dark .modal,body.theme-dark .rmodal,body.theme-dark .sdmodal,body.theme-dark .pay-modal,body.theme-dark .map-modal,body.theme-dark .fold,body.theme-dark .fold-head,body.theme-dark .month-card,body.theme-dark .result-card,body.theme-dark .rule-explain-card,body.theme-dark .rule-metric,body.theme-dark .route-card,body.theme-dark .route-panel,body.theme-dark .payment-panel,body.theme-dark .pay-summary,body.theme-dark .pay-evidence-item,body.theme-dark .evidence-chip,body.theme-dark .dvcard,body.theme-dark .bk,body.theme-dark .mi,body.theme-dark .rkcard,body.theme-dark .msc,body.theme-dark .map-stats-bar,body.theme-dark .map-addr,body.theme-dark .nodata{
+  background:var(--surface);
+  border-color:var(--border);
+  color:var(--text);
+}
+body.theme-dark .toolbar input{background-color:#151515;color:#f5f5f5}
+body.theme-dark .toolbar input::placeholder{color:#9b9b9b}
+body.theme-dark .toolbar select,body.theme-dark .fb{background:#161616;color:#e5e5e5}
+body.theme-dark .toolbar input:focus,body.theme-dark .toolbar select:focus{border-color:#ff9a35;box-shadow:0 0 0 3px rgba(255,128,0,.18)}
+body.theme-dark .tb-action{background:#ff8000;border-color:#ff8000;color:#fff}
+body.theme-dark .goal-head,body.theme-dark .mhdr,body.theme-dark .mhdr.ng,body.theme-dark .mhdr.pu,body.theme-dark .rhdr,body.theme-dark .map-hdr,body.theme-dark .sd-hdr,body.theme-dark .rkcard-hdr,body.theme-dark .rt th,body.theme-dark .att th,body.theme-dark .route-table th,body.theme-dark .pay-body{background:var(--surface-2);border-color:var(--border);color:var(--text)}
+body.theme-dark .map-workspace,body.theme-dark .map-info-panel,body.theme-dark .map-canvas-panel{background:#0f0f0f;border-color:var(--border)}
+body.theme-dark #leafletMap{background:#0f0f0f}
+body.theme-dark #leafletMap .leaflet-tile{filter:brightness(.72) contrast(1.12) saturate(.86)}
+body.theme-dark .leaflet-control-zoom a,body.theme-dark .route-legend{background:#151515!important;color:#f5f5f5!important;border-color:#3a3a3a!important}
+body.theme-dark .goal-title,body.theme-dark .cn,body.theme-dark .cs-n,body.theme-dark .bk-n,body.theme-dark .dv-v,body.theme-dark .ba-v,body.theme-dark .mtitle,body.theme-dark .rhdr h2,body.theme-dark .map-hdr h3,body.theme-dark .result-card strong,body.theme-dark .rule-explain-card h4,body.theme-dark .rule-metric b,body.theme-dark .pay-summary h4,body.theme-dark .payment-head strong,body.theme-dark .route-card strong,body.theme-dark .stage-name,body.theme-dark .month-card-title,body.theme-dark .week-name,body.theme-dark .pay-evidence-item strong{color:var(--text)}
+body.theme-dark .goal-sub,body.theme-dark .ri,body.theme-dark .li,body.theme-dark .cpl,body.theme-dark .cs-l,body.theme-dark .bk-sub,body.theme-dark .dv-s,body.theme-dark .mci,body.theme-dark .rsec,body.theme-dark .rsec strong,body.theme-dark .result-card small,body.theme-dark .rule-explain-card p,body.theme-dark .rule-explain-card li,body.theme-dark .rule-metric span,body.theme-dark .pay-summary p,body.theme-dark .payment-head span,body.theme-dark .pay-evidence-item,body.theme-dark .stage-meta,body.theme-dark .month-card-meta,body.theme-dark .week-meta,body.theme-dark .map-note,body.theme-dark .map-addr,body.theme-dark .route-mini,body.theme-dark .route-source{color:var(--muted)}
+body.theme-dark .card:hover,body.theme-dark .result-card:hover,body.theme-dark .month-card:hover,body.theme-dark .hour-card:hover,body.theme-dark .fold-head:hover{background:#1d1d1d;border-color:#ff9a35;box-shadow:var(--shadow-md)}
+body.theme-dark .goal-main{background:linear-gradient(135deg,#102016,#151515);border-color:#28643d}
+body.theme-dark .goal-explain,body.theme-dark .rule-formula,body.theme-dark .google-route-btn,body.theme-dark .soft-action,body.theme-dark .head-usage{background:#3b220f;border-color:#9a4518;color:#fed7aa}
+body.theme-dark .google-route-btn:hover,body.theme-dark .soft-action:hover{background:#4a2a12}
+body.theme-dark .pb,body.theme-dark .goal-main .goal-bar,body.theme-dark .week-bar,body.theme-dark .month-card-bar,body.theme-dark .hour-bar,body.theme-dark .head-bar{background:#2b2b2b}
+body.theme-dark .cs,body.theme-dark .att tr.r0 td,body.theme-dark .att tr.r1 td,body.theme-dark .att tr.r2 td,body.theme-dark .att tr.r3 td,body.theme-dark .att tr.r4 td,body.theme-dark .att tbody tr:nth-child(even) td,body.theme-dark .route-table td,body.theme-dark .rt td,body.theme-dark .rkrow,body.theme-dark .mrk-row{background:var(--surface);border-color:var(--border);color:var(--text)}
+body.theme-dark .att tr:hover td{background:#202020}
+body.theme-dark .icon-box.neutral,body.theme-dark .status-ico.neutral{background:#202020;border-color:#444;color:#e5e5e5}
+body.theme-dark .icon-box.green,body.theme-dark .status-ico.ok,body.theme-dark .result-card.ok,body.theme-dark .payment-panel.pay,body.theme-dark .pay-evidence-item.ok,body.theme-dark .evidence-chip.ok,body.theme-dark .dvcard.good,body.theme-dark .bk.c0,body.theme-dark .hour-card.general{background:#102a1d;border-color:#1f6f42;color:#86efac}
+body.theme-dark .status-ico.warn,body.theme-dark .result-card.token,body.theme-dark .pay-evidence-item.warn,body.theme-dark .evidence-chip.warn,body.theme-dark .dvcard.warn,body.theme-dark .bk.c1,body.theme-dark .bk.c2{background:#33270e;border-color:#805f18;color:#fbbf24}
+body.theme-dark .status-ico.bad,body.theme-dark .result-card.bad,body.theme-dark .payment-panel.deny,body.theme-dark .pay-evidence-item.bad,body.theme-dark .evidence-chip.bad,body.theme-dark .dvcard.bad,body.theme-dark .bk.c4{background:#351a11;border-color:#9a4518;color:#fb923c}
+body.theme-dark .atag.t4,body.theme-dark .rtag.er,body.theme-dark .pill.err{background:#ff3f46!important;border-color:#ff3f46!important;color:#fff!important}
+body.theme-dark .atag.t1,body.theme-dark .atag.t2,body.theme-dark .rtag.mod,body.theme-dark .rtag.sm,body.theme-dark .pill.mod,body.theme-dark .pill.sm{background:#33270e;border-color:#805f18;color:#fde68a}
+body.theme-dark .atag.t3,body.theme-dark .rtag.wb,body.theme-dark .pill.web{background:#102a1d;border-color:#1f6f42;color:#86efac}
+body.theme-dark .rtag.ok,body.theme-dark .cbdg.ca{background:#102a1d;border-color:#1f6f42;color:#86efac}
+body.theme-dark .cbdg.cf{background:#351a11;border-color:#9a4518;color:#fdba74}
+body.theme-dark .mcls{background:#1d1d1d;border-color:#444;color:#f5f5f5}
+body.theme-dark .provider-band,body.theme-dark .map-number-band,.provider-band{background:#FF8000;color:#fff}
+body.theme-dark .phone-card{background:linear-gradient(135deg,#062f1d,#105c36);border-color:#1f6f42}
+body.theme-dark .phone-visual{background:#030712;border-color:#334155}
+body.theme-dark .phone-screen{background:linear-gradient(160deg,#11291c,#ff8000);color:#fff}
+body.theme-dark .route-aux{background:#161616;border-color:var(--border);color:var(--muted)}
+body.theme-dark .rule-intro{background:#302017;border-color:#8a4219;color:#fed7aa}
+body.theme-dark .rule-intro strong{color:#ffb066}
+body.theme-dark .rule-cell p,body.theme-dark #ruleModeDesc{color:var(--muted)!important}
+body.theme-dark .rule-cell b,body.theme-dark .rule-example strong{color:var(--text)}
+body.theme-dark .rule-example{background:#181818;border-color:#343434;color:var(--muted)}
+body.theme-dark .rule-example.pass{background:#102016;border-color:#28643d}
+body.theme-dark .rule-example.fail{background:#2d2411;border-color:#76601f}
+body.theme-dark .rule-plan,body.theme-dark .criterion,body.theme-dark .criterion .letter,body.theme-dark .plan-example{background:var(--surface);border-color:var(--border);color:var(--muted)}
+body.theme-dark .rule-plan h3,body.theme-dark .criterion b,body.theme-dark .plan-example strong{color:var(--text)}
+body.theme-dark .rule-plan .plan-sub{color:var(--muted)}
+body.theme-dark .criterion.yes,body.theme-dark .plan-example.good{background:#102016;border-color:#28643d;color:#c8f7d8}
+body.theme-dark .criterion.yes .letter{background:#163722;border-color:#28643d;color:#86efac}
+body.theme-dark .criterion.no,body.theme-dark .plan-example.bad{background:#2d2411;border-color:#76601f;color:#fde68a}
+body.theme-dark .criterion.no .letter{background:#3a2b12;border-color:#76601f;color:#fbbf24}
+body.theme-dark .criterion.opt .letter{background:#202020;border-color:#444;color:#d4d4d4}
+body.theme-dark .rules-note{background:#302017;border-color:#8a4219;color:#fed7aa}
+body.theme-dark .rules-note strong{color:#ffb066}
+body.theme-dark .hour-card,body.theme-dark .route-step,body.theme-dark .route-mini,body.theme-dark .stage-card,body.theme-dark .route-legend-panel,body.theme-dark .route-legend-panel span,body.theme-dark .sd-body,body.theme-dark .sd-chip,body.theme-dark .pay-btn,body.theme-dark .mtabs-wrap,body.theme-dark .mih,body.theme-dark .mib,body.theme-dark .mrk,body.theme-dark .ms5,body.theme-dark .atw,body.theme-dark .tok-box,body.theme-dark .dvchip,body.theme-dark .month-detail-table{
+  background:var(--surface);
+  border-color:var(--border);
+  color:var(--text);
+}
+body.theme-dark .stage-card.missing,body.theme-dark .week-card.empty,body.theme-dark .google-route-btn.disabled{background:#1a1a1a;border-color:#3a3a3a;color:#9b9b9b}
+body.theme-dark .stage-card.external-user{background:#33270e;border-color:#805f18}
+body.theme-dark .route-mini b,body.theme-dark .route-mini span,body.theme-dark .route-legend-panel,body.theme-dark .sd-chip,body.theme-dark .dvchip,body.theme-dark .scope-card strong,body.theme-dark .scope-card span,body.theme-dark .fold-head>span:first-child,body.theme-dark .hour-name,body.theme-dark .hour-meta,body.theme-dark .uleg,body.theme-dark .uli{color:var(--muted)}
+body.theme-dark .pay-btn{background:#3b220f;border-color:#9a4518;color:#fed7aa}
+body.theme-dark .pay-btn:hover{background:#4a2a12}
+body.theme-dark .tr-alert.trained,body.theme-dark .tok-ok,body.theme-dark .msc.c0{background:#102a1d;border-color:#1f6f42;color:#86efac}
+body.theme-dark .tr-alert.pending,body.theme-dark .tr-alert.scheduled,body.theme-dark .tok-warn,body.theme-dark .msc.c1,body.theme-dark .msc.c2{background:#33270e;border-color:#805f18;color:#fde68a}
+body.theme-dark .tr-alert.no-info,body.theme-dark .tr-tag.gray,body.theme-dark .tok-gray,body.theme-dark .msc.c3{background:#202020;border-color:#444;color:#d4d4d4}
+body.theme-dark .tok-bad,body.theme-dark .msc.c4,body.theme-dark .ba-delta.down,body.theme-dark .rkerr,body.theme-dark .mrk-err{background:#351a11;border-color:#9a4518;color:#fdba74}
+body.theme-dark .ba-delta.up,body.theme-dark .rkok,body.theme-dark .mrk-ok{background:#102a1d;border-color:#1f6f42;color:#86efac}
+body.theme-dark ::-webkit-scrollbar-thumb{background:#555}
 </style>
 </head>
 <body>
+<script>
+const THEME_KEY='view_fornecedores_theme';
+function preferredTheme(){
+  try{return localStorage.getItem(THEME_KEY)||'light'}catch(e){return'light'}
+}
+function applyTheme(theme){
+  const dark=theme==='dark';
+  document.body.classList.toggle('theme-dark',dark);
+  document.documentElement.style.colorScheme=dark?'dark':'light';
+  const btn=document.getElementById('themeBtn');
+  if(btn){
+    btn.title=dark?'Alternar para modo claro':'Alternar para modo escuro';
+    btn.innerHTML=`<svg class="ico"><use href="#${dark?'icon-sun':'icon-moon'}"></use></svg><span>${dark?'Claro':'Escuro'}</span>`;
+  }
+}
+function toggleTheme(){
+  const next=document.body.classList.contains('theme-dark')?'light':'dark';
+  try{localStorage.setItem(THEME_KEY,next)}catch(e){}
+  applyTheme(next);
+}
+applyTheme(preferredTheme());
+</script>
 <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
   <symbol id="icon-route" viewBox="0 0 24 24"><path d="M6 19c2.5 0 3.5-2 3.5-4.5S10.5 10 13 10s4-2 4-5"/><path d="M6 19a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/><path d="M17 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></symbol>
   <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
@@ -586,6 +762,8 @@ main{max-width:1500px;padding:24px 32px 34px}
   <symbol id="icon-truck" viewBox="0 0 24 24"><path d="M10 17H6a2 2 0 0 1-2-2V6h10v11"/><path d="M14 9h4l3 4v4h-3"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M8 10h4"/><path d="M10 8v4"/></symbol>
   <symbol id="icon-user-check" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></symbol>
   <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-12A7 7 0 0 0 5 9c0 6.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M20.8 14.2A8.5 8.5 0 0 1 9.8 3.2 8.8 8.8 0 1 0 20.8 14.2Z"/></symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
 </svg>
 
 <header>
@@ -599,6 +777,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   <div class="hright">
     <div class="hstats" id="hstats"></div>
     <div class="avg-box" id="avgBox"></div>
+    <button class="ibtn theme-btn" id="themeBtn" onclick="toggleTheme()" title="Alternar modo escuro"><svg class="ico"><use href="#icon-moon"></use></svg><span>Escuro</span></button>
     <button class="ibtn" onclick="openRules()" title="Regras de classificação"><svg class="ico"><use href="#icon-info"></use></svg>Regras</button>
     <button class="ibtn" id="ruleModeBtn" onclick="toggleRuleMode()" title="Abrir visão com outra regra"><svg class="ico"><use href="#icon-target"></use></svg>Regra token</button>
     <button class="ibtn" onclick="doLogout()" title="Sair"><svg class="ico"><use href="#icon-log-out"></use></svg>Sair</button>
@@ -696,6 +875,7 @@ main{max-width:1500px;padding:24px 32px 34px}
     <div class="map-stats-bar" id="mapStats" style="display:none">
       <div class="map-stat" id="mapDist"></div>
       <div class="map-stat" id="mapTime"></div>
+      <div class="map-stat" id="mapDuration"></div>
       <div class="map-stat" id="mapFlow"></div>
       <div class="map-stat" id="mapClicks"></div>
       <span class="map-note">Rota calculada via OpenStreetMap</span>
@@ -724,7 +904,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   <div class="rmodal">
     <div class="rhdr"><h2>Regras de Classificação</h2><button class="mcls" onclick="closeRules()">×</button></div>
     <div class="rbody">
-      <p id="ruleModeDesc" style="font-size:.77rem;color:#6b7280;margin-bottom:10px">Como cada atendimento é classificado pela regra atual de usabilidade operacional e como o acompanhamento é calculado.</p>
+      <div id="ruleModeDesc" style="font-size:.77rem;color:#6b7280;margin-bottom:10px">Como cada atendimento é classificado pela regra atual de usabilidade operacional e como o acompanhamento é calculado.</div>
       <table class="rt">
         <thead><tr><th>Critério</th><th>Exigência</th><th>Resultado</th></tr></thead>
         <tbody id="rulesRows">
@@ -738,15 +918,15 @@ main{max-width:1500px;padding:24px 32px 34px}
         </tbody>
       </table>
       <hr class="rd">
-      <div class="rsec"><strong>Fórmula:</strong> Perfeito exige todas as validações e raio de 700m. Requisitos mínimos exige TOKEN SIM + horários via APP. Sem geolocalização vira alerta para análise.</div>
+      <div class="rsec"><strong>Leitura simples:</strong> se tem TOKEN e horários via APP, existe evidência de uso. Se além disso vier dispositivo, rastreio, usuários corretos e pontos próximos de origem/destino, o atendimento sobe de qualidade até chegar em Perfeito.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Acompanhamento:</strong> os filtros Todos Fornecedores da Rede e Fornecedores de Maior Representatividade de Remoções possuem visão Sem HMED e Com HMED. Quando HMED entra no filtro, mantém regra própria de integração de horários. TransMedi fica fora do grupo foco. Alvo: 80%.</div>
+      <div class="rsec"><strong>Padrão do relatório:</strong> quando a pessoa usa o APP corretamente, aparecem sinais como TOKEN SIM, horários via APP, dispositivo, rastreio e geolocalização. Quando não usa, normalmente aparece TOKEN NÃO, sem dispositivo, sem rastreio e sem horários via APP.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Inserção Horários:</strong> para fornecedores da rede, é indicador de assertividade no modal e não altera a regra de usabilidade do transporte. A exceção é HMED, que usa a integração de horários como regra própria.</div>
+      <div class="rsec"><strong>Uso parcial:</strong> acontece quando existe alguma evidência de uso, mas não veio tudo. Exemplo: tem TOKEN, mas faltou geolocalização. Nesse caso o painel não trata automaticamente como ausência de uso; ele mostra análise/alerta.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Base treinamento:</strong> mostra fornecedores encontrados na planilha de implantação/treinamento, hoje com universo de 177 registros.</div>
+      <div class="rsec"><strong>Pagamento:</strong> o mapa ajuda a responder se o transporte parece comprovado. A melhor evidência é o fornecedor marcar chegada perto da origem e chegada perto do destino, dentro do raio definido de 700m.</div>
       <hr class="rd">
-      <div class="rsec"><strong>Ranking:</strong> ranqueado por % de transportes perfeitos ou com requisitos mínimos.</div>
+      <div class="rsec"><strong>Ranking:</strong> fornecedores sobem quando têm mais transportes Perfeitos ou com Requisitos mínimos. Transportes sem evidência suficiente puxam o resultado para baixo.</div>
       <hr class="rd">
       <div class="rsec"><strong>Turnos (data da remoção):</strong> Manhã 06h–12h · Tarde 12h–18h · Noite 18h–06h</div>
       <hr class="rd">
@@ -757,7 +937,7 @@ main{max-width:1500px;padding:24px 32px 34px}
   </div>
 </div>
 
-<script src="data.js?v=20260723-marcadores-arrastaveis-v20"></script>
+<script src="data.js?v=20260731-base21-v1"></script>
 <script>
 // ── SESSION GUARD ────────────────────────────────────────────
 (function guardSession(){
@@ -800,6 +980,7 @@ let activeF='all_no_hmed';
 let activeMonth='all';
 const MAP_ATTS={};
 const DETAIL_LISTS={};
+let CURRENT_PROVIDER_NAME='';
 const META_SUPPLIER_TOTAL=33;
 const CANCELED_SUPPLIER_NAME='CANCELADOS - FORNECEDOR VAZIO';
 const HMED_AUDIT_EVENT_KEYS=new Set(['saida_recurso','chegada_origem','saida_origem','chegada_destino','saida_destino','lib_destino','chegada_origem_ret','saida_origem_ret','lib_recurso']);
@@ -842,7 +1023,7 @@ const META_SUPPLIER_NAMES=new Set([
 const CCLR={A:'#059669',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
 const CTLBL={1:'Pendente',2:'Em instalação',3:'Não usa APP',4:'Integrada IRIS'};
 const CTBNR={1:'bp',2:'bi',3:'bn',4:'bint'};
-const CLBL=['Perfeito','Transporte realizado com requisitos mínimos','Transporte sem geolocalização','Preencheu via link','Não utilizou o TOKEN'];
+const CLBL=['Transporte perfeito','Mínimos requisitos','Atenção','Agendamento','Não usou o token'];
 const TCLS=['t0','t1','t2','t3','t4'];
 const RCLS=['r0','r1','r2','r3','r4'];
 const SHIFT_ICO={M:'M',T:'T',N:'N'};
@@ -883,10 +1064,16 @@ function isFocusSupplierName(name,includeHmed=true){
 function isMetaSupplierName(name){return isFocusSupplierName(name,true)}
 function isCorrectClass(cl){return cl===0||cl===1}
 function statusLabelForAtt(a,cl=a?.[5]){
-  const label=a?.[24]?.scenarioLabel||CLBL[cl]||'Status';
+  const label=a?.[24]?.status||a?.[24]?.scenarioLabel||CLBL[cl]||'Status';
   if(cl===4&&String(label).toLowerCase()==='erro')return'Não utilizou o TOKEN';
-  if(cl===4)return String(label).replace(/^Erro$/i,'Não utilizou o TOKEN').replace(/HMED erro/i,'Não utilizou o TOKEN').replace(/Não usou o TOKEN/i,'Não utilizou o TOKEN');
+  if(cl===4)return String(label).replace(/^Erro$/i,'Não usou o token').replace(/HMED erro/i,'Não usou o token').replace(/Não utilizou o TOKEN/i,'Não usou o token');
   return label;
+}
+function subclassLabelForAtt(a){
+  return a?.[24]?.subclass||'sem subclasse';
+}
+function reasonSentenceForAtt(a){
+  return cleanReasonText(a?.[24]?.motivoCurto||a?.[22]||'Sem motivo detalhado no relatório.');
 }
 function monthList(){
   const months=new Map();
@@ -998,7 +1185,7 @@ function scopeTargetTotal(filter=activeF){
 function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
   const entries=scopedEntries(filter,month,includeSearch);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0,web=0,naoUsou=0,geoFalha=0,perfeito=0,minimos=0,semReq=0,viaLink=0,semGeo=0;
+  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0,web=0,naoUsou=0,agendamento=0,geoFalha=0,perfeito=0,minimos=0,semReq=0,viaLink=0,semGeo=0;
   entries.forEach(([,v])=>{
     const sv=supplierView(v,month);
     const rows=allAtts(v,month);
@@ -1016,7 +1203,8 @@ function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
       if(scenario==='requisitos_minimos')minimos++;
       if(scenario==='sem_requisitos_minimos')semReq++;
       if(scenario==='nao_utilizou_token'||scenario==='nao_usou_token')naoUsou++;
-      if(scenario==='preencheu_via_link')viaLink++;
+      if(scenario==='agendamento')agendamento++;
+      if(scenario==='preencheu_via_link'||subclassLabelForAtt(a)==='preenchimento por link')viaLink++;
       if(a?.[24]?.evidence?.semGeolocalizacao||scenario==='falha_geolocalizacao')semGeo++;
       if(scenario==='falha_geolocalizacao')geoFalha++;
     });
@@ -1025,7 +1213,7 @@ function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
   const avg=base>0?Math.round(ok/base*1000)/10:0;
   const targetTotal=scopeTargetTotal(filter);
   const naoAprovado=Math.max(0,base-ok);
-  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,geoFalha,perfeito,minimos,semReq,viaLink,semGeo,naoAprovado,avg,cats,label:filterLabel(filter)};
+  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,agendamento,geoFalha,perfeito,minimos,semReq,viaLink,semGeo,naoAprovado,avg,cats,label:filterLabel(filter)};
 }
 function allAtts(v,month=activeMonth){return month==='all'?Object.values(v[11]||{}).flatMap(m=>m[11]||[]):(((v[11]||{})[month]||[])[11]||[])}
 function devParts(disp){
@@ -1217,6 +1405,8 @@ function modalResultStats(atts){
   const token=atts.filter(tokenYesFromAtt).length;
   const perfeito=atts.filter(a=>a[5]===0||scenarioOfAtt(a)==='correto_perfeito').length;
   const minimos=atts.filter(a=>scenarioOfAtt(a)==='requisitos_minimos').length;
+  const agendamento=atts.filter(a=>scenarioOfAtt(a)==='agendamento').length;
+  const naoUsou=atts.filter(a=>['nao_utilizou_token','nao_usou_token'].includes(scenarioOfAtt(a))).length;
   return {
     total,
     perfeito,
@@ -1225,9 +1415,10 @@ function modalResultStats(atts){
     semReq:atts.filter(a=>scenarioOfAtt(a)==='sem_requisitos_minimos').length,
     naoCumpriu:atts.filter(a=>scenarioOfAtt(a)==='sem_requisitos_minimos').length,
     token,
-    naoUsou:atts.filter(a=>['nao_utilizou_token','nao_usou_token'].includes(scenarioOfAtt(a))).length,
+    naoUsou,
+    agendamento,
     web:atts.filter(a=>scenarioOfAtt(a)==='preenchimento_web').length,
-    viaLink:atts.filter(a=>scenarioOfAtt(a)==='preencheu_via_link').length,
+    viaLink:atts.filter(a=>scenarioOfAtt(a)==='preencheu_via_link'||subclassLabelForAtt(a)==='preenchimento por link').length,
     semGeo:atts.filter(a=>a?.[24]?.evidence?.semGeolocalizacao||scenarioOfAtt(a)==='falha_geolocalizacao').length
   };
 }
@@ -1239,14 +1430,14 @@ function resultRuleCard(key,cls,iconId,label,value,desc){
   return `<button class="result-card ${cls}" onclick="openResultRule('${key}')"><span>${statusIcon(iconId,cls==='bad'?'bad':cls==='token'?'warn':'ok')}${esc(label)}</span><strong>${esc(value)}</strong><small>${esc(desc)}</small></button>`;
 }
 const RESULT_RULES={
-  indice:{title:'ÍNDICE DE USABILIDADE',body:'É o placar geral do fornecedor no período selecionado.',items:['Pegamos todos os transportes analisados.','Contamos Perfeito + Requisitos mínimos.','Dividimos esse total por todos os transportes analisados.']},
-  perfeito:{title:'PERFEITO',body:'É o transporte que veio completo e confiável para pagamento sem análise extra.',items:['TOKEN SIM.','Dispositivo informado.','Lat/Long e data/hora da inserção do TOKEN.','Horários via APP.','Pontos de rastreio maiores que zero.','Todos os eventos preenchidos pelo Usuario IRIS Contingencia.','Chegada/saída da origem, chegada no destino e liberação do destino com Lat/Long.','Chegada na origem e destino dentro de 700m do local oficial.']},
-  correto:{title:'REQUISITOS MÍNIMOS',body:'É o transporte que teve o mínimo necessário para considerar que foi realizado pelo fluxo do APP.',items:['TOKEN SIM.','Horários via APP SIM.','Dispositivo, data/hora do TOKEN, Lat/Long do TOKEN e usuário dos eventos entram como observação: podem estar verdadeiros ou falsos.','Pontos de rastreio podem ser zero ou mais.']},
-  naoCumpriu:{title:'NÃO ALCANÇOU AS VALIDAÇÕES MÍNIMAS',body:'É o transporte que inseriu TOKEN, mas não teve horários via APP.',items:['TOKEN SIM.','Horários via APP NÃO.','Sem horários via APP não dá para confirmar o fluxo mínimo do transporte.']},
-  token:{title:'INSERIRAM TOKEN',body:'Mostra quantos transportes têm evidência de TOKEN SIM.',items:['Conta quando o relatório trouxe TOKEN SIM.','Serve para medir adoção do TOKEN, separado da qualidade da geolocalização.']},
-  naoUsou:{title:'NÃO UTILIZOU O TOKEN',body:'É o transporte sem uso do TOKEN e sem horários via APP.',items:['TOKEN NÃO.','Horários via APP NÃO.','É o caso em que não apareceu evidência mínima de uso do fluxo.']},
-  web:{title:'PREENCHEU VIA LINK',body:'É quando o TOKEN e os horários existem, mas o transporte veio sem dispositivo e sem rastreio.',items:['TOKEN SIM.','Horários via APP SIM.','Pontos de rastreio iguais a zero.','Dispositivo não informado.']},
-  semGeo:{title:'TRANSPORTES SEM GEOLOCALIZAÇÃO',body:'É um alerta para mostrar transportes que precisam de cuidado na análise geográfica.',items:['Pontos de rastreio iguais a zero, ou','sem Lat/Long na chegada da origem, ou','sem Lat/Long na chegada do destino.','Esse alerta ajuda o financeiro a saber quando confiar direto e quando analisar melhor.']}
+  indice:{title:'ACOMPANHAMENTO',body:'É o placar do período selecionado.',items:['Conta como positivo: Transporte perfeito + Mínimos requisitos.','Não entra como positivo: Não usou o token + Agendamento.','A conta é: positivos divididos por transportes analisados.','Exemplo positivo: 70 positivos em 100 transportes = 70%.','Exemplo negativo: 30 sem uso do token baixam o resultado.']},
+  perfeito:{title:'TRANSPORTE PERFEITO',body:'É quando o mapa e o APP contam a mesma história: o prestador saiu, chegou na origem e chegou no destino dentro do raio esperado.',items:['Precisa ter TOKEN SIM.','Precisa ter pelo menos 1 ponto de rastreio.','Precisa comprovar origem e destino dentro de 700m.','Pode aparecer com subclasse “aparelho não identificado” quando o trajeto foi bom, mas o relatório não trouxe o modelo do celular.','Exemplo positivo: TOKEN SIM + rastreio + origem/destino batendo no raio.','Exemplo negativo: TOKEN SIM, mas destino longe do endereço oficial, não entra aqui.']},
+  correto:{title:'MÍNIMOS REQUISITOS',body:'É quando dá para ver que o fornecedor tentou usar o fluxo do APP, mas falta alguma evidência para chamar de perfeito.',items:['Normalmente tem TOKEN SIM e algum sinal de uso do APP.','Pode cair aqui por geolocalização fora do raio.','Pode cair aqui por GPS não responder.','Pode cair aqui por app/dispositivo não identificado.','Pode cair aqui por “só o token”, quando há tentativa, mas o relatório não trouxe o resto.','Exemplo positivo: TOKEN SIM e horários do APP existem, mas o mapa precisa análise.','Exemplo negativo: TOKEN NÃO e sem vestígio de APP não entra aqui.']},
+  naoUsou:{title:'NÃO USOU O TOKEN',body:'É quando o relatório não mostra uso real do TOKEN.',items:['Subclasse “nenhum vestígio”: não tem TOKEN SIM, nem APP, nem rastreio, nem geolocalização útil.','Subclasse “evidência conflitante”: TOKEN não veio como SIM, mas algum campo estranho apareceu; precisa conferir.','Exemplo negativo: TOKEN NÃO + horários APP NÃO + sem dispositivo = não usou.','Exemplo de atenção: TOKEN NÃO, mas tem Lat/Long de etapa; fica como evidência conflitante.']},
+  agendamento:{title:'AGENDAMENTO',body:'É quando a corrida existiu como planejamento, mas não virou transporte despachado.',items:['A chave é Solicitação VTR vazia.','Tem endereço e pode ter KM calculado, mas não tem despacho da viatura.','Exemplo: paciente foi agendado, mas a remoção não aconteceu.','Não deve ser confundido com transporte mal preenchido.']},
+  token:{title:'TOKEN SIM',body:'Mostra quantos transportes vieram com TOKEN SIM no relatório.',items:['É uma contagem simples de adoção do TOKEN.','Não diz sozinho se o transporte foi perfeito.','Exemplo: TOKEN SIM com GPS ruim continua contando aqui, mas aparece com subclasse no status.']},
+  web:{title:'PREENCHIMENTO POR LINK',body:'É uma subclasse de Mínimos requisitos.',items:['Tem TOKEN SIM e horários via APP.','Não veio dispositivo.','Rastreio veio zerado.','Serve para separar “usou algo” de “não fez nada”.']},
+  semGeo:{title:'GPS OU MAPA FALHOU',body:'É um alerta de apoio, não um status principal.',items:['Aparece quando não há rastreio, ou','falta Lat/Long da chegada na origem, ou','falta Lat/Long da chegada no destino.','Ajuda o financeiro a saber quando precisa olhar o mapa com mais cuidado.']}
 };
 function ruleNumbersFor(key,ctx=CURRENT_RESULT_CONTEXT){
   const rs=ctx?.stats||{};
@@ -1255,12 +1446,13 @@ function ruleNumbersFor(key,ctx=CURRENT_RESULT_CONTEXT){
   const base=sv.base||total;
   const correct=(rs.perfeito||0)+(rs.correto||0);
   const map={
-    indice:{main:percentText(sv.correto+sv.gop+sv.sem,base),formula:`(${sv.correto+sv.gop+sv.sem} corretos com requisitos mínimos ÷ ${base} transportes analisados) × 100`,simple:'É como uma prova: quanto mais transportes corretos, maior a nota.'},
+    indice:{main:percentText(sv.correto+sv.gop+sv.sem,base),formula:`(${sv.correto+sv.gop+sv.sem} positivos ÷ ${base} transportes analisados) × 100`,simple:'É como uma prova: perfeito e mínimos somam pontos; não usou token e agendamento não somam.'},
     perfeito:{main:rs.perfeito||0,formula:`${rs.perfeito||0} transporte(s) perfeito(s) dentro de ${total} transporte(s)`,simple:'Entrou aqui quando veio tudo redondinho, sem faltar evidência importante.'},
-    correto:{main:rs.minimos||rs.correto||0,formula:`${rs.minimos||rs.correto||0} transporte(s) com TOKEN SIM + horários via APP dentro de ${total}`,simple:'É o mínimo: colocou o token e preencheu horários pelo APP.'},
+    correto:{main:rs.minimos||rs.correto||0,formula:`${rs.minimos||rs.correto||0} transporte(s) com evidência mínima dentro de ${total}`,simple:'É o “usou, mas precisa olhar detalhe”: existe sinal do APP, porém faltou algo para perfeito.'},
     naoCumpriu:{main:rs.semReq||rs.naoCumpriu||0,formula:`${rs.semReq||rs.naoCumpriu||0} transporte(s) com TOKEN SIM, mas sem horários via APP`,simple:'Colocou token, mas não completou o mínimo que prova o fluxo.'},
     token:{main:rs.token||0,formula:`${rs.token||0} de ${total} transporte(s) têm TOKEN SIM`,simple:'Aqui só olhamos se o token apareceu como SIM.'},
-    naoUsou:{main:rs.naoUsou||0,formula:`${rs.naoUsou||0} de ${total} transporte(s) estão com TOKEN NÃO e sem horários via APP`,simple:'Aqui fica quando não usou o token nem preencheu pelo APP.'},
+    naoUsou:{main:rs.naoUsou||0,formula:`${rs.naoUsou||0} de ${total} transporte(s) ficaram sem uso comprovado do TOKEN`,simple:'Aqui fica quando não apareceu prova de que o token foi usado.'},
+    agendamento:{main:rs.agendamento||0,formula:`${rs.agendamento||0} de ${total} registro(s) estão sem Solicitação VTR`,simple:'É agenda que não virou corrida despachada.'},
     web:{main:rs.viaLink||0,formula:`${rs.viaLink||0} transporte(s) com TOKEN SIM + horários via APP + rastreio 0 + sem dispositivo`,simple:'Parece preenchimento por link: tem token e horário, mas não veio dispositivo nem rastreio.'},
     semGeo:{main:rs.semGeo||0,formula:`${rs.semGeo||0} transporte(s) sem rastreio ou sem Lat/Long de origem/destino`,simple:'É o aviso de “não dá para confiar 100% no mapa sem olhar melhor”.'}
   };
@@ -1343,7 +1535,7 @@ function renderRuleModeButton(){
 
 // ── META TRACKING ────────────────────────────────────────────
 function emptyMetric(label='',order=0){
-  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0,naoUsou:0,geoFalha:0,perfeito:0,minimos:0,semReq:0,viaLink:0,semGeo:0};
+  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0,naoUsou:0,agendamento:0,geoFalha:0,perfeito:0,minimos:0,semReq:0,viaLink:0,semGeo:0};
 }
 function addMetric(m,a){
   const cl=a[5];
@@ -1360,7 +1552,8 @@ function addMetric(m,a){
   if(scenario==='requisitos_minimos')m.minimos++;
   if(scenario==='sem_requisitos_minimos')m.semReq++;
   if(scenario==='nao_utilizou_token'||scenario==='nao_usou_token')m.naoUsou++;
-  if(scenario==='preencheu_via_link')m.viaLink++;
+  if(scenario==='agendamento')m.agendamento++;
+  if(scenario==='preencheu_via_link'||subclassLabelForAtt(a)==='preenchimento por link')m.viaLink++;
   if(a?.[24]?.evidence?.semGeolocalizacao||scenario==='falha_geolocalizacao')m.semGeo++;
   if(scenario==='falha_geolocalizacao')m.geoFalha++;
   return m;
@@ -1398,7 +1591,7 @@ function buildGoalTracking(){
   });
   const monthList=[...months.entries()].map(([key,m])=>({key,...m,pct:metricPct(m)})).sort((a,b)=>b.order-a.order);
   const latest=activeMonth==='all'
-    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,web:meta.web,naoUsou:meta.naoUsou,geoFalha:meta.geoFalha,perfeito:meta.perfeito,minimos:meta.minimos,semReq:meta.semReq,viaLink:meta.viaLink,semGeo:meta.semGeo,pct:meta.avg}
+    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,web:meta.web,naoUsou:meta.naoUsou,agendamento:meta.agendamento,geoFalha:meta.geoFalha,perfeito:meta.perfeito,minimos:meta.minimos,semReq:meta.semReq,viaLink:meta.viaLink,semGeo:meta.semGeo,pct:meta.avg}
     : (monthList.find(m=>m.key===activeMonth)||emptyMetric('Sem dados'));
   latest.pct=metricPct(latest);
   const chronological=[...monthList].sort((a,b)=>a.order-b.order);
@@ -1444,28 +1637,28 @@ function renderGoalTracking(){
   const noToken=m.naoUsou||0;
   const viaLink=m.viaLink||0;
   const geo=m.semGeo||0;
+  const agendamento=m.agendamento||0;
+  const treated=m.ok||0;
+  const withGeo=Math.max(0,(m.base||0)-geo);
+  const badge=(label,value,tone)=>`<div class="metric-badge ${tone}" data-value="${esc(value.toLocaleString('pt-BR'))}"><strong>${esc(label)}</strong></div>`;
+  const periodLabel=m.key==='all'?'Acumulado':(m.label||'Período selecionado');
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
-        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento do Transporte</div><div class="goal-sub">${esc(ruleModeLabel())} · ${esc(data.meta.label)} · ${esc(m.label||'período selecionado')} · ${data.meta.matched}/${data.meta.targetTotal} fornecedores com dados · ${esc(GS2.updated||'')}</div></div></div>
-        <div class="goal-target">Alvo ${GS2.meta||80}%</div>
+        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento <span class="goal-compact-score"><b style="color:${color}">${p}%</b><span>aproveitamento</span></span></div></div></div>
+        <div class="goal-target">${icon('icon-calendar','route-ico')}${esc(periodLabel)} · ${esc(data.meta.label)}</div>
       </div>
       <div class="goal-body">
         <div class="goal-summary">
-          <div class="goal-main">
-            <div class="goal-pct" data-target="${p}" style="color:${color}">0%</div>
-            <div class="goal-label">Corretos ÷ Analisados</div>
-            <div class="goal-bar"><div class="goal-fill" data-target="${Math.min(100,p)}" style="width:0%;background:${color}"></div></div>
-          </div>
-          <div class="goal-kpi neutral"><strong>${(m.base||0).toLocaleString('pt-BR')}</strong><span>Atendimentos analisados</span></div>
-          <div class="goal-kpi good"><strong>${(m.perfeito||0).toLocaleString('pt-BR')}</strong><span>Perfeitos</span></div>
-          <div class="goal-kpi good"><strong>${(m.minimos||0).toLocaleString('pt-BR')}</strong><span>Requisitos mínimos</span></div>
-          <div class="goal-kpi bad"><strong>${(m.semReq||notOk).toLocaleString('pt-BR')}</strong><span>Sem requisitos</span></div>
-          <div class="goal-kpi bad"><strong>${noToken.toLocaleString('pt-BR')}</strong><span>Não utilizou TOKEN</span></div>
-          <div class="goal-kpi web"><strong>${viaLink.toLocaleString('pt-BR')}</strong><span>Preencheu via link</span></div>
-          <div class="goal-kpi warn"><strong>${geo.toLocaleString('pt-BR')}</strong><span>Sem geolocalização</span></div>
+          ${badge('Total de Remoções',m.base||0,'gray')}
+          ${badge('Total de Remoções Tratadas',treated,'orange')}
+          ${badge('Utilizaram o Token',m.token||0,'green')}
+          ${badge('Não Utilizaram o Token',noToken,'red')}
+          ${badge('Via Web Link',viaLink,'purple')}
+          ${badge('Sem Geolocalização',geo,'yellow')}
+          ${badge('Com Geolocalização',withGeo,'green')}
         </div>
-        <div class="goal-explain"><strong>Leitura rápida:</strong> perfeito é pronto para confiar melhor no financeiro. Requisitos mínimos é TOKEN SIM + horários via APP. Sem geolocalização mostra transportes que precisam de mais cuidado no mapa.</div>
+        <div class="goal-explain"><strong>Leitura rápida:</strong> verde é transporte com caminho bem comprovado. Amarelo é uso do APP com evidência mínima. Vermelho é quando não apareceu uso do TOKEN. Cinza é agendamento que não virou corrida.</div>
         <div class="scope-row">
           <div class="scope-card"><strong>Filtro atual</strong><span>${esc(data.meta.label)} · ${data.meta.avg}% · ${data.meta.ok}/${data.meta.base} corretos · ${data.meta.naoAprovado} sem requisitos</span></div>
           <div class="scope-card"><strong>Base treinamento</strong><span>${data.training.avg}% · ${data.training.matched}/${data.training.targetTotal} com dados no relatório · ${data.training.trained} treinados</span></div>
@@ -1600,9 +1793,9 @@ function render(){
     const sn=n.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const bnr=pu?`<div class="cbnr ${CTBNR[v[0]]}">${CTLBL[v[0]]}</div>`:'';
     const pills=[
-      sv.tokenOk>0?`<span class="pill mod">Utilização token ${sv.tokenOk}</span>`:'',
+      sv.tokenOk>0?`<span class="pill mod">Usou o Token ${sv.tokenOk}</span>`:'',
       sv.sem>0?`<span class="pill sm">Sem geolocalização ${sv.sem}</span>`:'',
-      sv.erro>0?`<span class="pill err">Sem requisitos ${sv.erro}</span>`:'',
+      sv.erro>0?`<span class="pill err">Não usou o Token ${sv.erro}</span>`:'',
     ].filter(Boolean).join('');
     // Training chip
     const tr=v[12];
@@ -1622,9 +1815,9 @@ function render(){
       <div class="pb"><div class="pbf" style="width:${sv.pct}%"></div></div>
       <div class="cs4">
         <div class="cs"><div class="cs-n">${sv.total}</div><div class="cs-l">Total</div></div>
-        <div class="cs"><div class="cs-n" style="color:#059669">${sv.correto+sv.gop+sv.sem}</div><div class="cs-l">Comprovados</div></div>
-        <div class="cs"><div class="cs-n" style="color:#7c3aed">${sv.tokenOk}</div><div class="cs-l">Utilização token</div></div>
-        <div class="cs"><div class="cs-n" style="color:#dc2626">${sv.web+sv.erro}</div><div class="cs-l">Análise</div></div>
+        <div class="cs"><div class="cs-n" style="color:#059669">${sv.correto}</div><div class="cs-l">Perfeitos</div></div>
+        <div class="cs"><div class="cs-n" style="color:#7c3aed">${sv.tokenOk}</div><div class="cs-l">Usou o Token</div></div>
+        <div class="cs"><div class="cs-n" style="color:#dc2626">${sv.erro}</div><div class="cs-l">Não usou o Token</div></div>
       </div>
       ${pills?`<div class="cpills">${pills}</div>`:''}
       ${trChip}
@@ -1660,6 +1853,52 @@ function rkRows(list){
       <span class="rkpct" style="background:${pctBg(pct)};color:${pctCl(pct)}">${pct}%</span>
     </div>`;
   }).join('');
+}
+function performanceStats(atts,getter){
+  const map=new Map();
+  atts.forEach(a=>{
+    const name=String(getter(a)||'').trim();
+    if(!name||name==='—')return;
+    const cur=map.get(name)||{name,total:0,ok:0,err:0,atts:[]};
+    cur.total++;
+    if(isCorrectClass(a[5]))cur.ok++;else cur.err++;
+    cur.atts.push(a[0]);
+    map.set(name,cur);
+  });
+  return [...map.values()].map(x=>({...x,pct:x.total?Math.round(x.ok/x.total*1000)/10:0,errPct:x.total?Math.round(x.err/x.total*1000)/10:0}));
+}
+function bestPerformance(list,limit=5){
+  return [...list].sort((a,b)=>b.pct-a.pct||b.ok-a.ok||b.total-a.total||a.name.localeCompare(b.name,'pt-BR')).slice(0,limit);
+}
+function worstPerformance(list,limit=5){
+  return [...list].filter(x=>x.err>0).sort((a,b)=>b.err-a.err||a.pct-b.pct||b.total-a.total||a.name.localeCompare(b.name,'pt-BR')).slice(0,limit);
+}
+function perfRows(list,type,nid,prefix){
+  if(!list.length)return`<div class="ops-empty">Sem dados suficientes</div>`;
+  return list.map((x,i)=>{
+    const id=registerDetailList(`${nid}_${prefix}_${i}`,x.atts);
+    const pct=type==='bad'?x.errPct:x.pct;
+    const bg=type==='bad'?pctBg(100-pct):pctBg(pct);
+    const color=type==='bad'?pctCl(100-pct):pctCl(pct);
+    return `<button class="ops-row" onclick="openDetailList('${id}','${esc(x.name)}')">
+      <span><span class="ops-name" title="${esc(x.name)}">${esc(x.name)}</span><span class="ops-meta">${x.ok} acertos · ${x.err} falhas · ${x.total} total</span></span>
+      <span class="ops-pct" style="background:${bg};color:${color}">${pct}%</span>
+    </button>`;
+  }).join('');
+}
+function shiftPerformanceStats(atts){
+  const labels={M:'Manhã',T:'Tarde',N:'Noite'};
+  return performanceStats(atts,a=>labels[a[2]]||'Turno não informado');
+}
+function operationalPerformanceHtml(atts,nid){
+  const drivers=performanceStats(atts,a=>a[3]);
+  const shifts=shiftPerformanceStats(atts);
+  return `<div class="ops-grid">
+    <div class="ops-card good"><div class="ops-head">${statusIcon('icon-check','ok')}Motoristas que mais acertam</div>${perfRows(bestPerformance(drivers), 'good', nid, 'driver_best')}</div>
+    <div class="ops-card bad"><div class="ops-head">${statusIcon('icon-x','bad')}Motoristas que mais erram</div>${perfRows(worstPerformance(drivers), 'bad', nid, 'driver_worst')}</div>
+    <div class="ops-card good"><div class="ops-head">${statusIcon('icon-clock','ok')}Turno que mais acerta</div>${perfRows(bestPerformance(shifts,3), 'good', nid, 'shift_best')}</div>
+    <div class="ops-card bad"><div class="ops-head">${statusIcon('icon-alert','bad')}Turno que mais erra</div>${perfRows(worstPerformance(shifts,3), 'bad', nid, 'shift_worst')}</div>
+  </div>`;
 }
 function miniRk(list){
   if(!list||!list.length)return`<div style="font-size:.63rem;color:#9ca3af;font-style:italic">Sem dados</div>`;
@@ -1772,8 +2011,10 @@ function validationTooltip(a,cl){
   const badLines=checks.filter(([,ok])=>!ok).map(([label,, ,bad])=>`❌ ${label}: ${bad}`);
   const raw=cleanReasonText(a?.[22]||'');
   const result=statusLabelForAtt(a,cl);
+  const subclass=subclassLabelForAtt(a);
+  const shortReason=reasonSentenceForAtt(a);
   const pay=routeInfo?.payment;
-  const out=[`Atendimento #${a?.[0]||'--'} - validação da regra`,`Resultado: ${result}`,''];
+  const out=[`Atendimento #${a?.[0]||'--'} - validação da regra`,`Status: ${result}`,`Subclasse: ${subclass}`,`Motivo: ${shortReason}`,''];
   if(pay){
     out.push('Pagamento:',`${pay.payable?'✅':'❌'} ${pay.title}: ${cleanReasonText(pay.reason||'')}`,'');
   }
@@ -1949,9 +2190,215 @@ function toggleFold(id){
   if(el)el.classList.toggle('collapsed');
 }
 
+function subclassSummary(atts){
+  const map=new Map();
+  atts.forEach(a=>{
+    const key=`${statusLabelForAtt(a,a?.[5])}|||${subclassLabelForAtt(a)}`;
+    const cur=map.get(key)||{status:statusLabelForAtt(a,a?.[5]),subclass:subclassLabelForAtt(a),count:0};
+    cur.count++;
+    map.set(key,cur);
+  });
+  return [...map.values()].sort((a,b)=>b.count-a.count).slice(0,8);
+}
+function reportSampleRows(atts){
+  const buckets=['correto_perfeito','requisitos_minimos','nao_utilizou_token','agendamento'];
+  const used=new Set();
+  const rows=[];
+  buckets.forEach(sc=>{
+    const item=atts.find(a=>scenarioOfAtt(a)===sc&&!used.has(a[0]));
+    if(item){used.add(item[0]);rows.push(item);}
+  });
+  return rows.concat(atts.filter(a=>!used.has(a[0])).slice(0,Math.max(0,8-rows.length)));
+}
+function pdfFriendlyTone(status){
+  if(status==='Transporte perfeito')return'good';
+  if(status==='Mínimos requisitos')return'warn';
+  if(status==='Não usou o token')return'bad';
+  return'neutral';
+}
+function pdfFriendlyReason(a){
+  const status=statusLabelForAtt(a,a?.[5]);
+  const subclass=subclassLabelForAtt(a);
+  const info=a?.[24]&&typeof a[24]==='object'?a[24]:{};
+  const ev=info.evidence||{};
+  const checks=info.checks||[];
+  const missingStages=info.stageSummary?.missing||0;
+  const changedUsers=info.stageSummary?.differentUser||0;
+  const track=Number(ev.trackingPoints??a?.[21]??0);
+  const nearOk=checks.length?checks.every(ch=>ch.ok):!!ev.nearRoute;
+  const originCheck=checks.find(ch=>/Origem/i.test(ch.label||''));
+  const destCheck=checks.find(ch=>/Destino/i.test(ch.label||''));
+  const distanceText=checks.length?checks.map(ch=>{
+    const dist=ch.distance==null?'sem ponto de GPS':`${Number(ch.distance).toFixed(2)} km do endereço`;
+    return `${ch.label}: ${dist}`;
+  }).join(' | '):'sem conferência de distância no relatório';
+  let headline='Classificação do transporte';
+  let explanation=reasonSentenceForAtt(a);
+  let supplierText='Confira os dados do atendimento e use o mapa para confirmar o ocorrido.';
+  let nextStep='Manter o preenchimento pelo APP em todas as etapas.';
+  if(status==='Transporte perfeito'){
+    headline='Transporte perfeito';
+    explanation='O transporte ficou completo: usou TOKEN, marcou os horários pelo APP, gerou rastreio e comprovou origem/destino dentro do raio de 700m.';
+    supplierText=`Para o prestador: o fluxo foi feito do jeito esperado. ${originCheck?.distance!=null?`Origem a ${Number(originCheck.distance).toFixed(2)} km. `:''}${destCheck?.distance!=null?`Destino a ${Number(destCheck.distance).toFixed(2)} km.`:''}`.trim();
+    nextStep='Continuar usando o TOKEN antes da remoção e marcar cada chegada/saída no APP.';
+  }else if(status==='Mínimos requisitos'){
+    headline='Usou o APP, mas precisa atenção';
+    explanation='Existe evidência de uso do TOKEN/APP, então não tratamos como “não usou”. Porém faltou alguma prova para chamar de perfeito.';
+    if(/geolocalização fora do raio/i.test(subclass)){
+      supplierText=`Para o prestador: o TOKEN e os horários apareceram, mas o mapa não confirmou origem e destino dentro de 700m. ${distanceText}.`;
+      nextStep='Na próxima remoção, marcar chegada na origem e chegada no destino somente quando estiver próximo do local correto.';
+    }else if(/link/i.test(subclass)){
+      supplierText='Para o prestador: houve preenchimento com TOKEN e horários, mas o relatório não trouxe aparelho nem rastreio. Por isso fica como uso por link/análise.';
+      nextStep='Usar o APP instalado no celular da equipe, com GPS ativo, para gerar dispositivo e rastreio.';
+    }else if(/aparelho|dispositivo/i.test(subclass)){
+      supplierText='Para o prestador: o trajeto tem boa evidência, mas o relatório não identificou o aparelho usado.';
+      nextStep='Conferir se o APP está atualizado e se o celular está liberando as permissões do aplicativo.';
+    }else if(track===0||ev.semGeolocalizacao){
+      supplierText='Para o prestador: o TOKEN/APP apareceu, mas o GPS não trouxe pontos suficientes para o mapa comprovar o caminho.';
+      nextStep='Antes de iniciar, conferir internet, GPS ligado e permissão de localização do APP.';
+    }else{
+      supplierText=`Para o prestador: houve uso do APP, mas ficou pendência de evidência. Subclasse: ${subclass}.`;
+      nextStep='Revisar se todas as etapas foram marcadas no APP e se o GPS estava funcionando.';
+    }
+  }else if(status==='Não usou o token'){
+    headline='Não usou o TOKEN';
+    if(/conflitante/i.test(subclass)){
+      explanation='O relatório não trouxe TOKEN SIM. Apareceu alguma informação solta, então o caso pode ser conferido manualmente, mas não há prova completa de uso do TOKEN.';
+      supplierText='Para o prestador: não basta aparecer um horário isolado ou uma coordenada solta. O painel precisa ver o TOKEN como SIM e sinais claros do APP.';
+      nextStep='Inserir o TOKEN no APP e preencher as etapas pelo aplicativo durante o transporte.';
+    }else{
+      explanation='Não apareceu prova de uso do TOKEN neste atendimento: sem TOKEN SIM e sem sinais suficientes do APP.';
+      supplierText='Para o prestador: o painel não encontrou evidência de que o TOKEN foi inserido para essa remoção.';
+      nextStep='Sempre inserir o TOKEN no APP antes da remoção e seguir marcando as etapas no celular.';
+    }
+  }else if(status==='Agendamento'){
+    headline='Agendamento sem corrida';
+    explanation='Esse registro parece ser apenas agendamento: não teve Solicitação VTR, então não virou transporte despachado.';
+    supplierText='Para o prestador: este item não é uma falha de uso do TOKEN; ele indica que a corrida não foi efetivamente aberta para execução.';
+    nextStep='Nenhuma ação operacional do prestador, salvo se a corrida tiver ocorrido e o despacho estiver faltando no sistema.';
+  }
+  if(changedUsers>0&&status!=='Não usou o token'){
+    supplierText+=` Atenção: ${changedUsers} etapa(s) foram preenchidas por usuário diferente do esperado, indicando possível ajuste da operação.`;
+  }
+  if(missingStages>0){
+    supplierText+=` Também faltou preencher ${missingStages} etapa(s) do transporte.`;
+  }
+  return {status,subclass,headline,explanation,supplierText,nextStep,tone:pdfFriendlyTone(status),nearOk,track};
+}
+function pdfChecklist(a){
+  const info=a?.[24]&&typeof a[24]==='object'?a[24]:{};
+  const ev=info.evidence||{};
+  const checks=info.checks||[];
+  const stage=info.stageSummary||{};
+  const track=Number(ev.trackingPoints??a?.[21]??0);
+  const yesNo=(ok,label,detail)=>`<li class="${ok?'yes':'no'}"><b>${ok?'OK':'Atenção'}</b><span>${esc(label)}</span><em>${esc(detail)}</em></li>`;
+  return [
+    yesNo(!!ev.token,'TOKEN',ev.token?'TOKEN veio como SIM':'TOKEN não veio como SIM'),
+    yesNo(!!ev.appTimes,'Horários pelo APP',ev.appTimes?'as etapas têm horários no aplicativo':'não há horários suficientes do APP'),
+    yesNo(track>0,'Rastreio',`${track} ponto(s) de rastreio`),
+    yesNo(!!ev.device,'Aparelho',ev.device?'celular/aplicativo identificado':'aparelho não identificado no relatório'),
+    yesNo(checks.length?checks.every(ch=>ch.ok):!!ev.nearRoute,'Origem e destino',checks.length?checks.map(ch=>`${ch.label}: ${ch.distance==null?'sem GPS':Number(ch.distance).toFixed(2)+' km'}`).join(' | '):'sem cálculo de proximidade'),
+    yesNo((stage.differentUser||0)===0,'Usuário das etapas',(stage.differentUser||0)===0?'preenchido pelo usuário esperado':`${stage.differentUser} etapa(s) com usuário diferente`)
+  ].join('');
+}
+function pdfRuleCards(){
+  return `<div class="rule">
+    <div class="good"><b>Transporte perfeito</b><p>Usou TOKEN, marcou horários no APP, gerou rastreio e chegou perto da origem e do destino dentro de 700m.</p><small>Exemplo: TOKEN SIM + mapa confirmou origem/destino.</small></div>
+    <div class="warn"><b>Mínimos requisitos</b><p>Mostra que o APP/TOKEN foi usado, mas ficou algo para olhar: GPS, aparelho, raio ou preenchimento parcial.</p><small>Exemplo: TOKEN SIM, horários existem, mas o GPS falhou.</small></div>
+    <div class="bad"><b>Não usou o TOKEN</b><p>Não apareceu prova suficiente de que o TOKEN foi inserido e acompanhado pelo APP.</p><small>Exemplo: TOKEN NÃO e sem sinais claros do aplicativo.</small></div>
+    <div class="neutral"><b>Agendamento</b><p>Registro que não virou corrida, porque não teve Solicitação VTR.</p><small>Exemplo: havia rota planejada, mas sem despacho.</small></div>
+  </div>`;
+}
+function supplierPdfPeriods(v){
+  const months=Object.entries(v?.[11]||{}).map(([key,m])=>({
+    key,
+    label:m?.[0]||`Mês ${key}`,
+    total:m?.[1]||0,
+    order:parseMonthOrder(m?.[0]||'',key)
+  })).filter(m=>m.total>0).sort((a,b)=>b.order-a.order);
+  return [{key:'all',label:'Todos os períodos',total:v?.[1]||0,order:999999},...months];
+}
+function askSupplierPdfPeriod(name,v){
+  const periods=supplierPdfPeriods(v);
+  if(periods.length<=1)return periods[0]?.key||'all';
+  const suggestedIndex=Math.max(0,periods.findIndex(p=>p.key===activeMonth));
+  const message=[
+    `Qual período deseja salvar no PDF de ${name}?`,
+    '',
+    ...periods.map((p,i)=>`${i+1} - ${p.label} (${p.total} atendimento${p.total===1?'':'s'})`),
+    '',
+    'Digite o número da opção.'
+  ].join('\n');
+  const ans=prompt(message,String(suggestedIndex+1));
+  if(ans==null)return null;
+  const txt=String(ans).trim().toLowerCase();
+  if(!txt)return null;
+  const idx=Number(txt);
+  if(Number.isInteger(idx)&&idx>=1&&idx<=periods.length)return periods[idx-1].key;
+  const found=periods.find(p=>p.key.toLowerCase()===txt||p.label.toLowerCase()===txt);
+  if(found)return found.key;
+  alert('Opção inválida. Clique novamente em Salvar PDF e escolha o número da lista.');
+  return null;
+}
+function printCurrentSupplierReport(month){
+  const name=CURRENT_PROVIDER_NAME;
+  const v=D[name];if(!v)return;
+  const selectedMonth=month===undefined?askSupplierPdfPeriod(name,v):month;
+  if(selectedMonth==null)return;
+  const sv=supplierView(v,selectedMonth);
+  const atts=allAtts(v,selectedMonth);
+  if(!atts.length)return alert('Não há atendimentos para salvar nesse período.');
+  const rs=modalResultStats(atts);
+  const subclasses=subclassSummary(atts);
+  const rows=[...atts].sort((a,b)=>Number(a?.[0]||0)-Number(b?.[0]||0));
+  const pct=sv.base?Math.round((sv.correto+sv.gop+sv.sem)/sv.base*1000)/10:0;
+  const perfectSample=rows.find(a=>statusLabelForAtt(a,a?.[5])==='Transporte perfeito');
+  const noTokenSample=rows.find(a=>statusLabelForAtt(a,a?.[5])==='Não usou o token');
+  const sampleHtml=[perfectSample,noTokenSample].filter(Boolean).map(a=>{
+    const fr=pdfFriendlyReason(a);
+    return `<div class="case ${fr.tone}"><strong>#${esc(a[0])} · ${esc(fr.headline)}</strong><span>${esc(fr.supplierText)}</span><ul>${pdfChecklist(a)}</ul></div>`;
+  }).join('');
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>Relatório - ${esc(name)}</title>
+  <style>
+    @page{size:A4 landscape;margin:9mm}
+    *{box-sizing:border-box}body{font-family:Inter,Arial,sans-serif;margin:0;color:#132018;background:#fff;font-size:11px}
+    .sheet{border:2px solid #0b6b3a;border-radius:14px;overflow:hidden;min-height:188mm}
+    .top{background:#0b6b3a;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+    .brand{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#bbf7d0;font-weight:900}.title{font-size:22px;font-weight:950;margin-top:4px;max-width:720px}.date{font-weight:800;color:#ffedd5}
+    .score{background:#FF8000;color:#fff;border-radius:12px;padding:10px 14px;min-width:150px;text-align:center}.score b{display:block;font-size:28px;line-height:1}.score span{font-size:10px;text-transform:uppercase;font-weight:900}
+    .content{padding:14px 16px;display:grid;gap:12px}.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.kpi{border:1px solid #e5e7eb;border-radius:10px;padding:10px;background:#fff}.kpi strong{display:block;font-size:20px;line-height:1;color:#111827}.kpi span{display:block;margin-top:6px;font-size:9px;text-transform:uppercase;font-weight:950;color:#667085}.kpi.good{border-color:#86efac;background:#f0fdf4}.kpi.warn{border-color:#fdba74;background:#fff7ed}.kpi.bad{border-color:#fca5a5;background:#fff1f2}.kpi.neutral{background:#f8fafc}
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:12px}.box{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}.box h3{margin:0 0 8px;font-size:12px;color:#0b6b3a;text-transform:uppercase;letter-spacing:.06em}.box .lead{margin:0 0 8px;color:#475467;line-height:1.45;font-weight:700}.rule{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.rule div{border-radius:9px;padding:8px;border:1px solid #e5e7eb}.rule b{display:block;font-size:10px;margin-bottom:5px}.rule p{margin:0;color:#344054;line-height:1.35}.rule small{display:block;margin-top:6px;color:#667085;line-height:1.3}.good{border-color:#86efac!important;background:#f0fdf4!important}.warn{border-color:#fdba74!important;background:#fff7ed!important}.bad{border-color:#fca5a5!important;background:#fff1f2!important}.neutral{background:#f8fafc!important}.cases{display:grid;grid-template-columns:1fr 1fr;gap:8px}.case{border-radius:10px;border:1px solid #e5e7eb;padding:9px}.case strong{display:block;font-size:11px;color:#101828}.case span{display:block;margin-top:5px;color:#344054;line-height:1.35;font-weight:700}.case ul,.checks{list-style:none;padding:0;margin:7px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:4px}.case li,.checks li{border-radius:7px;padding:5px 6px;border:1px solid #e5e7eb;background:#fff}.case li b,.checks li b{display:inline-block;margin-right:5px;font-size:8px;text-transform:uppercase}.case li.yes b,.checks li.yes b{color:#047857}.case li.no b,.checks li.no b{color:#c2410c}.case li span,.checks li span{display:inline;font-size:9px;font-weight:900;color:#344054}.case li em,.checks li em{display:block;margin-top:2px;color:#667085;font-style:normal;font-size:8px;line-height:1.25}
+    table{width:100%;border-collapse:collapse}th{font-size:9px;text-transform:uppercase;color:#667085;text-align:left;border-bottom:1px solid #e5e7eb;padding:6px}td{padding:6px;border-bottom:1px solid #f1f5f9;color:#344054;vertical-align:top}.why{font-weight:800;color:#344054;line-height:1.35}.next{color:#667085;line-height:1.3;margin-top:3px}.tag{display:inline-block;border-radius:999px;padding:3px 7px;font-weight:900;font-size:9px}.tag.good{background:#dcfce7;color:#166534}.tag.warn{background:#ffedd5;color:#9a3412}.tag.bad{background:#fee2e2;color:#991b1b}.tag.neutral{background:#f1f5f9;color:#334155}
+    .foot{padding:0 16px 12px;color:#667085;font-size:9px;display:flex;justify-content:space-between}.orange{color:#ea580c;font-weight:950}.avoid{break-inside:avoid}
+  </style></head><body><div class="sheet">
+    <div class="top"><div><div class="brand">Painel IRIS · Fornecedores</div><div class="title">${esc(name)}</div><div class="date">${esc(sv.label)} · Atualizado em ${esc(GS2.updated||'')}</div></div><div class="score"><b>${pct}%</b><span>positivos</span></div></div>
+    <div class="content">
+      <div class="kpis avoid">
+        <div class="kpi neutral"><strong>${sv.total}</strong><span>transportes</span></div>
+        <div class="kpi good"><strong>${rs.perfeito}</strong><span>transporte perfeito</span></div>
+        <div class="kpi warn"><strong>${rs.minimos}</strong><span>mínimos requisitos</span></div>
+        <div class="kpi bad"><strong>${rs.naoUsou}</strong><span>não usou token</span></div>
+        <div class="kpi neutral"><strong>${rs.agendamento}</strong><span>agendamento</span></div>
+        <div class="kpi warn"><strong>${rs.semGeo}</strong><span>GPS/mapa falhou</span></div>
+      </div>
+      <div class="grid">
+        <div class="box avoid"><h3>Como ler este relatório</h3><p class="lead">A classificação procura uma coisa simples: se o transporte deixou sinais confiáveis de uso do APP e do TOKEN. Verde é completo, amarelo é uso comprovado com alguma atenção, vermelho é quando não apareceu prova suficiente do TOKEN.</p>${pdfRuleCards()}</div>
+        <div class="box avoid"><h3>Subclasses mais comuns</h3><table><tbody>${subclasses.map(x=>`<tr><td><span class="tag ${x.status==='Transporte perfeito'?'good':x.status==='Mínimos requisitos'?'warn':x.status==='Não usou o token'?'bad':'neutral'}">${esc(x.status)}</span></td><td>${esc(x.subclass)}</td><td><b>${x.count}</b></td></tr>`).join('')}</tbody></table></div>
+      </div>
+      ${sampleHtml?`<div class="box avoid"><h3>Exemplos deste prestador</h3><div class="cases">${sampleHtml}</div></div>`:''}
+      <div class="box"><h3>Todos os atendimentos</h3><table><thead><tr><th>Nº</th><th>Data</th><th>Status</th><th>Subclasse</th><th>Explicação clara</th></tr></thead><tbody>${rows.map(a=>{const fr=pdfFriendlyReason(a);return `<tr><td><b>#${esc(a[0])}</b></td><td>${esc(a[1]||'')}</td><td><span class="tag ${fr.tone}">${esc(fr.status)}</span></td><td>${esc(fr.subclass)}</td><td><div class="why">${esc(fr.supplierText)}</div><div class="next"><b>Orientação:</b> ${esc(fr.nextStep)}</div></td></tr>`}).join('')}</tbody></table></div>
+    </div>
+    <div class="foot"><span>Relatório gerado pelo Painel IRIS de Fornecedores.</span><span><span class="orange">Regra simples:</span> positivos = transporte perfeito + mínimos requisitos.</span></div>
+  </div><script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`;
+  const w=window.open('','_blank');
+  if(!w)return alert('O navegador bloqueou a janela do PDF. Libere pop-ups para imprimir.');
+  w.document.open();w.document.write(html);w.document.close();
+}
+
 // ── OPEN MODAL ───────────────────────────────────────────────
 function openM(name){
   const v=D[name];if(!v)return;
+  CURRENT_PROVIDER_NAME=name;
   const sv=supplierView(v);
   const pu=isPu(v),c=cat(sv.pct),clr=pu?'#7c3aed':CCLR[c];
   const nid=name.replace(/[^a-zA-Z0-9]/g,'_').slice(0,20);
@@ -1974,14 +2421,18 @@ function openM(name){
   CURRENT_RESULT_CONTEXT={name,sv,stats:rs};
 
   document.getElementById('mbody').innerHTML=`
+    <div class="modal-report-actions">
+      <button class="pdf-action" onclick="printCurrentSupplierReport()">${icon('icon-download')}Salvar PDF do prestador</button>
+      <span class="mci">Relatório A4 · ${esc(sv.label)}</span>
+    </div>
     ${sectionTitle('Resultado dos Atendimentos','icon-activity','green')}
     <div class="result-clean">
-      ${resultRuleCard('perfeito','ok','icon-check-circle','Perfeito',rs.perfeito,'cumpriu todas as validações')}
-      ${resultRuleCard('correto','ok','icon-check','Requisitos mínimos',rs.minimos,'TOKEN + horários APP')}
-      ${resultRuleCard('naoCumpriu','token','icon-alert','Sem requisitos',rs.semReq,'TOKEN sem horários APP')}
-      ${resultRuleCard('naoUsou','bad','icon-x','Não utilizou TOKEN',rs.naoUsou,'TOKEN não + sem APP')}
-      ${resultRuleCard('web','neutral','icon-info','Preencheu via link',rs.viaLink,'sem dispositivo/rastreio')}
-      ${resultRuleCard('semGeo','token','icon-pin','Sem geolocalização',rs.semGeo,'mapa exige análise')}
+      ${resultRuleCard('perfeito','ok','icon-check-circle','Transporte perfeito',rs.perfeito,'trajeto comprovado')}
+      ${resultRuleCard('correto','token','icon-check','Mínimos requisitos',rs.minimos,'usou, mas precisa olhar')}
+      ${resultRuleCard('naoUsou','bad','icon-x','Não usou o token',rs.naoUsou,'sem prova de uso')}
+      ${resultRuleCard('agendamento','neutral','icon-calendar','Agendamento',rs.agendamento,'não virou corrida')}
+      ${resultRuleCard('token','neutral','icon-smartphone','TOKEN SIM',rs.token,'adoção do token')}
+      ${resultRuleCard('semGeo','token','icon-pin','GPS ou mapa falhou',rs.semGeo,'alerta de análise')}
     </div>
     ${zeroRastAtts.length?`<button class="soft-action" onclick='openSd("${nid}_zero","Rastreios zerados",${JSON.stringify(zeroRastAtts)})'>${icon('icon-alert')} ${zeroRastAtts.length} chamados com rastreio zerado</button>`:''}
 
@@ -2035,19 +2486,22 @@ function openMonthDetail(id,lbl){
   document.getElementById('sdLbl').textContent=`Atendimentos - ${lbl}`;
   document.getElementById('sdCount').textContent=`${atts.length} atendimento(s) no mês`;
   document.getElementById('sdChips').innerHTML=`<div class="atw month-detail-table"><table class="att">
-    <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Status</th><th>Token</th><th>KM</th><th>Eventos</th><th>Mapa</th><th>Pagamento</th></tr></thead>
-    <tbody>${atts.map(a=>`<tr class="${RCLS[a[5]]||''}">
+    <thead><tr><th>Nº</th><th>Remoção</th><th>Turno</th><th>Condutor</th><th>Status</th><th>Token</th><th>Android / APP</th><th>Inserção TOKEN</th><th>Mapa</th><th>Pagamento</th></tr></thead>
+    <tbody>${atts.map(a=>{
+      const dev=attDeviceInfo(a);
+      const delta=tokenDeltaPresentation(a[8]);
+      return `<tr class="${RCLS[a[5]]||''}">
       <td><span class="anum">#${a[0]}</span></td>
       <td style="white-space:nowrap;font-size:.65rem;color:#6b7280">${a[1]||'—'}</td>
       <td style="text-align:center;font-size:.82rem">${SHIFT_ICO[a[2]]||'?'}</td>
       <td><span class="apers" title="${a[3]||''}">${a[3]||'—'}</span></td>
       <td><span class="atag ${TCLS[a[5]]}" title="${esc(validationTooltip(a,a[5]))}">${esc(statusLabelForAtt(a,a[5]))}</span></td>
       <td style="font-size:.65rem;font-weight:700;color:${tokenYesFromAtt(a)?'#059669':'#dc2626'}">${tokenYesFromAtt(a)?'SIM':'NÃO'}</td>
-      <td style="font-size:.65rem">${a[18]!=null?a[18]+' km':(a[9]!=null?a[9]+' km':'—')}</td>
-      <td style="font-size:.65rem;color:#ea580c;font-weight:700">${Array.isArray(a[20])?a[20].length:'—'}</td>
+      <td style="font-size:.62rem;line-height:1.25;color:#344054"><b>${esc(dev.android)}</b><br><span style="color:#667085">APP ${esc(dev.version)}</span></td>
+      <td style="font-size:.65rem;font-weight:800;color:${delta.color};white-space:nowrap" title="Tempo entre a inserção do TOKEN e o horário de início da remoção">${esc(delta.text)}</td>
       <td><button class="map-btn" onclick="openMapAtt(${a[0]})">${icon('icon-map')}Mapa</button></td>
       <td><button class="pay-btn" onclick="openPaymentAtt(${a[0]})">${icon('icon-check-circle')}Pagamento</button></td>
-    </tr>`).join('')}</tbody>
+    </tr>`}).join('')}</tbody>
   </table></div>`;
   document.getElementById('sdov').classList.add('open');
   document.body.style.overflow='hidden';
@@ -2082,6 +2536,47 @@ function closePayment(){
 function coordOk(p){return p&&p.lat!=null&&p.lon!=null&&!isNaN(+p.lat)&&!isNaN(+p.lon)}
 function fmtKm(v){return v==null?'—':`${(+v).toFixed(1)} km`}
 function fmtMin(v){if(v==null)return'—';const m=Math.round(v);return m>=60?`${Math.floor(m/60)}h ${m%60}min`:`${m} min`}
+function parseStageDateMin(raw){
+  const m=String(raw||'').match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\s+(\d{1,2}):(\d{2})/);
+  if(!m)return null;
+  const y=m[3]?Number(m[3].length===2?'20'+m[3]:m[3]):2026;
+  return Math.round(new Date(y,Number(m[2])-1,Number(m[1]),Number(m[4]),Number(m[5])).getTime()/60000);
+}
+function stageDurationMin(from,to){
+  const a=parseStageDateMin(from?.time),b=parseStageDateMin(to?.time);
+  if(a==null||b==null)return null;
+  let d=b-a;
+  if(d<0&&d>-720)d+=1440;
+  return d>=0?d:null;
+}
+function eventByAny(route,keys){
+  const by=route?.by||{};
+  return keys.map(k=>by[k]).find(Boolean)||null;
+}
+function routeTimeAudit(route){
+  const by=route?.by||{};
+  const segments=[
+    {label:'Saída à Origem',from:eventByAny(route,['saida_recurso','token']),to:by.chegada_origem},
+    {label:'Origem ao Destino',from:eventByAny(route,['saida_origem','chegada_origem']),to:by.chegada_destino}
+  ];
+  if(route?.hasRoundTrip){
+    segments.push(
+      {label:'Destino à Origem Volta',from:eventByAny(route,['saida_destino','lib_destino','chegada_destino']),to:by.chegada_origem_ret},
+      {label:'Origem Volta à Liberação',from:eventByAny(route,['saida_origem_ret','chegada_origem_ret']),to:eventByAny(route,['lib_recurso','finalizacao'])}
+    );
+  }else{
+    segments.push({label:'Destino à Liberação',from:eventByAny(route,['lib_destino','chegada_destino']),to:eventByAny(route,['lib_recurso','finalizacao'])});
+  }
+  const totalStart=eventByAny(route,['saida_recurso','token','chegada_origem']);
+  const totalEnd=eventByAny(route,['lib_recurso','finalizacao','lib_destino','chegada_destino']);
+  let total=stageDurationMin(totalStart,totalEnd);
+  const filledTimes=(route?.rawEvents||[]).map(e=>parseStageDateMin(e?.time)).filter(v=>v!=null).sort((a,b)=>a-b);
+  if(filledTimes.length>1){
+    const span=filledTimes[filledTimes.length-1]-filledTimes[0];
+    if(span>=0&&(total==null||span>total))total=span;
+  }
+  return {total,segments:segments.map(s=>({...s,min:stageDurationMin(s.from,s.to)}))};
+}
 function geoKm(a,b){
   if(!coordOk(a)||!coordOk(b))return null;
   const R=6371,r=x=>x*Math.PI/180,dLat=r(b.lat-a.lat),dLon=r(b.lon-a.lon);
@@ -2131,6 +2626,13 @@ function paymentPanelHtml(a){
     <div class="pay-actions"><button class="pay-btn" onclick="openPaymentAtt(${Number(a?.[0]||0)})">${icon('icon-check-circle')}Abrir laudo de pagamento</button></div>
   </div>`;
 }
+function classificationSummaryHtml(a){
+  return `<div class="classification-summary">
+    <div class="classification-pill"><b>Status</b><span>${esc(statusLabelForAtt(a,a?.[5]))}</span></div>
+    <div class="classification-pill"><b>Subclasse</b><span>${esc(subclassLabelForAtt(a))}</span></div>
+    <div class="classification-reason"><b>Motivo</b><span>${esc(reasonSentenceForAtt(a))}</span></div>
+  </div>`;
+}
 function paymentModalHtml(a){
   const route=operationalRoute(a);
   const info=a?.[24]&&typeof a[24]==='object'?a[24]:{};
@@ -2153,7 +2655,8 @@ function paymentModalHtml(a){
   return `<div class="pay-summary">
     <h4>${esc(p.title||'Pagamento')} · Atendimento #${esc(a?.[0]||'')}</h4>
     <p>${esc(cleanReasonText(p.reason||''))}</p>
-    <p><strong>Status:</strong> ${esc(statusLabelForAtt(a,a?.[5]))} · <strong>Dispositivo:</strong> ${esc(dev.realModel)} · <strong>Android:</strong> ${esc(dev.android)} · <strong>APP:</strong> ${esc(dev.version)}</p>
+    <p><strong>Status:</strong> ${esc(statusLabelForAtt(a,a?.[5]))} · <strong>Subclasse:</strong> ${esc(subclassLabelForAtt(a))} · <strong>Dispositivo:</strong> ${esc(dev.realModel)} · <strong>Android:</strong> ${esc(dev.android)} · <strong>APP:</strong> ${esc(dev.version)}</p>
+    <p><strong>Motivo:</strong> ${esc(reasonSentenceForAtt(a))}</p>
     <div class="pay-actions">
       ${googleUrl?`<a class="google-route-btn" href="${googleUrl}" target="_blank" rel="noopener">${icon('icon-route')}Simular trajeto no Google</a>`:`<span class="google-route-btn disabled">${icon('icon-alert')}${esc(info.gmapsReason||'Não foi possível montar a rota no Google Maps.')}</span>`}
     </div>
@@ -2276,6 +2779,19 @@ function renderRoutePanel(a,route){
       <div class="route-mini"><b>Tempo esperado</b><span>${fmtMin(l.min)}</span></div>
     </div>
   </div>`).join('');
+  const timeAudit=routeTimeAudit(route);
+  const timeRows=timeAudit.segments.map(s=>`<div class="route-step">
+    <div class="route-step-head">
+      <div class="route-step-title">${statusIcon(s.min==null?'icon-alert':'icon-clock',s.min==null?'warn':'ok')}<span>${esc(s.label)}</span></div>
+      <span class="route-source">Horários APP</span>
+    </div>
+    <div class="route-step-meta">
+      <div class="route-mini"><b>Início</b><span>${esc(s.from?.time||'—')}</span></div>
+      <div class="route-mini"><b>Fim</b><span>${esc(s.to?.time||'—')}</span></div>
+      <div class="route-mini"><b>Duração</b><span>${fmtMin(s.min)}</span></div>
+      <div class="route-mini"><b>Base</b><span>${s.min==null?'horário ausente':'preenchido'}</span></div>
+    </div>
+  </div>`).join('');
   const extraTxt=route.extraEvents?.length?route.extraEvents.map(p=>`${p.label||p.key}${p.time?' · '+p.time:''}${coordOk(p)?' · '+coordTxt(p):''}`).join(' | '):'Sem registros adicionais fora das etapas principais';
   const pt=(p,empty='sem clique')=>p?`${p.time?esc(p.time)+' · ':''}${coordOk(p)?coordTxt(p):'sem lat/long'}`:empty;
   const audits=routeAuditForAtt(a,route);
@@ -2297,13 +2813,14 @@ function renderRoutePanel(a,route){
       <span><span class="route-dot" style="background:#ef4444"></span>Fornecedor - volta</span>
       <span><span class="route-dot" style="background:#facc15"></span>Usuário operacional</span>
     </div>
+    ${classificationSummaryHtml(a)}
     ${paymentPanelHtml(a)}
     <div class="route-section-title">${icon('icon-smartphone','route-ico')}Dispositivo do atendimento</div>
     <div class="route-grid">
       <div class="route-card"><strong>${icon('icon-smartphone','route-ico')}Modelo</strong><span>${esc(dev.realModel)}<br>${esc(dev.model)}</span></div>
       <div class="route-card"><strong>${icon('icon-info','route-ico')}Android</strong><span>${esc(dev.android)}</span></div>
       <div class="route-card"><strong>${icon('icon-target','route-ico')}Versão APP</strong><span>${esc(dev.version)}</span></div>
-      <div class="route-card"><strong>${icon('icon-check-circle','route-ico')}Status</strong><span>${esc(statusLabelForAtt(a,a[5]))}</span></div>
+      <div class="route-card"><strong>${icon('icon-check-circle','route-ico')}Status</strong><span>${esc(statusLabelForAtt(a,a[5]))}<br>${esc(subclassLabelForAtt(a))}</span></div>
     </div>
     <div class="route-grid">
       <div class="route-card"><strong>${icon('icon-route','route-ico')}KM oficial</strong><span>${km!=null?km+' km':'—'}</span></div>
@@ -2313,6 +2830,8 @@ function renderRoutePanel(a,route){
     </div>
     <div class="route-section-title">${icon('icon-clock','route-ico')}Etapas realizadas no APP</div>
     <div class="route-timeline">${stageRows}</div>
+    <div class="route-section-title">${icon('icon-clock','route-ico')}Tempos entre etapas preenchidas</div>
+    <div class="route-steps">${timeRows}</div>
     <div class="route-section-title">${icon('icon-route','route-ico')}Trechos esperados calculados</div>
     <div class="route-steps">${stepRows||'<div class="route-step"><div class="route-step-title">Sem pontos suficientes para calcular trechos.</div></div>'}</div>
     <div class="route-section-title">${icon('icon-pin','route-ico')}Pontos oficiais x fornecedor</div>
@@ -2348,10 +2867,12 @@ function openMapAtt(num){
   MAP_ATTS[a[0]]=a;
   const route=operationalRoute(a);
   const dev=attDeviceInfo(a);
+  const timeAudit=routeTimeAudit(route);
   document.getElementById('mapTitle').innerHTML=`<span class="map-number-band">${iconBox('icon-map','green')}<span class="map-title-text">Atendimento IRIS #${num}</span></span>`;
   document.getElementById('mapStats').style.display='grid';
   document.getElementById('mapDist').innerHTML=`${icon('icon-route','route-ico')}<strong>${a[18]!=null?a[18]:a[9]??'—'} km oficiais</strong>`;
   document.getElementById('mapTime').innerHTML=`${icon('icon-clock','route-ico')}<strong>${esc(a[19]||'—')} parada</strong>`;
+  document.getElementById('mapDuration').innerHTML=`${icon('icon-clock','route-ico')}<strong>${fmtMin(timeAudit.total)} duração</strong>`;
   document.getElementById('mapFlow').innerHTML=`${icon('icon-activity','route-ico')}<strong>${route.hasRoundTrip?'Ida e volta':'Ida'}</strong>`;
   document.getElementById('mapClicks').innerHTML=`${icon('icon-pin','route-ico')}<strong>${(route.geoEvents||[]).length}/${(route.rawEvents||[]).length} pontos</strong>`;
   document.getElementById('mapAddrs').innerHTML=`
@@ -2444,7 +2965,7 @@ function initMap(a,route){
       if(p.overlap>1)L.polyline([[p.lat,p.lon],[p.displayLat,p.displayLon]],{color:pointColor,weight:1,opacity:.45,dashArray:'2,4'}).addTo(map);
     });
     const expectedGroup=L.layerGroup().addTo(map);
-    Promise.all(route.legs.map(async leg=>{
+    Promise.all(route.legs.filter(leg=>coordOk(leg.from)&&coordOk(leg.to)).map(async leg=>{
       const r=await osrmLeg(leg.from,leg.to);
       const coords=r&&r.coords?r.coords:[[leg.from.lat,leg.from.lon],[leg.to.lat,leg.to.lon]];
       L.polyline(coords,{color:'#2563eb',weight:4,opacity:.55,dashArray:leg.type==='volta'?'7,6':null}).addTo(expectedGroup)
@@ -2486,24 +3007,96 @@ function renderRulesContent(){
   const desc=document.getElementById('ruleModeDesc');
   const rows=document.getElementById('rulesRows');
   if(!desc||!rows)return;
+  const table=document.querySelector('.rt');
+  if(table)table.classList.add('plans-mode');
+  const crit=(letter,tone,text)=>`<div class="criterion ${tone}"><span class="letter">${letter}</span><span>${text}</span></div>`;
+  const plan=(cls,title,sub,items,good,bad)=>`<section class="rule-plan ${cls}">
+    <h3>${title}</h3>
+    <div class="plan-sub">${sub}</div>
+    <div class="criteria-list">${items.join('')}</div>
+    <div class="plan-examples">
+      <div class="plan-example good"><strong>Exemplo positivo</strong>${good}</div>
+      <div class="plan-example bad"><strong>Exemplo negativo</strong>${bad}</div>
+    </div>
+  </section>`;
   if(RULE_MODE==='token'){
-    desc.textContent='Visão alternativa: classifica a utilização por TOKEN SIM, pelo menos 1 ponto de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.';
+    desc.innerHTML='<div class="rule-intro"><strong>Modo regra token:</strong> aqui a pergunta é mais direta: teve TOKEN, teve rastreio e a saída do recurso ficou com Usuario IRIS Contingencia? É uma visão resumida para comparar com a regra completa.</div>';
     rows.innerHTML=`
-      <tr><td>Usabilidade correta</td><td>Token SIM, pelo menos 1 ponto de rastreio e Usuário Saída do Recurso igual a Usuario IRIS Contingencia.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-      <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
-      <tr><td>Não utilizou o TOKEN</td><td>Qualquer atendimento sem TOKEN SIM, sem ponto de rastreio ou sem evidência suficiente de execução via APP.</td><td><span class="rtag er">FORA</span></td></tr>
+      <tr><td colspan="3"><div class="rule-plans">
+        ${plan('good','CORRETO NA REGRA TOKEN','Regra resumida para confirmar uso básico do token.',[
+          crit('A','yes','<b>TOKEN</b> = SIM'),
+          crit('B','yes','<b>Pontos de rastreio</b> maior ou igual a 1'),
+          crit('C','yes','<b>Usuário Saída do Recurso</b> = Usuario IRIS Contingencia'),
+          crit('D','opt','Dispositivo e Lat/Long ajudam, mas nessa visão são observação.')
+        ],'TOKEN = SIM, Número de rastreios = 12, Usuário Saída do Recurso = Usuario IRIS Contingencia.','TOKEN = SIM, mas Número de rastreios = 0 ou Saída do Recurso foi preenchida por outro usuário.')}
+        ${plan('bad','FORA DA REGRA TOKEN','Não cumpriu o mínimo dessa visão resumida.',[
+          crit('A','no','TOKEN não veio como SIM, ou'),
+          crit('B','no','Não teve rastreio suficiente, ou'),
+          crit('C','no','Saída do Recurso não foi Usuario IRIS Contingencia.')
+        ],'TOKEN = NÃO, sem rastreio e sem saída do recurso por contingência.','Se TOKEN = SIM e existe rastreio, não trate como ausência total antes de olhar a regra completa.')}
+        ${plan('neutral','HMED','Fornecedor com leitura própria de integração de horários.',[
+          crit('A','yes','Eventos operacionais preenchidos por HMED - INTEGRAÇÃO ou HMED ROOT'),
+          crit('B','no','Usuário fora da integração derruba a regra HMED'),
+          crit('C','opt','Token e rastreio continuam aparecendo como evidência operacional.')
+        ],'Chegada na Origem, Saída da Origem e Chegada no Destino por HMED - INTEGRAÇÃO.','Etapas principais aparecem com usuário manual fora do padrão HMED.')}
+      </div></td></tr>
     `;
   }else{
-    desc.textContent='Como cada atendimento entra no acompanhamento por evidência de uso do TOKEN, preenchimento via APP e validação operacional.';
+    desc.innerHTML='<div class="rule-intro"><strong>Como ler o relatório:</strong> o painel procura evidências de uso do APP. Primeiro ele vê se o prestador usou TOKEN e registrou horários pelo APP. Depois separa o que foi perfeito, o que cumpriu o mínimo, o que foi parcial e o que não trouxe evidência suficiente. As validações de mapa e geolocalização ajudam a saber se o transporte dá confiança para análise operacional e pagamento.</div>';
     rows.innerHTML=`
-      <tr><td>Perfeito</td><td>TOKEN, dispositivo, Lat/Long e data/hora do TOKEN, horários via APP, rastreio, usuários IRIS, coordenadas essenciais e origem/destino dentro de 700m.</td><td><span class="rtag ok">PERFEITO</span></td></tr>
-      <tr><td>Requisitos mínimos</td><td>TOKEN SIM e horários via APP SIM.</td><td><span class="rtag ok">CORRETO</span></td></tr>
-      <tr><td>Sem requisitos</td><td>TOKEN SIM, mas horários via APP NÃO.</td><td><span class="rtag mod">VALIDAÇÃO</span></td></tr>
-      <tr><td>Preencheu via link</td><td>TOKEN SIM, horários via APP SIM, rastreio zerado e sem dispositivo.</td><td><span class="rtag er">ANÁLISE</span></td></tr>
-      <tr><td>Sem geolocalização</td><td>Rastreio zerado ou sem Lat/Long da chegada na origem/destino.</td><td><span class="rtag mod">GEO</span></td></tr>
-      <tr><td>Regra HMED</td><td>Para HMED, a classificação usa as etapas operacionais integradas, exceto token/solicitação/finalização, que devem ter usuário HMED - INTEGRAÇÃO ou HMED ROOT.</td><td><span class="rtag ok">CUSTOM</span></td></tr>
-      <tr><td>Pagamento</td><td>O modal do mapa mostra se há evidência suficiente para pagar, quais validações passaram, quais ficaram estimadas e se o Google Maps não pode simular a rota.</td><td><span class="rtag ok">LAUDO</span></td></tr>
-      <tr><td>Não utilizou o TOKEN</td><td>TOKEN NÃO e horários via APP NÃO.</td><td><span class="rtag er">FORA</span></td></tr>
+      <tr><td colspan="3"><div class="rule-plans">
+        ${plan('perfect','PERFEITO','Plano completo: tudo que o relatório precisa mostrar para dar máxima confiança.',[
+          crit('A','yes','<b>TOKEN</b> = SIM'),
+          crit('B','yes','<b>Dispositivo</b> informado: modelo, Android e versão do APP'),
+          crit('C','yes','<b>Inserção do TOKEN</b> com data/hora e Lat/Long'),
+          crit('D','yes','<b>Horários via APP</b> = SIM'),
+          crit('E','yes','<b>Rastreio</b> maior que 0 ponto'),
+          crit('F','yes','<b>Usuários dos eventos</b> = Usuario IRIS Contingencia'),
+          crit('G','yes','<b>Lat/Long das etapas</b>: chegada/saída da origem, chegada/liberação do destino'),
+          crit('H','yes','<b>Mapa</b>: chegada perto da origem e do destino em até 700m')
+        ],'TOKEN = SIM; Dispositivo = SM-X115; APP = 3.0.9; Inserção do Token = 10:48 com Lat/Long; 50 pontos; etapas por Usuario IRIS Contingencia; chegada no destino dentro de 0,7 km.','Se faltou Lat/Long da chegada no destino, se o ponto ficou longe do destino ou se algum evento essencial veio sem usuário correto, não entra como Perfeito.')}
+        ${plan('good','REQUISITOS MÍNIMOS','Plano essencial: prova que houve uso do APP, mesmo sem todas as evidências perfeitas.',[
+          crit('A','yes','<b>TOKEN</b> = SIM'),
+          crit('B','yes','<b>Horários via APP</b> = SIM'),
+          crit('C','opt','Dispositivo pode estar preenchido ou não'),
+          crit('D','opt','Lat/Long do TOKEN pode estar preenchida ou não'),
+          crit('E','opt','Rastreio pode ter 0 ou mais pontos'),
+          crit('F','opt','Usuários dos eventos podem vir certos, alterados ou incompletos'),
+          crit('G','no','Não precisa comprovar 700m para entrar aqui')
+        ],'TOKEN = SIM e Chegada na Origem / Chegada no Destino aparecem com horários via APP. Mesmo se o relatório falhar na geolocalização, conta como mínimo.','TOKEN = SIM, mas Horários via APP = NÃO. Sem horário do APP não tem o mínimo para considerar uso correto.')}
+        ${plan('warn','SEM REQUISITOS','Existe algum sinal de token, mas não chegou ao mínimo.',[
+          crit('A','yes','<b>TOKEN</b> = SIM'),
+          crit('B','no','<b>Horários via APP</b> = NÃO'),
+          crit('C','opt','Pode até ter dispositivo ou Lat/Long, mas faltou o principal depois do TOKEN'),
+          crit('D','no','Não entra como correto porque não comprovou preenchimento das etapas pelo APP')
+        ],'TOKEN = SIM, mas as etapas aparecem sem horários via APP. O painel entende que houve tentativa ou registro incompleto.','Se TOKEN = NÃO e horários via APP = NÃO, não é Sem requisitos: é Não utilizou o TOKEN.')}
+        ${plan('neutral','PREENCHEU VIA LINK','Parece preenchimento fora do APP instalado, mesmo tendo token e horários.',[
+          crit('A','yes','<b>TOKEN</b> = SIM'),
+          crit('B','yes','<b>Horários via APP</b> = SIM'),
+          crit('C','no','<b>Dispositivo</b> vazio'),
+          crit('D','no','<b>Rastreio</b> = 0 ponto'),
+          crit('E','opt','Pode existir horário, mas sem dispositivo/rastreio fica com cara de link/web')
+        ],'TOKEN = SIM; horários preenchidos; Dispositivo / APP Utilizado vazio; Número de rastreios = 0.','Se tem dispositivo ou pontos de rastreio, já existe evidência de APP e o atendimento vai para outra regra.')}
+        ${plan('warn','SEM GEOLOCALIZAÇÃO','Usou ou tentou usar, mas o mapa não trouxe prova suficiente.',[
+          crit('A','opt','Pode ter TOKEN SIM e horários via APP'),
+          crit('B','no','Rastreio = 0, ou'),
+          crit('C','no','Sem Lat/Long da chegada na origem, ou'),
+          crit('D','no','Sem Lat/Long da chegada no destino'),
+          crit('E','opt','Não é erro automático: pode ser falha de captação do relatório')
+        ],'TOKEN = SIM, horários via APP SIM, mas Chegada no Destino veio sem Lat/Long. O painel mostra alerta de geolocalização.','Se tem Lat/Long da origem e do destino e os pontos entram no raio de 700m, não fica marcado como Sem geolocalização.')}
+        ${plan('bad','NÃO UTILIZOU O TOKEN','Ausência de evidência do fluxo esperado.',[
+          crit('A','no','<b>TOKEN</b> = NÃO'),
+          crit('B','no','<b>Horários via APP</b> = NÃO'),
+          crit('C','no','Sem dispositivo'),
+          crit('D','no','Sem rastreio'),
+          crit('E','no','Sem sinais fortes de preenchimento pelo APP')
+        ],'TOKEN = NÃO; Dispositivo vazio; Número de rastreios = 0; sem horários via APP. Aqui o painel entende que não usou o TOKEN.','Se aparece TOKEN = SIM, dispositivo, horário do APP ou usuário de contingência preenchendo etapas, não chame direto de “não usou”: é parcial/análise.')}
+      </div>
+      <div class="rules-note-grid">
+        <div class="rules-note"><strong>Resumo rápido</strong>Perfeito é como o plano completo. Requisitos mínimos é o plano básico: TOKEN SIM + horários via APP.</div>
+        <div class="rules-note"><strong>O que um aceita e o outro não</strong>Requisitos mínimos aceita falha de geolocalização, dispositivo ausente e usuário alterado. Perfeito não aceita: precisa vir tudo limpo.</div>
+        <div class="rules-note"><strong>Para pagamento</strong>Quanto mais perto do Perfeito, mais confiança. Quando fica só no mínimo ou sem geo, o mapa vira apoio para análise.</div>
+      </div></td></tr>
     `;
   }
 }
@@ -2516,7 +3109,7 @@ function doLogout(){
   sessionStorage.removeItem('amb_session');
   window.location.replace('login.html');
 }
-applyInitialRuleMode();renderRuleModeButton();renderRulesContent();initMonthFilter();initHeader();renderGoalTracking();render();
+applyInitialRuleMode();renderRuleModeButton();renderRulesContent();applyTheme(preferredTheme());initMonthFilter();initHeader();renderGoalTracking();render();
 </script>
 </body>
 </html>
