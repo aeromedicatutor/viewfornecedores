@@ -101,11 +101,12 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .goal-kpi strong{display:block;font-size:1.02rem;color:#111827;line-height:1}
 .goal-kpi span{display:block;font-size:.55rem;color:#344054;font-weight:900;text-transform:uppercase;letter-spacing:.035em;margin-top:7px;line-height:1.22}
 .goal-compact-score{display:inline-flex;align-items:center;gap:6px;margin:0 0 0 4px;border:1px solid #fed7aa;background:#fff7ed;border-radius:999px;padding:4px 9px;vertical-align:middle}.goal-compact-score b{font-size:.86rem;line-height:1;font-weight:950}.goal-compact-score span{font-size:.55rem;font-weight:900;color:#9a3412;text-transform:uppercase;letter-spacing:.04em}
+.goal-compact-score.geo-score{border-color:#bbf7d0;background:#f0fdf4}.goal-compact-score.geo-score span{color:#047857}
 .metric-badge{position:relative;overflow:hidden;border:0;border-radius:16px;padding:14px 16px;min-height:94px;display:flex;flex-direction:column;justify-content:flex-start;box-shadow:0 12px 26px rgba(16,24,40,.08);isolation:isolate}
 .metric-badge::after{content:attr(data-value);position:absolute;right:12px;bottom:-10px;font-size:clamp(3.25rem,5.2vw,4.35rem);line-height:1;font-weight:950;color:rgba(255,255,255,.30);letter-spacing:-.04em;z-index:-1;max-width:92%;white-space:nowrap}
 .metric-badge strong{font-size:.78rem;line-height:1.15;text-transform:uppercase;letter-spacing:.02em;color:#fff;max-width:68%;text-wrap:balance}
 .metric-badge span{display:none}
-.metric-badge small{display:none}
+.metric-badge small{display:inline-flex;align-items:center;align-self:flex-start;margin-top:8px;border:1px solid rgba(255,255,255,.42);background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:4px 7px;font-size:.58rem;font-weight:950;text-transform:uppercase;letter-spacing:.02em}
 .metric-badge.green{background:linear-gradient(135deg,#0f9f62,#16a34a)}
 .metric-badge.orange{background:linear-gradient(135deg,#ff8000,#f97316)}
 .metric-badge.red{background:linear-gradient(135deg,#ff3f46,#ef4444)}
@@ -666,6 +667,7 @@ body.theme-dark .tb-action{background:#ff8000;border-color:#ff8000;color:#fff}
 body.theme-dark .goal-head,body.theme-dark .mhdr,body.theme-dark .mhdr.ng,body.theme-dark .mhdr.pu,body.theme-dark .rhdr,body.theme-dark .map-hdr,body.theme-dark .sd-hdr,body.theme-dark .rkcard-hdr,body.theme-dark .rt th,body.theme-dark .att th,body.theme-dark .route-table th,body.theme-dark .pay-body{background:var(--surface-2);border-color:var(--border);color:var(--text)}
 body.theme-dark .goal-body{background:#111}
 body.theme-dark .goal-target,body.theme-dark .goal-compact-score{background:#2a1808;border-color:#7c3f12;color:#fed7aa}
+body.theme-dark .goal-compact-score.geo-score{background:#102a1d;border-color:#1f6f42;color:#86efac}
 body.theme-dark .map-workspace,body.theme-dark .map-info-panel,body.theme-dark .map-canvas-panel{background:#0f0f0f;border-color:var(--border)}
 body.theme-dark #leafletMap{background:#0f0f0f}
 body.theme-dark #leafletMap .leaflet-tile{filter:brightness(.72) contrast(1.12) saturate(.86)}
@@ -1765,7 +1767,9 @@ function renderGoalTracking(){
   const agendamento=m.agendamento||0;
   const treated=m.ok||0;
   const withGeo=Math.max(0,(m.base||0)-geo);
-  const badge=(label,value,tone)=>`<div class="metric-badge ${tone}" data-value="${esc(value.toLocaleString('pt-BR'))}"><strong>${esc(label)}</strong></div>`;
+  const geoPct=m.base?Math.round(withGeo/m.base*1000)/10:0;
+  const semGeoPct=m.base?Math.round(geo/m.base*1000)/10:0;
+  const badge=(label,value,tone,detail='')=>`<div class="metric-badge ${tone}" data-value="${esc(value.toLocaleString('pt-BR'))}"><strong>${esc(label)}</strong>${detail?`<small>${esc(detail)}</small>`:''}</div>`;
   const periodLabel=m.key==='all'?'Acumulado':(m.label||'Período selecionado');
   const contractTxt=contractLabel();
   const contractRank=data.contractRank||[];
@@ -1785,7 +1789,7 @@ function renderGoalTracking(){
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
-        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento <span class="goal-compact-score"><b style="color:${color}">${p}%</b><span>aproveitamento</span></span></div></div></div>
+        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento <span class="goal-compact-score"><b style="color:${color}">${p}%</b><span>aproveitamento</span></span><span class="goal-compact-score geo-score"><b style="color:#047857">${geoPct}%</b><span>geolocalização</span></span></div></div></div>
         <div class="goal-target">${icon('icon-calendar','route-ico')}${esc(periodLabel)} · ${esc(data.meta.label)} · ${esc(contractTxt)}</div>
       </div>
       <div class="goal-body">
@@ -1796,8 +1800,8 @@ function renderGoalTracking(){
           ${badge('Utilizaram o Token',m.token||0,'green')}
           ${badge('Não Utilizaram o Token',noToken,'red')}
           ${badge('Via Web Link',viaLink,'purple')}
-          ${badge('Sem Geolocalização',geo,'yellow')}
-          ${badge('Com Geolocalização',withGeo,'green')}
+          ${badge('Sem Geolocalização',geo,'yellow',`${semGeoPct}% sem geo`)}
+          ${badge('Com Geolocalização',withGeo,'green',`${geoPct}% com geo`)}
         </div>
         <div class="goal-explain"><strong>Leitura rápida:</strong> verde é transporte com caminho bem comprovado. Amarelo é uso do APP com evidência mínima. Vermelho é quando não apareceu uso do TOKEN. Cinza é agendamento que não virou corrida.</div>
         <div class="scope-row">
