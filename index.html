@@ -118,12 +118,13 @@ main{padding:20px 28px;max-width:1440px;margin:0 auto}
 .contract-rank-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
 .contract-rank-title{display:flex;align-items:center;gap:8px;font-size:.68rem;font-weight:900;color:#9a3412;text-transform:uppercase;letter-spacing:.05em}
 .contract-rank-sub{font-size:.62rem;color:#9a3412;font-weight:800}
-.contract-rank-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
-.contract-rank-item{border:1px solid #fdba74;background:#fff;border-radius:10px;padding:9px 10px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+.contract-rank-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:8px}
+.contract-rank-item{border:1px solid #fdba74;background:#fff;border-radius:10px;padding:9px 10px;display:grid;grid-template-columns:24px minmax(0,1fr) auto;align-items:center;gap:8px;min-width:0}
+.contract-rank-item>span:nth-child(2){min-width:0;overflow:hidden}
 .contract-rank-pos{width:24px;height:24px;border-radius:999px;background:#FF8000;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:950}
 .contract-rank-name{font-size:.68rem;font-weight:900;color:#344054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .contract-rank-meta{font-size:.56rem;color:#667085;font-weight:800;margin-top:2px}
-.contract-rank-pct{font-size:.72rem;font-weight:950;color:#047857;background:#dcfce7;border-radius:999px;padding:4px 7px}
+.contract-rank-pct{font-size:.72rem;font-weight:950;color:#047857;background:#dcfce7;border-radius:999px;padding:4px 7px;white-space:nowrap}
 .goal-explain{display:none;border:1px solid #fed7aa;background:#fff7ed;color:#7c2d12;border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:.68rem;font-weight:700;line-height:1.45}
 .goal-explain strong{color:#9a3412}
 .week-track{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:4px}
@@ -1292,7 +1293,7 @@ function scopeTargetTotal(filter=activeF){
 function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
   const entries=scopedEntries(filter,month,includeSearch);
   const cats={A:0,B:0,C:0,D:0,F:0};
-  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0,web=0,naoUsou=0,agendamento=0,geoFalha=0,perfeito=0,minimos=0,semReq=0,viaLink=0,semGeo=0;
+  let att=0,base=0,ok=0,err=0,token=0,sem=0,erro=0,web=0,naoUsou=0,agendamento=0,geoFalha=0,perfeito=0,minimos=0,semReq=0,viaLink=0,semGeo=0,geoToken=0;
   entries.forEach(([,v])=>{
     const sv=supplierView(v,month);
     const rows=allAtts(v,month);
@@ -1306,13 +1307,14 @@ function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
     rows.forEach(a=>{
       const scenario=scenarioOfAtt(a);
       if(tokenYesFromAtt(a))token++;
+      if(hasTokenGeo(a))geoToken++;
       if(scenario==='correto_perfeito')perfeito++;
       if(scenario==='requisitos_minimos')minimos++;
       if(scenario==='sem_requisitos_minimos')semReq++;
       if(scenario==='nao_utilizou_token'||scenario==='nao_usou_token')naoUsou++;
       if(scenario==='agendamento')agendamento++;
       if(scenario==='preencheu_via_link'||subclassLabelForAtt(a)==='preenchimento por link')viaLink++;
-      if(a?.[24]?.evidence?.semGeolocalizacao||scenario==='falha_geolocalizacao')semGeo++;
+      if(hasGeoIssue(a))semGeo++;
       if(scenario==='falha_geolocalizacao')geoFalha++;
     });
     cats[cat(sv.pct)]++;
@@ -1320,7 +1322,7 @@ function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
   const avg=base>0?Math.round(ok/base*1000)/10:0;
   const targetTotal=scopeTargetTotal(filter);
   const naoAprovado=Math.max(0,base-ok);
-  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,agendamento,geoFalha,perfeito,minimos,semReq,viaLink,semGeo,naoAprovado,avg,cats,label:filterLabel(filter)};
+  return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,agendamento,geoFalha,perfeito,minimos,semReq,viaLink,semGeo,geoToken,naoAprovado,avg,cats,label:filterLabel(filter)};
 }
 function allAttsRaw(v,month=activeMonth){return month==='all'?Object.values(v[11]||{}).flatMap(m=>m[11]||[]):(((v[11]||{})[month]||[])[11]||[])}
 function allAtts(v,month=activeMonth,contract=activeContract){
@@ -1510,6 +1512,13 @@ function buildMetricFromRows(rows){
   return {total,correto,cormod,sem,web,erro,base,uso,tokenOk:token};
 }
 function scenarioOfAtt(a){return a?.[24]?.scenario||''}
+function hasGeoIssue(a){
+  const scenario=scenarioOfAtt(a);
+  return !!(a?.[24]?.evidence?.semGeolocalizacao||scenario==='falha_geolocalizacao');
+}
+function hasTokenGeo(a){
+  return tokenYesFromAtt(a)&&!hasGeoIssue(a);
+}
 function hasTokenEvidence(a){
   const ev=a?.[24]?.evidence||{};
   return !!(ev.token||ev.device||ev.appTimes||ev.tokenLatLong||ev.tokenTime||tokenYesFromAtt(a)||String(a?.[6]||'').trim()||a?.[7]||a?.[16]!=null||a?.[17]!=null);
@@ -1655,7 +1664,7 @@ function renderRuleModeButton(){
 
 // ── META TRACKING ────────────────────────────────────────────
 function emptyMetric(label='',order=0){
-  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0,naoUsou:0,agendamento:0,geoFalha:0,perfeito:0,minimos:0,semReq:0,viaLink:0,semGeo:0};
+  return {label,order,total:0,ok:0,base:0,web:0,sem:0,mod:0,erro:0,token:0,naoUsou:0,agendamento:0,geoFalha:0,perfeito:0,minimos:0,semReq:0,viaLink:0,semGeo:0,geoToken:0};
 }
 function addMetric(m,a){
   const cl=a[5];
@@ -1668,13 +1677,14 @@ function addMetric(m,a){
   if(cl===3)m.web++;
   if(cl===4)m.erro++;
   if(tokenYesFromAtt(a))m.token++;
+  if(hasTokenGeo(a))m.geoToken++;
   if(scenario==='correto_perfeito')m.perfeito++;
   if(scenario==='requisitos_minimos')m.minimos++;
   if(scenario==='sem_requisitos_minimos')m.semReq++;
   if(scenario==='nao_utilizou_token'||scenario==='nao_usou_token')m.naoUsou++;
   if(scenario==='agendamento')m.agendamento++;
   if(scenario==='preencheu_via_link'||subclassLabelForAtt(a)==='preenchimento por link')m.viaLink++;
-  if(a?.[24]?.evidence?.semGeolocalizacao||scenario==='falha_geolocalizacao')m.semGeo++;
+  if(hasGeoIssue(a))m.semGeo++;
   if(scenario==='falha_geolocalizacao')m.geoFalha++;
   return m;
 }
@@ -1718,7 +1728,7 @@ function buildGoalTracking(){
   });
   const monthList=[...months.entries()].map(([key,m])=>({key,...m,pct:metricPct(m)})).sort((a,b)=>b.order-a.order);
   const latest=activeMonth==='all'
-    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,web:meta.web,naoUsou:meta.naoUsou,agendamento:meta.agendamento,geoFalha:meta.geoFalha,perfeito:meta.perfeito,minimos:meta.minimos,semReq:meta.semReq,viaLink:meta.viaLink,semGeo:meta.semGeo,pct:meta.avg}
+    ? {key:'all',label:'Todos os meses',order:999999,total:meta.att,base:meta.base,ok:meta.ok,token:meta.token,sem:meta.sem,erro:meta.erro,web:meta.web,naoUsou:meta.naoUsou,agendamento:meta.agendamento,geoFalha:meta.geoFalha,perfeito:meta.perfeito,minimos:meta.minimos,semReq:meta.semReq,viaLink:meta.viaLink,semGeo:meta.semGeo,geoToken:meta.geoToken,pct:meta.avg}
     : (monthList.find(m=>m.key===activeMonth)||emptyMetric('Sem dados'));
   latest.pct=metricPct(latest);
   const chronological=[...monthList].sort((a,b)=>a.order-b.order);
@@ -1766,9 +1776,11 @@ function renderGoalTracking(){
   const geo=m.semGeo||0;
   const agendamento=m.agendamento||0;
   const treated=m.ok||0;
-  const withGeo=Math.max(0,(m.base||0)-geo);
+  const withGeo=m.geoToken||0;
+  const tokenWithoutGeo=Math.max(0,(m.token||0)-withGeo);
   const geoPct=m.base?Math.round(withGeo/m.base*1000)/10:0;
-  const semGeoPct=m.base?Math.round(geo/m.base*1000)/10:0;
+  const semGeoPct=m.base?Math.round(tokenWithoutGeo/m.base*1000)/10:0;
+  const geoAmongToken=m.token?Math.round(withGeo/m.token*1000)/10:0;
   const badge=(label,value,tone,detail='')=>`<div class="metric-badge ${tone}" data-value="${esc(value.toLocaleString('pt-BR'))}"><strong>${esc(label)}</strong>${detail?`<small>${esc(detail)}</small>`:''}</div>`;
   const periodLabel=m.key==='all'?'Acumulado':(m.label||'Período selecionado');
   const contractTxt=contractLabel();
@@ -1789,7 +1801,7 @@ function renderGoalTracking(){
   el.innerHTML=`
     <div class="goal-panel">
       <div class="goal-head">
-        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento <span class="goal-compact-score"><b style="color:${color}">${p}%</b><span>aproveitamento</span></span><span class="goal-compact-score geo-score"><b style="color:#047857">${geoPct}%</b><span>geolocalização</span></span></div></div></div>
+        <div class="title-with-icon">${iconBox('icon-target','green')}<div><div class="goal-title">Acompanhamento <span class="goal-compact-score"><b style="color:${color}">${p}%</b><span>aproveitamento</span></span><span class="goal-compact-score geo-score"><b style="color:#047857">${geoPct}%</b><span>geo com token</span></span></div></div></div>
         <div class="goal-target">${icon('icon-calendar','route-ico')}${esc(periodLabel)} · ${esc(data.meta.label)} · ${esc(contractTxt)}</div>
       </div>
       <div class="goal-body">
@@ -1800,8 +1812,8 @@ function renderGoalTracking(){
           ${badge('Utilizaram o Token',m.token||0,'green')}
           ${badge('Não Utilizaram o Token',noToken,'red')}
           ${badge('Via Web Link',viaLink,'purple')}
-          ${badge('Sem Geolocalização',geo,'yellow',`${semGeoPct}% sem geo`)}
-          ${badge('Com Geolocalização',withGeo,'green',`${geoPct}% com geo`)}
+          ${badge('TOKEN sem Geolocalização',tokenWithoutGeo,'yellow',`${semGeoPct}% da base`)}
+          ${badge('TOKEN com Geolocalização',withGeo,'green',`${geoPct}% da base · ${geoAmongToken}% dos tokens`)}
         </div>
         <div class="goal-explain"><strong>Leitura rápida:</strong> verde é transporte com caminho bem comprovado. Amarelo é uso do APP com evidência mínima. Vermelho é quando não apareceu uso do TOKEN. Cinza é agendamento que não virou corrida.</div>
         <div class="scope-row">
