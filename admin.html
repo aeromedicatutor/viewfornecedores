@@ -813,6 +813,7 @@ async function processAll(){
       att:findCol(hdrs,h=>h.includes('ATENDIMENTO')&&(h.startsWith('N')||h.includes('NUM')||h.includes('Nº')||h.includes('N°'))),
       fornecedor:findCol(hdrs,h=>h.includes('FORNECEDOR')),
       data:findCol(hdrs,h=>h.includes('DATA')&&h.includes('ATENDIMENTO')),
+      contrato:findCol(hdrs,h=>h.includes('CONTRATO')||h.includes('CONTRATANTE')),
       eqAt:findCol(hdrs,h=>h.includes('EQUIPE')&&h.includes('ATENDIMENTO')),
       eqEn:findCol(hdrs,h=>h.includes('ENFERMAGEM')),
       eo:findCol(hdrs,h=>h.includes('ENDERECO ATENDIMENTO')),
@@ -888,6 +889,7 @@ async function processAll(){
       const eqAt=idx.eqAt>=0&&r[idx.eqAt]?String(r[idx.eqAt]):'';
       const eqEn=idx.eqEn>=0&&r[idx.eqEn]?String(r[idx.eqEn]):'';
       if(eqAt){[cond,enf]=parseEquipe(eqAt);if(!enf&&eqEn)enf=eqEn;}
+      const contrato=idx.contrato>=0&&r[idx.contrato]?String(r[idx.contrato]).trim():'Sem contrato';
       const rawDisp=idx.disp>=0&&r[idx.disp]?String(r[idx.disp]):'';
       const dm=rawDisp.match(/^(.+?)\s*\(.*?\)\s*-\s*([\d.]+)$/);
       const disp=dm?(dm[1].trim()+'·'+dm[2]):rawDisp;
@@ -906,13 +908,13 @@ async function processAll(){
       const{mes,ano,dt}=parseDate(r[idx.data]);
       const shift=getShift(dt);
       if(!supplierMap[fn])supplierMap[fn]=[];
-      // [num,dt_rem,shift,cond,enf,cl,disp,dtTok,delay,km,lat1,lon1,lat2,lon2,eo,ed,tokLat,tokLon,kmRodado,horaParada,events,rastreios,motivo,tokenSim,rota,mes,ano]
+      // [num,dt_rem,shift,cond,enf,cl,disp,dtTok,delay,km,lat1,lon1,lat2,lon2,eo,ed,tokLat,tokLon,kmRodado,horaParada,events,rastreios,motivo,tokenSim,rota,mes,ano,contrato]
       supplierMap[fn].push([att,dt,shift,cond,enf,cl,disp,
         dtTok?fmtFullDate(rawTok):'',delay!==null?delay:null,kmRodado??kmCalc,
         lat1,lon1,lat2,lon2,
         idx.eo>=0&&r[idx.eo]?String(r[idx.eo]):'',idx.ed>=0&&r[idx.ed]?String(r[idx.ed]):'',
         tokLat,tokLon,kmRodado,idx.horaParada>=0?fmtDuration(r[idx.horaParada]):'',events,rst,reason,!!tkn,
-        {ok:rq.ok,radiusKm:ROUTE_MATCH_RADIUS_KM,checks:rq.checks,reason:rq.reason,...evidenceInfo},mes,ano]);
+        {ok:rq.ok,radiusKm:ROUTE_MATCH_RADIUS_KM,checks:rq.checks,reason:rq.reason,...evidenceInfo},mes,ano,contrato]);
     }
     ss(3,'done',`${totalEvents} eventos com Lat/Long`);
     ss(4,'done',`${Object.keys(supplierMap).length} fornecedores`);
@@ -931,7 +933,7 @@ async function processAll(){
       const base=total;
       const uso=base>0?Math.round((correto+cormod+sem_mov)/base*1000)/10:0;
       if(isMetaSupplierName(fn)){globalCorreto+=correto+cormod+sem_mov;globalBase+=base;}
-      const cmpct=r=>r.slice(0,25);
+      const cmpct=r=>r.slice(0,25).concat(r[27]||'Sem contrato');
       const allC=rows_.map(cmpct);
       const[rc,re_]=buildRanking(allC);
       const shAll=buildShifts(allC);
