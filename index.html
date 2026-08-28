@@ -58,6 +58,9 @@ header{background:var(--green);padding:0 28px;display:flex;align-items:center;ju
 .filter-wrap{display:flex;align-items:end;gap:8px;flex-wrap:wrap}
 .filter-field{display:flex;flex-direction:column;gap:4px}
 .filter-field label{font-size:.56rem;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.06em}
+.contract-total-card{height:48px;min-width:176px;border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow)}
+.contract-total-card strong{font-size:.98rem;line-height:1;font-weight:950;color:#c2410c}
+.contract-total-card span{font-size:.55rem;line-height:1.1;font-weight:900;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fbtns{display:flex;gap:5px;flex-wrap:wrap}
 .fb{padding:5px 12px;border:1.5px solid #e5e7eb;border-radius:20px;background:#fff;font-family:'Inter',sans-serif;font-size:.72rem;cursor:pointer;transition:all .18s;font-weight:500;color:#6b7280}
 .fb:hover{border-color:var(--green2);color:var(--green2)}
@@ -578,7 +581,7 @@ main{max-width:1500px;padding:24px 32px 34px}
 .map-stat{color:#344054}.map-note{color:var(--muted)}
 .route-panel{border-color:var(--border)}.route-table .route-km{color:var(--primary)}
 .nodata{background:#fff;border:1px solid var(--border);border-radius:12px;color:var(--muted)}
-@media(max-width:760px){header,.toolbar,main{padding-left:16px;padding-right:16px}.toolbar input{min-width:100%;flex-basis:100%}.filter-wrap,.filter-field{width:100%}.filter-field select,.tb-action{width:100%}.hstats{display:none}.avg-box{min-width:100%}.goal-summary{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.modal{max-height:96vh}.rkgrid,.mrk{grid-template-columns:1fr}.ms5{grid-template-columns:1fr 1fr}.map-modal{width:100vw;height:100vh;border-radius:0}}
+@media(max-width:760px){header,.toolbar,main{padding-left:16px;padding-right:16px}.toolbar input{min-width:100%;flex-basis:100%}.filter-wrap,.filter-field,.contract-total-card{width:100%}.filter-field select,.tb-action{width:100%}.hstats{display:none}.avg-box{min-width:100%}.goal-summary{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.modal{max-height:96vh}.rkgrid,.mrk{grid-template-columns:1fr}.ms5{grid-template-columns:1fr 1fr}.map-modal{width:100vw;height:100vh;border-radius:0}}
 .provider-band{display:inline-block;background:#FF8000;color:#fff;border-radius:10px;padding:9px 14px;font-size:1rem;font-weight:850;line-height:1.2;box-shadow:0 8px 18px rgba(255,128,0,.20)}
 .head-usage{display:grid;grid-template-columns:auto auto;align-items:center;gap:4px 10px;min-width:260px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:8px 10px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s}
 .head-usage:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);border-color:#fb923c}
@@ -669,6 +672,8 @@ body.theme-dark .goal-head,body.theme-dark .mhdr,body.theme-dark .mhdr.ng,body.t
 body.theme-dark .goal-body{background:#111}
 body.theme-dark .goal-target,body.theme-dark .goal-compact-score{background:#2a1808;border-color:#7c3f12;color:#fed7aa}
 body.theme-dark .goal-compact-score.geo-score{background:#102a1d;border-color:#1f6f42;color:#86efac}
+body.theme-dark .contract-total-card{background:#2a1808;border-color:#7c3f12;color:#fed7aa}
+body.theme-dark .contract-total-card strong{color:#ffb066}
 body.theme-dark .map-workspace,body.theme-dark .map-info-panel,body.theme-dark .map-canvas-panel{background:#0f0f0f;border-color:var(--border)}
 body.theme-dark #leafletMap{background:#0f0f0f}
 body.theme-dark #leafletMap .leaflet-tile{filter:brightness(.72) contrast(1.12) saturate(.86)}
@@ -839,6 +844,10 @@ applyTheme(preferredTheme());
     <div class="filter-field">
       <label for="contractFilter">Contratantes</label>
       <select id="contractFilter" onchange="setContractFilter(this.value)" title="Filtrar por contratante"></select>
+    </div>
+    <div class="contract-total-card" id="contractTotalCard" title="Total de remoções conforme mês, atendimento e contratante selecionados">
+      <strong>0</strong>
+      <span>remoções filtradas</span>
     </div>
   </div>
   <button class="tb-action" onclick="downloadFilteredCsv()" title="Exportar lista filtrada"><svg class="ico"><use href="#icon-download"></use></svg>Exportar CSV</button>
@@ -1158,9 +1167,17 @@ function initMonthFilter(){
 function initContractFilter(){
   const sel=document.getElementById('contractFilter'); if(!sel)return;
   const options=contractList();
-  sel.innerHTML=`<option value="all">Todos os contratantes</option>${options.map(c=>`<option value="${esc(c.label)}">${esc(c.label)} · ${c.count.toLocaleString('pt-BR')}</option>`).join('')}`;
+  sel.innerHTML=`<option value="all">Todos os contratantes</option>${options.map(c=>`<option value="${esc(c.label)}">${esc(c.label)}</option>`).join('')}`;
   sel.value=activeContract==='all'||options.some(c=>normMeta(c.label)===normMeta(activeContract))?activeContract:'all';
   if(sel.value==='all')activeContract='all';
+}
+function updateContractTotalCard(stats=null){
+  const card=document.getElementById('contractTotalCard'); if(!card)return;
+  const total=stats?.att??scopeStats(activeF,activeMonth,false).att;
+  const label='remoções filtradas';
+  card.querySelector('strong').textContent=Number(total||0).toLocaleString('pt-BR');
+  card.querySelector('span').textContent=label;
+  card.title=`${label}: ${Number(total||0).toLocaleString('pt-BR')} · ${contractLabel()}`;
 }
 function setMonthFilter(month){
   activeMonth=month||'all';
@@ -1764,6 +1781,7 @@ function buildGoalTracking(){
 function renderGoalTracking(){
   const el=document.getElementById('intel'); if(!el)return;
   const data=buildGoalTracking();
+  updateContractTotalCard(data.meta);
   const m=data.latest;
   const p=m.pct||0;
   const color=metricColor(p);
