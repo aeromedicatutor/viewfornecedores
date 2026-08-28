@@ -993,6 +993,10 @@ const RULE_MODE=new URLSearchParams(location.search).get('regra')==='token'?'tok
 let activeF='all_no_hmed';
 let activeMonth='all';
 let activeContract='all';
+let ALL_LOADED_ATTS_CACHE=null;
+let CONTRACT_CACHE=null;
+const ALL_ATTS_CACHE=new WeakMap();
+const SUPPLIER_VIEW_CACHE=new WeakMap();
 const MAP_ATTS={};
 const DETAIL_LISTS={};
 let CURRENT_PROVIDER_NAME='';
@@ -1052,37 +1056,51 @@ function pctBg(p){return p>=80?'#dcfce7':p>=60?'#fef3c7':'#fee2e2'}
 function pctCl(p){return p>=80?'#14532d':p>=60?'#92400e':'#991b1b'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function allLoadedAtts(){
+  if(ALL_LOADED_ATTS_CACHE)return ALL_LOADED_ATTS_CACHE;
   const rows=[];
   Object.values(D||{}).forEach(v=>{
     Object.values(v?.[11]||{}).forEach(m=>{
       (m?.[11]||[]).forEach(a=>rows.push(a));
     });
   });
+  ALL_LOADED_ATTS_CACHE=rows;
   return rows;
 }
 function attContract(a){
   const value=String(a?.[25]||'').trim();
   return value||'Sem contrato';
 }
+function attContractKey(a){
+  if(a&&a.__contractKey)return a.__contractKey;
+  const key=normMeta(attContract(a));
+  if(a&&Object.isExtensible(a)){
+    try{Object.defineProperty(a,'__contractKey',{value:key,enumerable:false});}catch(_){}
+  }
+  return key;
+}
+function contractCacheKey(contract=activeContract){return contract==='all'?'all':normMeta(contract)}
 function rowMatchesContract(a,contract=activeContract){
-  return contract==='all'||normMeta(attContract(a))===normMeta(contract);
+  return contract==='all'||attContractKey(a)===contractCacheKey(contract);
 }
 function contractList(){
+  if(CONTRACT_CACHE)return CONTRACT_CACHE;
   const map=new Map();
   allLoadedAtts().forEach(a=>{
     const label=attContract(a);
-    const key=normMeta(label);
+    const key=attContractKey(a);
     if(!key)return;
     const cur=map.get(key)||{label,count:0};
     cur.count++;
     if(label.length>cur.label.length)cur.label=label;
     map.set(key,cur);
   });
-  return [...map.values()].sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label,'pt-BR'));
+  CONTRACT_CACHE=[...map.values()].sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label,'pt-BR'));
+  return CONTRACT_CACHE;
 }
-function contractLabel(){
-  if(activeContract==='all')return'Todos os contratantes';
-  return contractList().find(c=>normMeta(c.label)===normMeta(activeContract))?.label||activeContract;
+function contractLabel(contract=activeContract){
+  if(contract==='all')return'Todos os contratantes';
+  const key=contractCacheKey(contract);
+  return contractList().find(c=>normMeta(c.label)===key)?.label||contract;
 }
 function findLoadedAtt(num){
   const key=Number(num);
@@ -1154,25 +1172,40 @@ function setContractFilter(contract){
   render();
 }
 function supplierScopedView(v,month=activeMonth,contract=activeContract){
+  const key=`${month||'all'}|${contractCacheKey(contract)}`;
+  let cache=SUPPLIER_VIEW_CACHE.get(v);
+  if(!cache){cache=new Map();SUPPLIER_VIEW_CACHE.set(v,cache);}
+  if(cache.has(key))return cache.get(key);
   const rows=allAtts(v,month,contract);
   const mt=buildMetricFromRows(rows);
   const monthLabel=month==='all'?'Acumulado':((v[11]||{})[month]?.[0]||`Mês ${month}`);
-  const contractTxt=contract==='all'?'':` · ${contractLabel()}`;
-  return {
+  const contractTxt=contract==='all'?'':` · ${contractLabel(contract)}`;
+  const out={
     status:v[0],total:mt.total,correto:mt.correto,gop:mt.cormod,sem:mt.sem,web:mt.web,erro:mt.erro,
     base:mt.base,pct:mt.uso,rankC:rankFromAtts(rows,3),rankE:rankFromAtts(rows,4),months:v[11]||{},
     training:v[12],shifts:shiftsFromAtts(rows),tok:tokDelayFromAtts(rows),tokenOk:mt.tokenOk,
     label:`${monthLabel}${contractTxt}`,month:null
   };
+  cache.set(key,out);
+  return out;
 }
 function supplierView(v,month=activeMonth,contract=activeContract){
   if(contract!=='all')return supplierScopedView(v,month,contract);
+  const key=`${month||'all'}|all`;
+  let cache=SUPPLIER_VIEW_CACHE.get(v);
+  if(!cache){cache=new Map();SUPPLIER_VIEW_CACHE.set(v,cache);}
+  if(cache.has(key))return cache.get(key);
+  let out;
   if(month==='all'){
-    return {status:v[0],total:v[1]||0,correto:v[2]||0,gop:v[3]||0,sem:v[4]||0,web:v[5]||0,erro:v[6]||0,base:v[7]||0,pct:v[8]||0,rankC:v[9]||[],rankE:v[10]||[],months:v[11]||{},training:v[12],shifts:v[13],tok:v[14],tokenOk:v[15]||0,label:'Acumulado',month:null};
+    out={status:v[0],total:v[1]||0,correto:v[2]||0,gop:v[3]||0,sem:v[4]||0,web:v[5]||0,erro:v[6]||0,base:v[7]||0,pct:v[8]||0,rankC:v[9]||[],rankE:v[10]||[],months:v[11]||{},training:v[12],shifts:v[13],tok:v[14],tokenOk:v[15]||0,label:'Acumulado',month:null};
+    cache.set(key,out);
+    return out;
   }
   const m=(v[11]||{})[month];
-  if(!m)return {status:v[0],total:0,correto:0,gop:0,sem:0,web:0,erro:0,base:0,pct:0,rankC:[],rankE:[],months:v[11]||{},training:v[12],shifts:null,tok:null,tokenOk:0,label:'Sem dados',month:null};
-  return {status:v[0],total:m[1]||0,correto:m[2]||0,gop:m[3]||0,sem:m[4]||0,web:m[5]||0,erro:m[6]||0,base:m[7]||0,pct:m[8]||0,rankC:m[9]||[],rankE:m[10]||[],months:v[11]||{},training:v[12],shifts:m[12],tok:m[13],tokenOk:m[14]||0,label:m[0]||`Mês ${month}`,month:m};
+  if(!m)out={status:v[0],total:0,correto:0,gop:0,sem:0,web:0,erro:0,base:0,pct:0,rankC:[],rankE:[],months:v[11]||{},training:v[12],shifts:null,tok:null,tokenOk:0,label:'Sem dados',month:null};
+  else out={status:v[0],total:m[1]||0,correto:m[2]||0,gop:m[3]||0,sem:m[4]||0,web:m[5]||0,erro:m[6]||0,base:m[7]||0,pct:m[8]||0,rankC:m[9]||[],rankE:m[10]||[],months:v[11]||{},training:v[12],shifts:m[12],tok:m[13],tokenOk:m[14]||0,label:m[0]||`Mês ${month}`,month:m};
+  cache.set(key,out);
+  return out;
 }
 function hasMonthData(v,month=activeMonth,contract=activeContract){return month==='all'?allAtts(v,'all',contract).length>0:allAtts(v,month,contract).length>0}
 function metaStats(month=activeMonth){
@@ -1284,7 +1317,16 @@ function scopeStats(filter=activeF,month=activeMonth,includeSearch=true){
   return {entries,targetTotal,matched:entries.length,missing:Math.max(0,targetTotal-entries.length),att,base,ok,err,token,sem,erro,web,naoUsou,agendamento,geoFalha,perfeito,minimos,semReq,viaLink,semGeo,naoAprovado,avg,cats,label:filterLabel(filter)};
 }
 function allAttsRaw(v,month=activeMonth){return month==='all'?Object.values(v[11]||{}).flatMap(m=>m[11]||[]):(((v[11]||{})[month]||[])[11]||[])}
-function allAtts(v,month=activeMonth,contract=activeContract){return allAttsRaw(v,month).filter(a=>rowMatchesContract(a,contract))}
+function allAtts(v,month=activeMonth,contract=activeContract){
+  let cache=ALL_ATTS_CACHE.get(v);
+  if(!cache){cache=new Map();ALL_ATTS_CACHE.set(v,cache);}
+  const key=`${month||'all'}|${contractCacheKey(contract)}`;
+  if(cache.has(key))return cache.get(key);
+  const raw=allAttsRaw(v,month);
+  const rows=contract==='all'?raw:raw.filter(a=>rowMatchesContract(a,contract));
+  cache.set(key,rows);
+  return rows;
+}
 function devParts(disp){
   if(!disp)return null;
   const raw=String(disp).trim();
@@ -1447,13 +1489,16 @@ function tokDelayFromAtts(atts){
   return [avg,ds.length,Math.min(...ds),Math.max(...ds)];
 }
 function buildMetricFromRows(rows){
+  let correto=0,cormod=0,sem=0,web=0,erro=0,token=0;
+  rows.forEach(r=>{
+    if(r[5]===0)correto++;
+    else if(r[5]===1)cormod++;
+    else if(r[5]===2)sem++;
+    else if(r[5]===3)web++;
+    else if(r[5]===4)erro++;
+    if(tokenYesFromAtt(r))token++;
+  });
   const total=rows.length;
-  const correto=rows.filter(r=>r[5]===0).length;
-  const cormod=rows.filter(r=>r[5]===1).length;
-  const sem=rows.filter(r=>r[5]===2).length;
-  const web=rows.filter(r=>r[5]===3).length;
-  const erro=rows.filter(r=>r[5]===4).length;
-  const token=rows.filter(tokenYesFromAtt).length;
   const base=total;
   const uso=base?Math.round((correto+cormod+sem)/base*1000)/10:0;
   return {total,correto,cormod,sem,web,erro,base,uso,tokenOk:token};
@@ -1864,7 +1909,6 @@ function filteredEntries(){
   const mode=document.getElementById('sortBy')?.value||'best';
   return Object.entries(D).filter(([n,v])=>{
     const mq=!q||n.toLowerCase().includes(q);
-    const sv=supplierView(v);
     if(!mq||!hasMonthData(v))return false;
     return entryMatchesFilter(n,v,activeF,activeMonth);
   }).sort((a,b)=>compareSuppliers(a,b,mode));
@@ -2179,7 +2223,7 @@ function attRow(a){
 // ── MONTH BLOCK ──────────────────────────────────────────────
 function monthTupleForContract(v,mn,m){
   if(activeContract==='all')return m;
-  const rows=allAtts(v,mn,activeContract).sort((a,b)=>Number(a?.[0]||0)-Number(b?.[0]||0));
+  const rows=allAtts(v,mn,activeContract).slice().sort((a,b)=>Number(a?.[0]||0)-Number(b?.[0]||0));
   const mt=buildMetricFromRows(rows);
   return [m?.[0]||`Mês ${mn}`,mt.total,mt.correto,mt.cormod,mt.sem,mt.web,mt.erro,mt.base,mt.uso,rankFromAtts(rows,3),rankFromAtts(rows,4),rows,shiftsFromAtts(rows),tokDelayFromAtts(rows),mt.tokenOk];
 }
